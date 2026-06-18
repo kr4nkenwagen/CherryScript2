@@ -1,0 +1,87 @@
+package scanner
+
+import "core:os"
+import "core:fmt"
+import "core:strings"
+import "core:mem"
+
+source_code_t :: struct {
+  content : string,
+  length : int,
+  is_at_end : bool,
+  pointer : int,
+  line : int,
+  column : int,
+}
+
+source_code_new :: proc(content: string) -> ^source_code_t{
+  src:= new(source_code_t)
+  src.content = content
+  src.length = len(src.content)
+  src.pointer = -1
+  src.line = 0
+  src.column = 0
+  src.is_at_end = false
+  return src
+}
+
+from_file :: proc(file: string) -> ^source_code_t {
+  data, err:= os.read_entire_file(file, context.allocator)
+  if err != nil {
+    return nil
+  }
+  return source_code_new(string(data))
+}
+
+from_repl :: proc(line: string) -> ^source_code_t {
+  return source_code_new(line)
+}
+
+source_code_import_file :: proc(target: ^source_code_t, src_path: string) {
+  file_data, err:= os.read_entire_file(src_path, context.allocator)
+  if err != nil {
+    return
+  }
+  defer delete(file_data)
+  obj_src := string(file_data)
+  b: strings.Builder
+  strings.builder_init(&b)
+  strings.builder_grow(&b, len(target.content) + len(obj_src) + 2)
+  strings.write_string(&b, target.content[:target.pointer])
+  strings.write_byte(&b, '\n')
+  strings.write_string(&b, obj_src)
+  strings.write_byte(&b, '\n')
+  strings.write_string(&b, target.content[target.pointer:])
+  target.content = strings.to_string(b)
+}
+
+advance :: proc(src: ^source_code_t) -> rune {
+  if src == nil {
+    return 0
+  }
+  src.pointer+=1
+  if src.pointer == src.length{
+    src.is_at_end = true
+  }
+  src.column+=1
+  if src.content[src.pointer] == '\n' {
+    src.line+=1
+    src.column = 0
+  }
+  return rune(src.content[src.pointer])
+}
+
+peek :: proc(src: ^source_code_t, distance:= int(0)) ->rune {
+  if src == nil || src.pointer + distance >= src.length {
+    return 0
+  }
+  return rune(src.content[src.pointer + distance])
+}
+
+source_code_delete :: proc(src: ^source_code_t) {
+  if src == nil {
+    return
+  }
+  delete(src.content)
+  free(src)
+}
