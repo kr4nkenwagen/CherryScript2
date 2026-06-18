@@ -63,7 +63,8 @@ token_type_t :: enum {
   IMPORT,
   OUT,
   ERROR,
-  REMOVE
+  REMOVE,
+  UNKNOWN_TOKEN
 }
 
 token_t :: struct {
@@ -82,5 +83,11 @@ token_new :: proc(src: ^source_code.source_code_t, type: token_type_t, literal: 
   token.column = src.column
   token.line = src.line
   token.type = type
+  return token
+}
+
+generate_unknown_token :: proc() -> ^token_t {
+  token:= new(token_t)
+  token.type = token_type_t.UNKNOWN_TOKEN
   return token
 }
