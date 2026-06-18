@@ -1,12 +1,13 @@
 package main
-import scan "scanner"
+import "source_code"
+import token "token"
 import "core:fmt"
 
 main :: proc() {
-  src := scan.from_file("test.jonx")
+  src := source_code.from_file("test.jonx")
   fmt.printf("%s\n", src.content)
   for i in 0 ..< src.length {
-    fmt.printf("[%i]%c ", src.pointer, scan.advance(src))
+    fmt.printf("[%i]%c ", src.pointer, source_code.advance(src))
   }
-  scan.source_code_delete(src)
+  source_code.source_code_delete(src)
   }

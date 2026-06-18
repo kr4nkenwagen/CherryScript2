@@ -1,4 +1,4 @@
-package scanner
+package source_code
 
 import "core:os"
 import "core:fmt"
