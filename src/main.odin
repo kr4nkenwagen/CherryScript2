@@ -2,6 +2,7 @@ package main
 import "source_code"
 import token "token"
 import token_list "token_list"
+import scan "scan"
 import "core:fmt"
 
 main :: proc() {
