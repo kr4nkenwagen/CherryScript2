@@ -81,8 +81,24 @@ is_end_of_word :: proc(character: rune) -> bool {
   return false
 }
 
-consume_word :: proc(src: source_code.source_code_t) -> (string, bool) {
-  if src == nil {
+consume_word :: proc(src: ^source_code.source_code_t) -> (string, bool) {
+   if src == nil {
+    return "", false
+  }
+  start_position:= src.pointer
+  for !src.is_at_end {
+    if is_end_of_word(source_code.advance(src)) {
+      break
+    }
+  }
+  total_length:= int(src.pointer - start_position + 1)
+  result:= string(src.content[start_position : start_position + total_length])
+  return result, true
+
+}
+
+consume_number :: proc(src: ^source_code.source_code_t) -> (string, bool) {
+   if src == nil {
     return "", false
   }
   is_float:= bool(false)
@@ -90,28 +106,24 @@ consume_word :: proc(src: source_code.source_code_t) -> (string, bool) {
   for !src.is_at_end {
     character:= rune(source_code.peek(src, 0))
     if character == '.' {
-      if rune(source_code.peek(src, 1) == '.') {
+      if rune(source_code.peek(src, 1)) == '.' {
         break
       }
       if is_float {
-      //HERE WE NEED TO 'err_unexpected_character'
-      return "", false
+        //HERE WE NEED TO 'err_unexpected_character'
+        return "", false
       }
-      is_float == true
+      is_float = true
     }
-  }
-  if is_number(source_code.peek(src, 1)) {
-    source_code.advance(src)
-  } else {
-    break
+    if is_number(source_code.peek(src, 1)) {
+      source_code.advance(src)
+    } else {
+      break
+    }
   }
   total_length:= int(src.pointer - start_position + 1)
   result:= string(src.content[start_position : start_position + total_length])
   return result, true
-}
-
-consume_number :: proc(src: source_code.source_code_t) -> string{
-  return ""
 }
 
 is_next_word_match :: proc(src: source_code.source_code_t) -> bool {
