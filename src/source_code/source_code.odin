@@ -37,7 +37,7 @@ from_repl :: proc(line: string) -> ^source_code_t {
   return source_code_new(line)
 }
 
-source_code_import_file :: proc(target: ^source_code_t, src_path: string) {
+import_file :: proc(target: ^source_code_t, src_path: string) {
   file_data, err:= os.read_entire_file(src_path, context.allocator)
   if err != nil {
     return
