@@ -28,7 +28,7 @@ consume_string :: proc(src: ^source_code.source_code_t) -> (string, bool) {
   for source_code.peek(src, size) != exit_char {
     size+=1
     if src.pointer + size >= src.length {
-      //HERE WE NEED TO ERR 'err_eof_in_string'
+      //ERROR HERE WE NEED TO ERR 'err_eof_in_string'
       return "", false
     }
   }
@@ -416,6 +416,22 @@ consume_reserved_word :: proc(src: ^source_code.source_code_t) -> (^token.token_
   return nil, false
 }
 
-scan :: proc(src: source_code.source_code_t) -> ^token_list.token_list_t {
-  return token_list.token_list_new()
+scan :: proc(src: ^source_code.source_code_t) -> ^token_list.token_list_t {
+  if src == nil {
+    //ERROR here
+    return nil
+  }
+  list:= token_list.token_list_new()
+  for !src.is_at_end {
+    switch(source_code.advance(src)) {
+      case '(': token_list.add(src, token.token_new(src, token.type_t.LEFT_PAREN, "("))
+      case ')': token_list.add(src, token.token_new(src, token.type_t.RIGHT_PAREN, ")"))
+      case '{': token_list.add(src, token.token_new(src, token.type_t.LEFT_BRACE, "{"))
+      case '}': token_list.add(src, token.token_new(src, token.type_t.RIGHT_BRACE, "}"))
+      case '[': token_list.add(src, token.token_new(src, token.type_t.LEFT_BRACE, "["))
+      case ']': token_list.add(src, token.token_new(src, token.type_t.RIGHT_BRACE, "]"))
+      case ';': token_list.add(src, token.token_new(src, token.type_t.TERMINATOR, ";"))
+
+    }
+  }
 }
