@@ -149,10 +149,10 @@ consume_identifier :: proc(src: ^source_code.source_code_t) -> (^token.token_t, 
   if err {
     return nil, false
   }
-  return token.token_new(src, token.token_type_t.IDENTIFIER, word), true
+  return token.token_new(src, token.type_t.IDENTIFIER, word), true
 }
 
-match_specific_reserved_word :: proc(src: ^source_code.source_code_t, literal: string, token_type: token.token_type_t) -> (^token.token_t, bool) {
+match_specific_reserved_word :: proc(src: ^source_code.source_code_t, literal: string, token_type: token.type_t) -> (^token.token_t, bool) {
   match, err:= is_next_word_match(src, "and")
     if err {
     return nil, false
@@ -162,7 +162,7 @@ match_specific_reserved_word :: proc(src: ^source_code.source_code_t, literal: s
     if err {
       return nil, false
     }
-    return token.token_new(src, token.token_type_t.AND, word), true
+    return token.token_new(src, token.type_t.AND, word), true
   }
   return nil, false
 }
@@ -174,9 +174,9 @@ consume_reserved_word :: proc(src: ^source_code.source_code_t) -> (^token.token_
   character:= rune(source_code.peek(src, 0))
   switch(character) {
   case 'a': fallthrough
-  case 'A': return match_specific_reserved_word(src, "AND", token.token_type_t.AND)
+  case 'A': return match_specific_reserved_word(src, "AND", token.type_t.AND)
   case 'b': fallthrough
-  case 'B': return match_specific_reserved_word(src, "BREAK", token.token_type_t.BREAK)
+  case 'B': return match_specific_reserved_word(src, "BREAK", token.type_t.BREAK)
   case 'c': fallthrough
   case 'C': 
   case 'e': fallthrough
@@ -193,18 +193,88 @@ consume_reserved_word :: proc(src: ^source_code.source_code_t) -> (^token.token_
   case 'O':
   case 'p': fallthrough
   case 'P':
+    match, err:= is_next_word_match(src, "println")
+    if err {
+      return nil, false
+    }
+    word, _:= consume_word(src)
+    if match {
+      return token.token_new(src, token.type_t.PRINT_LINE, word), true
+    }
+    match, err = is_next_word_match(src, "print")
+    if err {
+      return nil, false
+    }
+    if match { 
+      return token.token_new(src, token.type_t.PRINT, word), true
+    }
   case 'r': fallthrough
   case 'R':
+    match, err:= is_next_word_match(src, "return")
+    if err {
+      return nil, false
+    }
+    word, _:= consume_word(src)
+    if match {
+      return token.token_new(src, token.type_t.RETURN, word), true
+    }
+    match, err = is_next_word_match(src, "remove")
+    if err {
+      return nil, false
+    }
+    if match {
+      return token.token_new(src, token.type_t.REMOVE, word), true
+    }
   case 's': fallthrough
   case 'S':
+    match, err:= is_next_word_match(src, "super")
+    if err {
+      return nil, false
+    }
+    word, _:= consume_word(src)
+    return token.token_new(src, token.type_t.SUPER, word), true
   case 't': fallthrough
   case 'T':
+    match, err:= is_next_word_match(src, "this")
+    if err {
+      return nil, false
+    }
+    word, _:= consume_word(src)
+    if match {
+      return token.token_new(src, token.type_t.THIS, word), true
+    }
+    else if word == "true" {
+      return token.token_new(src, token.type_t.TRUE, word), true
+    }
   case 'v': fallthrough
   case 'V':
+    match, err:= is_next_word_match(src, "var")
+    if err {
+      return nil, false
+    }
+    word, _:= consume_word(src)
+    return token.token_new(src, token.type_t.VAR, word), true
+
   case 'w': fallthrough
   case 'W':
+    match, err:= is_next_word_match(src, "while")
+    if err {
+      return nil, false
+    }
+    word, _:= consume_word(src)
+    return token.token_new(src, token.type_t.WHILE, word), true
   case '&':
+    if source_code.peek(src, 1) == '&' {
+      source_code.advance(src)
+      source_code.advance(src)
+      return token.token_new(src, token.type_t.AND, "&&"), true
+    }
   case '|':
+    if source_code.peek(src, 1) == '|' {
+      source_code.advance(src)
+      source_code.advance(src)
+      return token.token_new(src, token.type_t.OR, "||"), true
+    }
   }
   return nil, false
 }

@@ -2,7 +2,7 @@ package token
 
 import "../source_code"
 
-token_type_t :: enum {
+type_t :: enum {
   LEFT_PAREN,
   RIGHT_PAREN,
   LEFT_BRACE,
@@ -68,13 +68,13 @@ token_type_t :: enum {
 }
 
 token_t :: struct {
-  type: token_type_t,
+  type: type_t,
   literal: string,
   column: int,
   line: int
 }
 
-token_new :: proc(src: ^source_code.source_code_t, type: token_type_t, literal: string) -> ^token_t { if src == nil || type == nil{
+token_new :: proc(src: ^source_code.source_code_t, type: type_t, literal: string) -> ^token_t { if src == nil || type == nil{
     return nil
   }
   token:= new(token_t)
@@ -87,6 +87,6 @@ token_new :: proc(src: ^source_code.source_code_t, type: token_type_t, literal: 
 
 generate_unknown_token :: proc() -> ^token_t {
   token:= new(token_t)
-  token.type = token_type_t.UNKNOWN_TOKEN
+  token.type = type_t.UNKNOWN_TOKEN
   return token
 }
