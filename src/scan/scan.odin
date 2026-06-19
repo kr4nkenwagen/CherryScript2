@@ -3,6 +3,8 @@ package scan
 import "../source_code"
 import "../token"
 import "../token_list"
+import "core:unicode"
+import "core:strings"
 
 consume_comment :: proc(src: ^source_code.source_code_t) -> bool {
   if src == nil || source_code.peek(src, 0) != '#' {
@@ -126,17 +128,85 @@ consume_number :: proc(src: ^source_code.source_code_t) -> (string, bool) {
   return result, true
 }
 
-is_next_word_match :: proc(src: source_code.source_code_t) -> bool {
-  return true
+is_next_word_match :: proc(src: ^source_code.source_code_t, word: string) -> (bool, bool) {
+  if src == nil {
+    return false, false
+  }
+  if src.pointer + len(word) >= src.length {
+    return false, true
+  }
+  if strings.to_lower(src.content[src.pointer : src.pointer + len(word)]) == string(word) {
+    return true, true
+  }
+  return true, true
 }
 
-consume_identifier :: proc(src: source_code.source_code_t) -> ^token.token_t {
-  return token.generate_unknown_token()
+consume_identifier :: proc(src: ^source_code.source_code_t) -> (^token.token_t, bool) {
+  if src == nil || unicode.is_alpha(source_code.peek(src, -1)){
+    return nil, false
+  }
+  word, err:= consume_word(src)
+  if err {
+    return nil, false
+  }
+  return token.token_new(src, token.token_type_t.IDENTIFIER, word), true
 }
 
+match_specific_reserved_word :: proc(src: ^source_code.source_code_t, literal: string, token_type: token.token_type_t) -> (^token.token_t, bool) {
+  match, err:= is_next_word_match(src, "and")
+    if err {
+    return nil, false
+  }
+  if match {
+    word, err:= consume_word(src)
+    if err {
+      return nil, false
+    }
+    return token.token_new(src, token.token_type_t.AND, word), true
+  }
+  return nil, false
+}
 
-consume_reserved_word :: proc(src: source_code.source_code_t) -> ^token.token_t {
-  return token.generate_unknown_token()
+consume_reserved_word :: proc(src: ^source_code.source_code_t) -> (^token.token_t, bool) {
+  if src == nil || unicode.is_alpha(source_code.peek(src, -1)) {
+    return nil, false
+  }
+  character:= rune(source_code.peek(src, 0))
+  switch(character) {
+  case 'a': fallthrough
+  case 'A': return match_specific_reserved_word(src, "AND", token.token_type_t.AND)
+  case 'b': fallthrough
+  case 'B': return match_specific_reserved_word(src, "BREAK", token.token_type_t.BREAK)
+  case 'c': fallthrough
+  case 'C': 
+  case 'e': fallthrough
+  case 'E':
+  case 'f': fallthrough
+  case 'F':
+  case 'i': fallthrough
+  case 'I':
+  case 'n': fallthrough
+  case 'N':
+  case 'm': fallthrough
+  case 'M':
+  case 'o': fallthrough
+  case 'O':
+  case 'p': fallthrough
+  case 'P':
+  case 'r': fallthrough
+  case 'R':
+  case 's': fallthrough
+  case 'S':
+  case 't': fallthrough
+  case 'T':
+  case 'v': fallthrough
+  case 'V':
+  case 'w': fallthrough
+  case 'W':
+  case '&':
+  case '|':
+  }
+  return nil, false
 }
 
 scan :: proc(src: source_code.source_code_t) -> ^token_list.token_list_t {

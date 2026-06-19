@@ -74,8 +74,7 @@ token_t :: struct {
   line: int
 }
 
-token_new :: proc(src: ^source_code.source_code_t, type: token_type_t, literal: string) -> ^token_t {
-  if src == nil || type == nil{
+token_new :: proc(src: ^source_code.source_code_t, type: token_type_t, literal: string) -> ^token_t { if src == nil || type == nil{
     return nil
   }
   token:= new(token_t)
