@@ -123,7 +123,7 @@ consume_word :: proc(src: ^source_code.source_code_t) -> (string, bool) {
 			break
 		}
 	}
-	total_length := int(src.pointer - start_position + 1)
+	total_length := int(src.pointer - start_position)
 	result := string(src.content[start_position:start_position + total_length])
 	return result, true
 
@@ -153,7 +153,7 @@ consume_number :: proc(src: ^source_code.source_code_t) -> (string, bool) {
 			break
 		}
 	}
-	total_length := int(src.pointer - start_position + 1)
+	total_length := int(src.pointer - start_position)
 	result := string(src.content[start_position:start_position + total_length])
 	return result, true
 }
