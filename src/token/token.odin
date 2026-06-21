@@ -74,7 +74,7 @@ token_t :: struct {
 	line:    int,
 }
 
-token_new :: proc(
+create :: proc(
 	src: ^source_code.source_code_t,
 	type: type_t,
 	literal: string,

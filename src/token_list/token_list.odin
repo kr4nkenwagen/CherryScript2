@@ -7,7 +7,7 @@ token_list_t :: struct {
 	pointer: int,
 }
 
-token_list_new :: proc() -> ^token_list_t {
+create :: proc() -> ^token_list_t {
 	list := new(token_list_t)
 	list.length = 0
 	list.pointer = 0
