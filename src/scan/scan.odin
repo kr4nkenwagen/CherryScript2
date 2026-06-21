@@ -124,9 +124,10 @@ consume_word :: proc(src: ^source_code.source_code_t) -> (string, bool) {
 		}
 	}
 	total_length := int(src.pointer - start_position)
-	result := string(src.content[start_position:start_position + total_length])
-	return result, true
-
+	if total_length <= 0 {
+		return "", false
+	}
+	return string(src.content[start_position:start_position + total_length]), true
 }
 
 consume_number :: proc(src: ^source_code.source_code_t) -> (string, bool) {
@@ -165,10 +166,7 @@ is_next_word_match :: proc(src: ^source_code.source_code_t, word: string) -> (bo
 	if src.pointer + len(word) >= src.length {
 		return false, true
 	}
-	if strings.to_lower(src.content[src.pointer:src.pointer + len(word)]) == string(word) {
-		return true, true
-	}
-	return true, true
+	return strings.to_lower(src.content[src.pointer:src.pointer + len(word)]) == word, true
 }
 
 consume_identifier :: proc(src: ^source_code.source_code_t) -> (^token.token_t, bool) {
