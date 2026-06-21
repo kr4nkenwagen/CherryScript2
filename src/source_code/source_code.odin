@@ -62,6 +62,7 @@ advance :: proc(src: ^source_code_t) -> rune {
 	src.pointer += 1
 	if src.pointer == src.length {
 		src.is_at_end = true
+		return 0
 	}
 	src.column += 1
 	if src.content[src.pointer] == '\n' {
@@ -72,7 +73,7 @@ advance :: proc(src: ^source_code_t) -> rune {
 }
 
 peek :: proc(src: ^source_code_t, distance := int(0)) -> rune {
-	if src == nil || src.pointer + distance >= src.length {
+	if src == nil || src.pointer + distance >= src.length || src.pointer + distance < 0 {
 		return 0
 	}
 	return rune(src.content[src.pointer + distance])

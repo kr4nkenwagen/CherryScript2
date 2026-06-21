@@ -18,8 +18,8 @@ add :: proc(list: ^token_list_t, token: ^token.token_t) {
 	if list == nil {
 		return
 	}
+	append(&list.list, token)
 	list.length += 1
-	list.list[list.length] = token
 }
 
 advance :: proc(list: ^token_list_t) -> ^token.token_t {

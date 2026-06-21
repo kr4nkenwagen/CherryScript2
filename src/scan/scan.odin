@@ -467,7 +467,7 @@ consume_reserved_word :: proc(src: ^source_code.source_code_t) -> (^token.token_
 	return nil, false
 }
 
-scan :: proc(src: ^source_code.source_code_t) -> (^token_list.token_list_t, bool) {
+run :: proc(src: ^source_code.source_code_t) -> (^token_list.token_list_t, bool) {
 	if src == nil {
 		//ERROR here
 		return nil, false
@@ -614,6 +614,9 @@ scan :: proc(src: ^source_code.source_code_t) -> (^token_list.token_list_t, bool
 			_ = consume_comment(src)
 
 		case:
+			if src.is_at_end {
+				break
+			}
 			if src.content[src.pointer] == 0 {
 				break
 			}
