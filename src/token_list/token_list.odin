@@ -36,3 +36,8 @@ peek :: proc(list: ^token_list_t, distance: int) -> ^token.token_t {
 	}
 	return list.list[list.pointer + distance]
 }
+
+remove :: proc(list: ^token_list_t) {
+	delete(list.list)
+	free(list)
+}

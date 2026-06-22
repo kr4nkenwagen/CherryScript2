@@ -10,5 +10,6 @@ main :: proc() {
 	for i := 0; i < tokens.length; i += 1 {
 		fmt.printf("%i\n", tokens.list[i].type)
 	}
-	source_code.source_code_delete(src)
+	source_code.remove(src)
+	token_list.remove(tokens)
 }

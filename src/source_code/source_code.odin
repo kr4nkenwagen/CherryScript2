@@ -79,7 +79,7 @@ peek :: proc(src: ^source_code_t, distance := int(0)) -> rune {
 	return rune(src.content[src.pointer + distance])
 }
 
-source_code_delete :: proc(src: ^source_code_t) {
+remove :: proc(src: ^source_code_t) {
 	if src == nil {
 		return
 	}
