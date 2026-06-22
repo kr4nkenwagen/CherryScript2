@@ -1,6 +1,7 @@
 package token
 
 import "../source_code"
+import "core:fmt"
 
 type_t :: enum {
 	LEFT_PAREN,
@@ -74,13 +75,11 @@ token_t :: struct {
 	line:    int,
 }
 
-create :: proc(
-	src: ^source_code.source_code_t,
-	type: type_t,
-	literal: string,
-) -> ^token_t {if src == nil || type == nil {
+create :: proc(src: ^source_code.source_code_t, type: type_t, literal: string) -> ^token_t {
+	if src == nil || type == nil {
 		return nil
 	}
+
 	token := new(token_t)
 	token.literal = literal
 	token.column = src.column
