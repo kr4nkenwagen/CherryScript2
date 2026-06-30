@@ -1,7 +1,6 @@
 package token
 
 import "../source_code"
-import "core:fmt"
 
 type_t :: enum {
 	LEFT_PAREN,
