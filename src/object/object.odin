@@ -118,6 +118,8 @@ create_vector :: proc(x: ^object_t, y: ^object_t, z: ^object_t) -> (^object_t, b
 	return obj, false
 }
 
+//TODO: Create procedure for function objects
+
 create_null :: proc() -> (^object_t, bool) {
 	obj := new(object_t)
 	if obj == nil {
