@@ -1,18 +1,9 @@
 package syntax
 
-import "../token"
+import "../types"
 
-syntax_t :: struct {
-	token:  ^token.token_t,
-	left:   ^syntax_t,
-	right:  ^syntax_t,
-	value:  ^syntax_t,
-	branch: ^rawptr,
-	args:   ^rawptr,
-}
-
-create :: proc() -> (^syntax_t, bool) {
-	syntax := new(syntax_t)
+create :: proc() -> (^types.syntax_t, bool) {
+	syntax := new(types.syntax_t)
 	if syntax == nil {
 		return nil, true
 	}

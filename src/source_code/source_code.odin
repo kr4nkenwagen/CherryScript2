@@ -1,21 +1,12 @@
 package source_code
 
-import "core:fmt"
-import "core:mem"
+import "../types"
 import "core:os"
 import "core:strings"
 
-source_code_t :: struct {
-	content:   string,
-	length:    int,
-	is_at_end: bool,
-	pointer:   int,
-	line:      int,
-	column:    int,
-}
 
-create :: proc(content: string) -> ^source_code_t {
-	src := new(source_code_t)
+create :: proc(content: string) -> ^types.source_code_t {
+	src := new(types.source_code_t)
 	src.content = content
 	src.length = len(src.content)
 	src.pointer = -1
@@ -25,7 +16,7 @@ create :: proc(content: string) -> ^source_code_t {
 	return src
 }
 
-from_file :: proc(file: string) -> ^source_code_t {
+from_file :: proc(file: string) -> ^types.source_code_t {
 	data, err := os.read_entire_file(file, context.allocator)
 	if err != nil {
 		return nil
@@ -33,11 +24,11 @@ from_file :: proc(file: string) -> ^source_code_t {
 	return create(string(data))
 }
 
-from_repl :: proc(line: string) -> ^source_code_t {
+from_repl :: proc(line: string) -> ^types.source_code_t {
 	return create(line)
 }
 
-import_file :: proc(target: ^source_code_t, src_path: string) {
+import_file :: proc(target: ^types.source_code_t, src_path: string) {
 	file_data, err := os.read_entire_file(src_path, context.allocator)
 	if err != nil {
 		return
@@ -55,7 +46,7 @@ import_file :: proc(target: ^source_code_t, src_path: string) {
 	target.content = strings.to_string(b)
 }
 
-advance :: proc(src: ^source_code_t) -> rune {
+advance :: proc(src: ^types.source_code_t) -> rune {
 	if src == nil {
 		return 0
 	}
@@ -72,14 +63,14 @@ advance :: proc(src: ^source_code_t) -> rune {
 	return rune(src.content[src.pointer])
 }
 
-peek :: proc(src: ^source_code_t, distance := int(0)) -> rune {
+peek :: proc(src: ^types.source_code_t, distance := int(0)) -> rune {
 	if src == nil || src.pointer + distance >= src.length || src.pointer + distance < 0 {
 		return 0
 	}
 	return rune(src.content[src.pointer + distance])
 }
 
-remove :: proc(src: ^source_code_t) {
+remove :: proc(src: ^types.source_code_t) {
 	if src == nil {
 		return
 	}

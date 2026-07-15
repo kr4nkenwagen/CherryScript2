@@ -1,31 +1,12 @@
 package program
 
-import "../syntax"
+import "../types"
 
-type_t :: enum {
-	SOURCE,
-	LOOP,
-	FUNCTION,
-	IF,
-}
-
-program_t :: struct {
-	exit:        bool,
-	breaking:    bool,
-	continueing: bool,
-	pointer:     int,
-	type:        type_t,
-	length:      int,
-	parent:      ^program_t,
-	statements:  [dynamic]^syntax.syntax_t,
-	ret_value:   rawptr,
-}
-
-create :: proc(parent: ^program_t) -> (^program_t, bool) {
+create :: proc(parent: ^types.program_t) -> (^types.program_t, bool) {
 	if parent == nil {
 		return nil, true
 	}
-	prog := new(program_t)
+	prog := new(types.program_t)
 	if prog == nil {
 		return nil, true
 	}
@@ -35,12 +16,12 @@ create :: proc(parent: ^program_t) -> (^program_t, bool) {
 	prog.breaking = false
 	prog.continueing = false
 	prog.ret_value = nil
-	prog.type = type_t.SOURCE
+	prog.type = types.program_type_t.SOURCE
 	prog.parent = parent
 	return prog, false
 }
 
-add :: proc(prog: ^program_t, statement: ^syntax.syntax_t) -> bool {
+add :: proc(prog: ^types.program_t, statement: ^types.syntax_t) -> bool {
 	if prog == nil || statement == nil {
 		return true
 	}

@@ -1,115 +1,84 @@
 package object
 
-type_t :: enum {
-	INT,
-	FLOAT,
-	STRING,
-	ARRAY,
-	VECTOR,
-	NULL,
-	BOOL,
-	FUNCTION,
-}
+import "../types"
 
-data_t :: union {
-	int,
-	f32,
-	string,
-	bool,
-	array_t,
-	vector_t,
-}
-
-object_t :: struct {
-	is_marked: bool,
-	is_const:  bool,
-	ref_count: int,
-	type:      type_t,
-	name:      string,
-	data:      data_t,
-}
-
-array_t :: struct {
-	count: int,
-	value: [dynamic]object_t,
-}
-
-vector_t :: struct {
-	x: ^object_t,
-	y: ^object_t,
-	z: ^object_t,
-}
-
-create_int :: proc(value: int) -> (^object_t, bool) {
-	obj := new(object_t)
+create_int :: proc(value: int) -> (^types.object_t, bool) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.INT
+	obj.type = types.object_type_t.INT
 	obj.data = value
 	obj.ref_count = 1
 	return obj, false
 }
 
-create_bool :: proc(value: bool) -> (^object_t, bool) {
-	obj := new(object_t)
+create_bool :: proc(value: bool) -> (^types.object_t, bool) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.BOOL
+	obj.type = types.object_type_t.BOOL
 	obj.data = value
 	obj.ref_count = 1
 	return obj, false
 }
 
-create_float :: proc(value: f32) -> (^object_t, bool) {
-	obj := new(object_t)
+create_float :: proc(value: f32) -> (^types.object_t, bool) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.FLOAT
+	obj.type = types.object_type_t.FLOAT
 	obj.data = value
 	obj.ref_count = 1
 	return obj, false
 }
 
-create_string :: proc(value: string) -> (^object_t, bool) {
-	obj := new(object_t)
+create_string :: proc(value: string) -> (^types.object_t, bool) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.STRING
+	obj.type = types.object_type_t.STRING
 	obj.data = value
 	obj.ref_count = 1
 	return obj, false
 }
 
-create_array :: proc() -> (^object_t, bool) {
-	obj := new(object_t)
+create_array :: proc() -> (^types.object_t, bool) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.ARRAY
+	obj.type = types.object_type_t.ARRAY
 	obj.ref_count = 1
-	obj.data = array_t {
+	obj.data = types.object_array_t {
 		count = 0,
 	}
 	return obj, false
 }
 
-create_vector :: proc(x: ^object_t, y: ^object_t, z: ^object_t) -> (^object_t, bool) {
-	obj := new(object_t)
+create_vector :: proc(
+	x: ^types.object_t,
+	y: ^types.object_t,
+	z: ^types.object_t,
+) -> (
+	^types.object_t,
+	bool,
+) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.VECTOR
-	obj.data = vector_t {
+	obj.type = types.object_type_t.VECTOR
+	obj.data = types.object_vector_t {
 		x = x,
 		y = y,
 		z = z,
@@ -120,26 +89,26 @@ create_vector :: proc(x: ^object_t, y: ^object_t, z: ^object_t) -> (^object_t, b
 
 //TODO: Create procedure for function objects
 
-create_null :: proc() -> (^object_t, bool) {
-	obj := new(object_t)
+create_null :: proc() -> (^types.object_t, bool) {
+	obj := new(types.object_t)
 	if obj == nil {
 		return nil, true
 	}
 	obj.is_marked = false
-	obj.type = type_t.NULL
+	obj.type = types.object_type_t.NULL
 	obj.ref_count = 1
 	return obj, false
 }
 
-set_null :: proc(obj: ^object_t) -> bool {
+set_null :: proc(obj: ^types.object_t) -> bool {
 	if obj == nil {
 		return true
 	}
-	obj.type = type_t.NULL
+	obj.type = types.object_type_t.NULL
 	return false
 }
 
-length :: proc(obj: ^object_t) -> (int, bool) {
+length :: proc(obj: ^types.object_t) -> (int, bool) {
 	if obj == nil {
 		return -1, true
 	}
@@ -160,7 +129,7 @@ length :: proc(obj: ^object_t) -> (int, bool) {
 	return -1, true
 }
 
-ref_dec :: proc(obj: ^object_t) -> bool {
+ref_dec :: proc(obj: ^types.object_t) -> bool {
 	if obj == nil {
 		return true
 	}
@@ -171,7 +140,7 @@ ref_dec :: proc(obj: ^object_t) -> bool {
 	return false
 }
 
-ref_inc :: proc(obj: ^object_t) -> bool {
+ref_inc :: proc(obj: ^types.object_t) -> bool {
 	if obj == nil {
 		return true
 	}
@@ -179,7 +148,7 @@ ref_inc :: proc(obj: ^object_t) -> bool {
 	return false
 }
 
-remove :: proc(obj: ^object_t) -> bool {
+remove :: proc(obj: ^types.object_t) -> bool {
 	if obj == nil {
 		return true
 	}
@@ -208,11 +177,11 @@ remove :: proc(obj: ^object_t) -> bool {
 	return false
 }
 
-copy :: proc(src: ^object_t) -> (^object_t, bool) {
+copy :: proc(src: ^types.object_t) -> (^types.object_t, bool) {
 	if src == nil {
 		return nil, true
 	}
-	obj, err := new(object_t)
+	obj, err := new(types.object_t)
 	if err != .None {
 		return nil, true
 	}
