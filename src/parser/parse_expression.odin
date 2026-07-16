@@ -1,7 +1,6 @@
 package parser
 
 import "../syntax"
-import "../token"
 import "../token_list"
 import "../types"
 
@@ -185,7 +184,7 @@ string_operations :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool
 unary :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool) {
 	left, _ := string_operations(tokens)
 	curr_token := token_list.peek(tokens, 0)
-	for curr_token != nil && curr_token.type == token.type_t.BANG {
+	for curr_token != nil && curr_token.type == types.token_type_t.BANG {
 		op, err := syntax.create()
 		if err {
 			free(op)
@@ -206,9 +205,9 @@ multiplicitive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool) {
 	left, _ := unary(tokens)
 	curr_token := token_list.peek(tokens, 0)
 	for curr_token != nil &&
-	    (curr_token.type == token.type_t.STAR ||
-			    curr_token.type == token.type_t.SLASH ||
-			    curr_token.type == token.type_t.MODULUS) {
+	    (curr_token.type == types.token_type_t.STAR ||
+			    curr_token.type == types.token_type_t.SLASH ||
+			    curr_token.type == types.token_type_t.MODULUS) {
 		op, err := syntax.create()
 		if err {
 			free(op)
@@ -229,9 +228,9 @@ additive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool) {
 	left, _ := multiplicitive(tokens)
 	curr_token := token_list.peek(tokens, 0)
 	for curr_token != nil &&
-	    (curr_token.type == token.type_t.PLUS ||
-			    curr_token.type == token.type_t.MINUS ||
-			    curr_token.type == token.type_t.DOT_DOT) {
+	    (curr_token.type == types.token_type_t.PLUS ||
+			    curr_token.type == types.token_type_t.MINUS ||
+			    curr_token.type == types.token_type_t.DOT_DOT) {
 		op, err := syntax.create()
 		if err {
 			free(op)
@@ -253,10 +252,10 @@ comparision :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool) {
 	left, _ := additive(tokens)
 	curr_token := token_list.peek(tokens, 0)
 	for curr_token != nil &&
-	    (curr_token.type == token.type_t.GREATER_EQUAL ||
-			    curr_token.type == token.type_t.LESS_EQUAL ||
-			    curr_token.type == token.type_t.GREATER ||
-			    curr_token.type == token.type_t.LESS) {
+	    (curr_token.type == types.token_type_t.GREATER_EQUAL ||
+			    curr_token.type == types.token_type_t.LESS_EQUAL ||
+			    curr_token.type == types.token_type_t.GREATER ||
+			    curr_token.type == types.token_type_t.LESS) {
 		op, err := syntax.create()
 		if err {
 			free(op)
@@ -277,8 +276,8 @@ equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool) {
 	left, _ := comparision(tokens)
 	curr_token := token_list.peek(tokens, 0)
 	for curr_token != nil &&
-	    (curr_token.type == token.type_t.EQUAL_EQUAL ||
-			    curr_token.type == token.type_t.BANG_EQUAL) {
+	    (curr_token.type == types.token_type_t.EQUAL_EQUAL ||
+			    curr_token.type == types.token_type_t.BANG_EQUAL) {
 		op, err := syntax.create()
 		if err {
 			free(op)
@@ -334,31 +333,29 @@ statement :: proc(
 	if tokens == nil {
 		return nil, true
 	}
-	switch (token_list.peek(tokens, 0).type) {
+	#partial switch (token_list.peek(tokens, 0).type) {
 	case .FUNCTION:
-		return function(tokens)
+		return function(tokens, parent)
 	case .FOR:
-		return for_statements(tokens)
+		return for_statement(tokens, parent)
 	case .IF:
-		return if_statements(tokens)
+		return if_statement(tokens, parent)
 	case .PRINT:
-		return print(tokens)
+		return function_print(tokens)
 	case .RETURN:
 		return return_statement(tokens)
 	case .VAR:
-		return var(tokens)
+		fallthrough
 	case .CONST:
-		return cont(tokens)
+		return variable_declaration(tokens)
 	case .WHILE:
-		return while(tokens)
+		return while(tokens, parent)
 	case .PRINT_LINE:
-		return print_line(tokens)
+		return function_print_line(tokens)
 	case .CONTINUE:
 		return continue_statement(tokens)
 	case .BREAK:
 		return break_statement(tokens)
-	case .IMPORT:
-		return import_statement(tokens)
 	case .OUT:
 		return out(tokens)
 	case .ERROR:

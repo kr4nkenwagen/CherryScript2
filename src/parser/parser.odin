@@ -1,8 +1,6 @@
 package parser
 
 import "../program"
-import "../syntax"
-import "../token"
 import "../token_list"
 import "../types"
 
@@ -67,11 +65,11 @@ run :: proc(tokens: ^types.token_list_t, parent: ^types.program_t) -> (^types.pr
 		return nil, true
 	}
 	for token_list.peek(tokens, 0).type != types.token_type_t.END_OF_FILE {
-		synt: ^syntax.syntax_t
-		prev_synt: ^syntax.syntax_t
-		for token_list.peek(tokens, 0).type != token.type_t.TERMINATOR &&
-		    token_list.peek(tokens, 0).type != token.type_t.RIGHT_BRACE &&
-		    token_list.peek(tokens, 0).type != token.type_t.LEFT_BRACE {
+		synt: ^types.syntax_t
+		prev_synt: ^types.syntax_t
+		for token_list.peek(tokens, 0).type != types.token_type_t.TERMINATOR &&
+		    token_list.peek(tokens, 0).type != types.token_type_t.RIGHT_BRACE &&
+		    token_list.peek(tokens, 0).type != types.token_type_t.LEFT_BRACE {
 			if synt == nil {
 				synt, err = statement(tokens, prog)
 			}

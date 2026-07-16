@@ -93,11 +93,11 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool
 		prev_syntax.left = curr_syntax
 		prev_syntax = curr_syntax
 		curr_token = token_list.advance(tokens)
-		if curr_token.type != token.type_t.COMMA {
+		if curr_token.type != types.token_type_t.COMMA {
 			break
 		}
 	}
-	if curr_token.type != token.type_t.RIGHT_BRACKET {
+	if curr_token.type != types.token_type_t.RIGHT_BRACKET {
 		//ERROR bracket not closed
 		return nil, true
 	}
@@ -108,14 +108,14 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool
 identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, bool) {
 	curr_syntax, _ := syntax.create()
 	curr_syntax.token = token_list.peek(tokens, 0)
-	if curr_syntax.token.type != token.type_t.IDENTIFIER {
+	if curr_syntax.token.type != types.token_type_t.IDENTIFIER {
 		return nil, true
 	}
 	token_list.advance(tokens)
-	if token_list.peek(tokens, 0).type == token.type_t.LEFT_BRACKET {
+	if token_list.peek(tokens, 0).type == types.token_type_t.LEFT_BRACKET {
 		curr_syntax.right, _ = array_declaration(tokens)
 	}
-	if token_list.peek(tokens, 0).type == token.type_t.LEFT_PAREN {
+	if token_list.peek(tokens, 0).type == types.token_type_t.LEFT_PAREN {
 		curr_syntax.left, _ = passed_function_args(tokens)
 	}
 	return curr_syntax, false
