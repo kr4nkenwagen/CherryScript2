@@ -2,6 +2,7 @@ package types
 
 
 token_type_t :: enum {
+	UNKNOWN_TOKEN,
 	LEFT_PAREN,
 	RIGHT_PAREN,
 	LEFT_BRACE,
@@ -63,7 +64,6 @@ token_type_t :: enum {
 	OUT,
 	ERROR,
 	REMOVE,
-	UNKNOWN_TOKEN,
 }
 
 token_t :: struct {

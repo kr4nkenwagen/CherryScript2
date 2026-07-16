@@ -11,7 +11,6 @@ create :: proc(
 	if type == nil {
 		return nil
 	}
-
 	token := new(types.token_t)
 	token.literal = literal
 	token.column = src.column

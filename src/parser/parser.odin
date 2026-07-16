@@ -52,9 +52,27 @@ branch :: proc(tokens: ^types.token_list_t, parent: ^types.program_t) -> (^types
 }
 
 line :: proc(tokens: ^types.token_list_t, parent: ^types.program_t) -> (^types.syntax_t, bool) {
-
+	curr_syntax: ^types.syntax_t
+	prev_syntax: ^types.syntax_t
+	for token_list.peek(tokens, 0).type != types.token_type_t.TERMINATOR &&
+	    token_list.peek(tokens, 0).type != types.token_type_t.RIGHT_PAREN {
+		if curr_syntax == nil {
+			curr_syntax, _ = statement(tokens, parent)
+			prev_syntax = curr_syntax
+			continue
+		}
+		curr_syntax, _ = statement(tokens, parent)
+		if curr_syntax == nil {
+			continue
+		}
+		curr_syntax.left = prev_syntax
+		prev_syntax = curr_syntax
+	}
+	for token_list.peek(tokens, 0).type == types.token_type_t.TERMINATOR {
+		token_list.advance(tokens)
+	}
+	return curr_syntax, false
 }
-
 
 run :: proc(tokens: ^types.token_list_t, parent: ^types.program_t) -> (^types.program_t, bool) {
 	if tokens == nil {
@@ -71,9 +89,19 @@ run :: proc(tokens: ^types.token_list_t, parent: ^types.program_t) -> (^types.pr
 		    token_list.peek(tokens, 0).type != types.token_type_t.RIGHT_BRACE &&
 		    token_list.peek(tokens, 0).type != types.token_type_t.LEFT_BRACE {
 			if synt == nil {
-				synt, err = statement(tokens, prog)
+				synt, _ = statement(tokens, prog)
+				prev_synt = synt
+				continue
 			}
+			synt, _ = statement(tokens, parent)
+			if synt == nil {
+				continue
+			}
+			synt.left = prev_synt
+			prev_synt = synt
 		}
+		token_list.advance(tokens)
+		program.add(prog, synt)
 	}
-
+	return prog, false
 }

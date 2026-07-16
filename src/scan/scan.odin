@@ -135,7 +135,7 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, bool) {
 	if src == nil {
 		return "", true
 	}
-	is_float := bool(false)
+	is_float := false
 	start_position := src.pointer
 	for !src.is_at_end {
 		character := rune(source_code.peek(src, 0))
@@ -144,7 +144,7 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, bool) {
 				break
 			}
 			if is_float {
-				//ERROR 'err_unexpected_character'
+				// ERROR 'err_unexpected_character'
 				return "", true
 			}
 			is_float = true
@@ -155,7 +155,7 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, bool) {
 			break
 		}
 	}
-	total_length := int(src.pointer - start_position)
+	total_length := int(src.pointer - start_position) + 1
 	result := string(src.content[start_position:start_position + total_length])
 	return result, false
 }
@@ -465,7 +465,6 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, boo
 	}
 	return nil, true
 }
-
 run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, bool) {
 	if src == nil {
 		//ERROR here

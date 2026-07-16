@@ -3,9 +3,6 @@ package program
 import "../types"
 
 create :: proc(parent: ^types.program_t) -> (^types.program_t, bool) {
-	if parent == nil {
-		return nil, true
-	}
 	prog := new(types.program_t)
 	if prog == nil {
 		return nil, true
@@ -25,7 +22,7 @@ add :: proc(prog: ^types.program_t, statement: ^types.syntax_t) -> bool {
 	if prog == nil || statement == nil {
 		return true
 	}
-	prog.statements[prog.length] = statement
+	append(&prog.statements, statement)
 	prog.length += 1
 	return false
 }
