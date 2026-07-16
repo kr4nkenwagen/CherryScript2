@@ -6,5 +6,5 @@ syntax_t :: struct {
 	right:  ^syntax_t,
 	value:  ^syntax_t,
 	branch: ^program_t,
-	args:   ^rawptr,
+	args:   ^program_t,
 }
