@@ -5,7 +5,6 @@ import "../syntax"
 import "../token"
 import "../token_list"
 import "../types"
-import "core:terminal"
 
 function_args :: proc(
 	tokens: ^types.token_list_t,
