@@ -1,0 +1,11 @@
+package types
+
+exit_codes :: enum {
+	OK,
+	ERROR,
+	OBJECT_IS_NIL,
+	WORD_NOT_FOUND,
+	UNEXPECTED_CHARACTER,
+	PATH_CANT_BE_PARSED,
+	EOF_IN_STRING,
+}
