@@ -4,7 +4,6 @@ import "../types"
 import "core:os"
 import "core:strings"
 
-
 create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 	src := new(types.source_code_t)
 	if src == nil {

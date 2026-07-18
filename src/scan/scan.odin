@@ -227,7 +227,7 @@ consume_identifier :: proc(src: ^types.source_code_t) -> (^types.token_t, types.
 	if error.is_error(err) {
 		return nil, err
 	}
-	return token.create(src, types.token_type_t.IDENTIFIER, word), types.exit_codes.OK
+	return token.create(src, types.token_type_t.IDENTIFIER, word)
 }
 
 consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, types.exit_codes) {
@@ -258,7 +258,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(err) {
 				return nil, err
 			}
-			return token.create(src, types.token_type_t.AND, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.AND, word)
 		}
 	case 'b':
 		fallthrough
@@ -272,7 +272,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(err) {
 				return nil, err
 			}
-			return token.create(src, types.token_type_t.BREAK, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.BREAK, word)
 		}
 	case 'c':
 		fallthrough
@@ -286,7 +286,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(match_err) {
 				return nil, match_err
 			}
-			return token.create(src, types.token_type_t.CLASS, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.CLASS, word)
 		}
 		match, err = is_next_word_match(src, "const")
 		if error.is_error(err) {
@@ -297,7 +297,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(match_err) {
 				return nil, match_err
 			}
-			return token.create(src, types.token_type_t.CONST, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.CONST, word)
 		}
 		match, err = is_next_word_match(src, "continue")
 		if error.is_error(err) {
@@ -308,7 +308,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(match_err) {
 				return nil, match_err
 			}
-			return token.create(src, types.token_type_t.CONTINUE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.CONTINUE, word)
 		}
 	case 'e':
 		fallthrough
@@ -338,13 +338,13 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 					return nil, str2_err
 				}
 				word := strings.concatenate({str1, string(" "), str2})
-				return token.create(src, types.token_type_t.ELSE_IF, word), types.exit_codes.OK
+				return token.create(src, types.token_type_t.ELSE_IF, word)
 			}
 			word, word_err := consume_word(src)
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.ELSE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.ELSE, word)
 		}
 	case 'f':
 		fallthrough
@@ -358,7 +358,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.FOR, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.FOR, word)
 		}
 		match, err = is_next_word_match(src, "false")
 		if error.is_error(err) {
@@ -369,7 +369,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.FALSE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.FALSE, word)
 		}
 		match, err = is_next_word_match(src, "fn")
 		if error.is_error(err) {
@@ -380,7 +380,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.FUNCTION, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.FUNCTION, word)
 		}
 	case 'i':
 		fallthrough
@@ -394,7 +394,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.IF, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.IF, word)
 		}
 	case 'n':
 		fallthrough
@@ -408,7 +408,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.NIL, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.NIL, word)
 		}
 		match, err = is_next_word_match(src, "nil")
 		if error.is_error(err) {
@@ -419,7 +419,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.NIL, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.NIL, word)
 		}
 	case 'm':
 		fallthrough
@@ -447,7 +447,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(imp_err) {
 				return nil, imp_err
 			}
-			return token.create(src, types.token_type_t.TERMINATOR, ""), types.exit_codes.OK
+			return token.create(src, types.token_type_t.TERMINATOR, "")
 		}
 	case 'o':
 		fallthrough
@@ -461,7 +461,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.OR, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.OR, word)
 		}
 		match, err = is_next_word_match(src, "or")
 		if error.is_error(err) {
@@ -472,7 +472,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, err
 			}
-			return token.create(src, types.token_type_t.OUT, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.OUT, word)
 		}
 	case 'p':
 		fallthrough
@@ -486,7 +486,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.PRINT_LINE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.PRINT_LINE, word)
 		}
 		match, err = is_next_word_match(src, "print")
 		if error.is_error(err) {
@@ -497,7 +497,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.PRINT, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.PRINT, word)
 		}
 	case 'r':
 		fallthrough
@@ -511,7 +511,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.RETURN, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.RETURN, word)
 		}
 		match, err = is_next_word_match(src, "return")
 		if error.is_error(err) {
@@ -522,7 +522,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.REMOVE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.REMOVE, word)
 		}
 	case 's':
 		fallthrough
@@ -536,7 +536,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.SUPER, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.SUPER, word)
 		}
 	case 't':
 		fallthrough
@@ -550,7 +550,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.THIS, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.THIS, word)
 		}
 		match, err = is_next_word_match(src, "true")
 		if error.is_error(err) {
@@ -561,7 +561,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.TRUE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.TRUE, word)
 		}
 	case 'v':
 		fallthrough
@@ -575,7 +575,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.VAR, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.VAR, word)
 		}
 	case 'w':
 		fallthrough
@@ -589,7 +589,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(word_err) {
 				return nil, word_err
 			}
-			return token.create(src, types.token_type_t.WHILE, word), types.exit_codes.OK
+			return token.create(src, types.token_type_t.WHILE, word)
 		}
 	case '&':
 		second_char, second_char_err := source_code.peek(src, 1)
@@ -605,7 +605,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(adv_err) {
 				return nil, adv_err
 			}
-			return token.create(src, types.token_type_t.AND, "&&"), types.exit_codes.OK
+			return token.create(src, types.token_type_t.AND, "&&")
 		}
 	case '|':
 		second_char, second_char_err := source_code.peek(src, 1)
@@ -621,7 +621,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if error.is_error(err) {
 				return nil, err
 			}
-			return token.create(src, types.token_type_t.OR, "||"), types.exit_codes.OK
+			return token.create(src, types.token_type_t.OR, "||")
 		}
 	}
 	return nil, types.exit_codes.OK
@@ -631,7 +631,10 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 	if src == nil {
 		return nil, types.exit_codes.OBJECT_IS_NIL
 	}
-	list := token_list.create()
+	list, list_err := token_list.create()
+	if error.is_error(list_err) {
+		return nil, list_err
+	}
 	for !src.is_at_end {
 		tmp := (list.length > 0) ? list.list[list.length - 1] : nil
 		character, character_err := source_code.advance(src)
@@ -641,34 +644,104 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 		}
 		switch (character) {
 		case '(':
-			token_list.add(list, token.create(src, types.token_type_t.LEFT_PAREN, "("))
+			tok, tok_err := token.create(src, types.token_type_t.LEFT_PAREN, "(")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case ')':
-			token_list.add(list, token.create(src, types.token_type_t.RIGHT_PAREN, ")"))
+			tok, tok_err := token.create(src, types.token_type_t.RIGHT_PAREN, ")")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '{':
-			token_list.add(list, token.create(src, types.token_type_t.LEFT_BRACE, "{"))
+			tok, tok_err := token.create(src, types.token_type_t.LEFT_BRACE, "{")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '}':
 			if tmp == nil {
 				break
 			}
 			if tmp.type != types.token_type_t.TERMINATOR {
-				token_list.add(list, token.create(src, types.token_type_t.TERMINATOR, ";"))
+				tok, tok_err := token.create(src, types.token_type_t.TERMINATOR, ";")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
-			token_list.add(list, token.create(src, types.token_type_t.RIGHT_BRACE, "}"))
+			tok, tok_err := token.create(src, types.token_type_t.RIGHT_BRACE, "}")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '[':
-			token_list.add(list, token.create(src, types.token_type_t.LEFT_BRACE, "["))
+			tok, tok_err := token.create(src, types.token_type_t.LEFT_BRACE, "[")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case ']':
-			token_list.add(list, token.create(src, types.token_type_t.RIGHT_BRACE, "]"))
+			tok, tok_err := token.create(src, types.token_type_t.RIGHT_BRACE, "]")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case ',':
-			token_list.add(list, token.create(src, types.token_type_t.COMMA, ","))
+			tok, tok_err := token.create(src, types.token_type_t.COMMA, ",")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case ':':
 			second_char, second_char_err := source_code.peek(src, 1)
 			if error.is_error(second_char_err) {
 				return nil, second_char_err
 			}
 			if second_char == '^' {
-				token_list.add(list, token.create(src, types.token_type_t.COLON_HAT, ":^"))
+				tok, tok_err := token.create(src, types.token_type_t.COLON_HAT, ":^")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.COLON, ":"))
+				tok, tok_err := token.create(src, types.token_type_t.COLON, ":")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '.':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -680,15 +753,36 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				if error.is_error(number_err) {
 					return nil, number_err
 				}
-				token_list.add(list, token.create(src, types.token_type_t.NUMBER, number))
+				tok, tok_err := token.create(src, types.token_type_t.NUMBER, number)
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			} else if second_char == '.' {
-				token_list.add(list, token.create(src, types.token_type_t.DOT_DOT, ".."))
+				tok, tok_err := token.create(src, types.token_type_t.DOT_DOT, "..")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.DOT, "."))
+				tok, tok_err := token.create(src, types.token_type_t.DOT, ".")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '-':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -696,13 +790,27 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.MINUS_EQUAL, "-="))
+				tok, tok_err := token.create(src, types.token_type_t.MINUS_EQUAL, "-=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.MINUS, "-"))
+				tok, tok_err := token.create(src, types.token_type_t.MINUS, "-")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '+':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -710,16 +818,37 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.PLUS_EQUAL, "+="))
+				tok, tok_err := token.create(src, types.token_type_t.PLUS_EQUAL, "+=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.PLUS, "+"))
+				tok, tok_err := token.create(src, types.token_type_t.PLUS, "+")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '%':
-			token_list.add(list, token.create(src, types.token_type_t.MODULUS, "%"))
+			tok, tok_err := token.create(src, types.token_type_t.MODULUS, "%")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '/':
 			second_char, second_char_err := source_code.peek(src, 1)
 			if error.is_error(second_char_err) &&
@@ -727,13 +856,27 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.SLASH_EQUAL, "/="))
+				tok, tok_err := token.create(src, types.token_type_t.SLASH_EQUAL, "/=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.SLASH, "/"))
+				tok, tok_err := token.create(src, types.token_type_t.SLASH, "/")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '*':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -741,13 +884,27 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.STAR_EQUAL, "*="))
+				tok, tok_err := token.create(src, types.token_type_t.STAR_EQUAL, "*=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.STAR, "*"))
+				tok, tok_err := token.create(src, types.token_type_t.STAR, "*")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '\'':
 			fallthrough
@@ -756,20 +913,41 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 			if error.is_error(str_err) {
 				return nil, str_err
 			}
-			token_list.add(list, token.create(src, types.token_type_t.STRING_WRAPPER, str))
+			tok, tok_err := token.create(src, types.token_type_t.STRING_WRAPPER, str)
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '!':
 			second_char, second_char_err := source_code.peek(src, 1)
 			if error.is_error(second_char_err) {
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.BANG_EQUAL, "!="))
+				tok, tok_err := token.create(src, types.token_type_t.BANG_EQUAL, "!=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.BANG, "!"))
+				tok, tok_err := token.create(src, types.token_type_t.BANG, "!")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '=':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -777,13 +955,27 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.EQUAL_EQUAL, "=="))
+				tok, tok_err := token.create(src, types.token_type_t.EQUAL_EQUAL, "==")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.EQUAL, "="))
+				tok, tok_err := token.create(src, types.token_type_t.EQUAL, "=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '>':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -791,13 +983,27 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.GREATER_EQUAL, ">="))
+				tok, tok_err := token.create(src, types.token_type_t.GREATER_EQUAL, ">=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.GREATER, ">"))
+				tok, tok_err := token.create(src, types.token_type_t.GREATER, ">")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '<':
 			second_char, second_char_err := source_code.peek(src, 1)
@@ -805,13 +1011,27 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				return nil, second_char_err
 			}
 			if second_char == '=' {
-				token_list.add(list, token.create(src, types.token_type_t.LESS_EQUAL, "<="))
+				tok, tok_err := token.create(src, types.token_type_t.LESS_EQUAL, "<=")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 				_, adv_err := source_code.advance(src)
 				if error.is_error(adv_err) {
 					return nil, adv_err
 				}
 			} else {
-				token_list.add(list, token.create(src, types.token_type_t.LESS, "<"))
+				tok, tok_err := token.create(src, types.token_type_t.LESS, "<")
+				if error.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		case '0':
 			fallthrough
@@ -836,7 +1056,14 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 			if error.is_error(number_err) {
 				return nil, number_err
 			}
-			token_list.add(list, token.create(src, types.token_type_t.NUMBER, number))
+			tok, tok_err := token.create(src, types.token_type_t.NUMBER, number)
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '\n':
 			if tmp == nil {
 				break
@@ -848,7 +1075,14 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 			}
 			fallthrough
 		case ';':
-			token_list.add(list, token.create(src, types.token_type_t.TERMINATOR, ";"))
+			tok, tok_err := token.create(src, types.token_type_t.TERMINATOR, ";")
+			if error.is_error(tok_err) {
+				return nil, tok_err
+			}
+			add_err := token_list.add(list, tok)
+			if error.is_error(add_err) {
+				return nil, add_err
+			}
 		case '\t':
 		case ' ':
 		case '#':
@@ -873,16 +1107,40 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 					return nil, word_err
 				}
 				if len(word.literal) > 0 {
-					token_list.add(list, word)
+					add_err := token_list.add(list, word)
+					if error.is_error(add_err) {
+						return nil, add_err
+					}
 				}
 			} else {
-				token_list.add(list, res_word)
+				add_err := token_list.add(list, res_word)
+				if error.is_error(add_err) {
+					return nil, add_err
+				}
 			}
 		}
 	}
-	if token_list.peek(list, 0).type != types.token_type_t.TERMINATOR {
-		token_list.add(list, token.create(src, types.token_type_t.TERMINATOR, ";"))
+	term_char, term_char_err := token_list.peek(list, 0)
+	if error.is_error(term_char_err) {
+		return nil, term_char_err
 	}
-	token_list.add(list, token.create(src, types.token_type_t.END_OF_FILE, "EOF"))
+	if term_char.type != types.token_type_t.TERMINATOR {
+		tok, tok_err := token.create(src, types.token_type_t.TERMINATOR, ";")
+		if error.is_error(tok_err) {
+			return nil, tok_err
+		}
+		add_err := token_list.add(list, tok)
+		if error.is_error(add_err) {
+			return nil, add_err
+		}
+	}
+	tok, tok_err := token.create(src, types.token_type_t.END_OF_FILE, "EOF")
+	if error.is_error(tok_err) {
+		return nil, tok_err
+	}
+	add_err := token_list.add(list, tok)
+	if error.is_error(add_err) {
+		return nil, add_err
+	}
 	return list, types.exit_codes.OK
 }
