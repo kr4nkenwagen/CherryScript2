@@ -1,5 +1,6 @@
 package scan
 
+import "../error"
 import "../source_code"
 import "../token"
 import "../token_list"
@@ -8,11 +9,21 @@ import "core:strings"
 import "core:unicode"
 
 consume_comment :: proc(src: ^types.source_code_t) -> types.exit_codes {
-	if src == nil || source_code.peek(src, 0) != '#' {
+	if src == nil {
 		return types.exit_codes.OBJECT_IS_NIL
 	}
+	char, peek_err := source_code.peek(src, 0)
+	if char != '#' {
+		return types.exit_codes.UNEXPECTED_CHARACTER
+	}
+	if error.is_error(peek_err) {
+		return peek_err
+	}
 	for !src.is_at_end {
-		c := rune(source_code.advance(src))
+		c, adv_err := source_code.advance(src)
+		if error.is_error(adv_err) {
+			return adv_err
+		}
 		if c == '\n' || c == '#' {
 			return types.exit_codes.OK
 		}
@@ -21,12 +32,26 @@ consume_comment :: proc(src: ^types.source_code_t) -> types.exit_codes {
 }
 
 consume_string :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
-	if src == nil || (source_code.peek(src, 0) != '\'' && source_code.peek(src, 0) != '"') {
+	if src == nil {
 		return "", types.exit_codes.OBJECT_IS_NIL
 	}
-	exit_char := rune(source_code.peek(src, 0)) == '"' ? '"' : '\''
+	start_char, peek_err := source_code.peek(src, 0)
+	if error.is_error(peek_err) {
+		return "", peek_err
+	}
+	if start_char != '\'' && start_char != '"' {
+		return "", types.exit_codes.UNEXPECTED_CHARACTER
+	}
+	exit_char := start_char == '"' ? '"' : '\''
 	size := int(1)
-	for source_code.peek(src, size) != exit_char {
+	for {
+		char, err := source_code.peek(src, size)
+		if error.is_error(err) {
+			return "", err
+		}
+		if char == exit_char {
+			break
+		}
 		size += 1
 		if src.pointer + size >= src.length {
 			return "", types.exit_codes.EOF_IN_STRING
@@ -34,7 +59,10 @@ consume_string :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 	}
 	i := 0
 	for i < size - 1 {
-		source_code.advance(src)
+		_, err := source_code.advance(src)
+		if error.is_error(err) {
+			return "", err
+		}
 	}
 	return src.content[src.pointer:src.pointer + size], types.exit_codes.OK
 }
@@ -119,7 +147,11 @@ consume_word :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
 	}
 	start_position := src.pointer
 	for !src.is_at_end {
-		if is_end_of_word(source_code.advance(src)) {
+		char, err := source_code.advance(src)
+		if error.is_error(err) {
+			return "", err
+		}
+		if is_end_of_word(char) {
 			break
 		}
 	}
@@ -138,9 +170,16 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 	is_float := false
 	start_position := src.pointer
 	for !src.is_at_end {
-		character := rune(source_code.peek(src, 0))
+		character, peek_err := source_code.peek(src, 0)
+		if error.is_error(peek_err) {
+			return "", peek_err
+		}
+		second_char, err := source_code.peek(src, 1)
+		if error.is_error(err) && err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+			return "", err
+		}
 		if character == '.' {
-			if rune(source_code.peek(src, 1)) == '.' {
+			if second_char == '.' {
 				break
 			}
 			if is_float {
@@ -148,8 +187,11 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 			}
 			is_float = true
 		}
-		if is_number(source_code.peek(src, 1)) {
-			source_code.advance(src)
+		if is_number(second_char) {
+			_, adv_err := source_code.advance(src)
+			if error.is_error(adv_err) {
+				return "", adv_err
+			}
 		} else {
 			break
 		}
@@ -171,289 +213,419 @@ is_next_word_match :: proc(src: ^types.source_code_t, word: string) -> (bool, ty
 }
 
 consume_identifier :: proc(src: ^types.source_code_t) -> (^types.token_t, types.exit_codes) {
-	if src == nil || unicode.is_alpha(source_code.peek(src, -1)) {
+	if src == nil {
 		return nil, types.exit_codes.OBJECT_IS_NIL
 	}
+	prev_char, peek_err := source_code.peek(src, -1)
+	if error.is_error(peek_err) {
+		return nil, peek_err
+	}
+	if unicode.is_alpha(prev_char) {
+		return nil, types.exit_codes.UNEXPECTED_CHARACTER
+	}
 	word, err := consume_word(src)
-	if err != types.exit_codes.OK {
+	if error.is_error(err) {
 		return nil, err
 	}
 	return token.create(src, types.token_type_t.IDENTIFIER, word), types.exit_codes.OK
 }
 
 consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, types.exit_codes) {
-	if src == nil || unicode.is_alpha(source_code.peek(src, -1)) {
+	if src == nil {
 		return nil, types.exit_codes.OBJECT_IS_NIL
 	}
-	character := rune(source_code.peek(src, 0))
+	prev_char, prev_char_err := source_code.peek(src, -1)
+	if error.is_error(prev_char_err) && prev_char_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+		return nil, prev_char_err
+	}
+	if unicode.is_alpha(prev_char) {
+		return nil, types.exit_codes.UNEXPECTED_CHARACTER
+	}
+	character, peek_err := source_code.peek(src, 0)
+	if error.is_error(peek_err) {
+		return nil, peek_err
+	}
 	switch (character) {
 	case 'a':
 		fallthrough
 	case 'A':
 		match, err := is_next_word_match(src, "and")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, err := consume_word(src)
+			if error.is_error(err) {
+				return nil, err
+			}
 			return token.create(src, types.token_type_t.AND, word), types.exit_codes.OK
 		}
 	case 'b':
 		fallthrough
 	case 'B':
 		match, err := is_next_word_match(src, "break")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, err := consume_word(src)
+			if error.is_error(err) {
+				return nil, err
+			}
 			return token.create(src, types.token_type_t.BREAK, word), types.exit_codes.OK
 		}
 	case 'c':
 		fallthrough
 	case 'C':
 		match, err := is_next_word_match(src, "class")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, match_err := consume_word(src)
+			if error.is_error(match_err) {
+				return nil, match_err
+			}
 			return token.create(src, types.token_type_t.CLASS, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "const")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, match_err := consume_word(src)
+			if error.is_error(match_err) {
+				return nil, match_err
+			}
 			return token.create(src, types.token_type_t.CONST, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "continue")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, match_err := consume_word(src)
+			if error.is_error(match_err) {
+				return nil, match_err
+			}
 			return token.create(src, types.token_type_t.CONTINUE, word), types.exit_codes.OK
 		}
 	case 'e':
 		fallthrough
 	case 'E':
 		match, err := is_next_word_match(src, "else")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			if rune(source_code.peek(src, 6)) == 'i' && rune(source_code.peek(src, 7)) == 'f' {
-				str1, _ := consume_word(src)
-				str2, _ := consume_word(src)
+			first_char, first_char_err := source_code.peek(src, 6)
+			if error.is_error(first_char_err) &&
+			   first_char_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+				return nil, first_char_err
+			}
+			second_char, second_char_err := source_code.peek(src, 7)
+			if error.is_error(second_char_err) &&
+			   second_char_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+				return nil, second_char_err
+			}
+			if first_char == 'i' && second_char == 'f' {
+				str1, str1_err := consume_word(src)
+				if error.is_error(str1_err) {
+					return nil, str1_err
+				}
+				str2, str2_err := consume_word(src)
+				if error.is_error(str2_err) {
+					return nil, str2_err
+				}
 				word := strings.concatenate({str1, string(" "), str2})
 				return token.create(src, types.token_type_t.ELSE_IF, word), types.exit_codes.OK
 			}
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.ELSE, word), types.exit_codes.OK
 		}
 	case 'f':
 		fallthrough
 	case 'F':
 		match, err := is_next_word_match(src, "for")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.FOR, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "false")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.FALSE, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "fn")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.FUNCTION, word), types.exit_codes.OK
 		}
 	case 'i':
 		fallthrough
 	case 'I':
 		match, err := is_next_word_match(src, "if")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.IF, word), types.exit_codes.OK
 		}
 	case 'n':
 		fallthrough
 	case 'N':
 		match, err := is_next_word_match(src, "null")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.NIL, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "nil")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.NIL, word), types.exit_codes.OK
 		}
 	case 'm':
 		fallthrough
 	case 'M':
 		match, err := is_next_word_match(src, "module")
-		if err != types.exit_codes.OK || !match {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			source_code.advance(src)
 			source_code.advance(src)
 			path, path_err := consume_string(src)
-			if path_err != types.exit_codes.OK {
+			if error.is_error(path_err) {
 				return nil, types.exit_codes.PATH_CANT_BE_PARSED
 			}
-			source_code.advance(src)
-			source_code.import_file(src, path)
+			_, adv_err := source_code.advance(src)
+			if error.is_error(adv_err) {
+				return nil, adv_err
+			}
+			imp_err := source_code.import_file(src, path)
+			if error.is_error(imp_err) {
+				return nil, imp_err
+			}
 			return token.create(src, types.token_type_t.TERMINATOR, ""), types.exit_codes.OK
 		}
 	case 'o':
 		fallthrough
 	case 'O':
 		match, err := is_next_word_match(src, "or")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.OR, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "or")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, err
+			}
 			return token.create(src, types.token_type_t.OUT, word), types.exit_codes.OK
 		}
 	case 'p':
 		fallthrough
 	case 'P':
 		match, err := is_next_word_match(src, "println")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.PRINT_LINE, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "print")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.PRINT, word), types.exit_codes.OK
 		}
 	case 'r':
 		fallthrough
 	case 'R':
 		match, err := is_next_word_match(src, "return")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.RETURN, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "return")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.REMOVE, word), types.exit_codes.OK
 		}
 	case 's':
 		fallthrough
 	case 'S':
 		match, err := is_next_word_match(src, "super")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.SUPER, word), types.exit_codes.OK
 		}
 	case 't':
 		fallthrough
 	case 'T':
 		match, err := is_next_word_match(src, "this")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.THIS, word), types.exit_codes.OK
 		}
 		match, err = is_next_word_match(src, "true")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.TRUE, word), types.exit_codes.OK
 		}
 	case 'v':
 		fallthrough
 	case 'V':
 		match, err := is_next_word_match(src, "var")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.VAR, word), types.exit_codes.OK
 		}
 	case 'w':
 		fallthrough
 	case 'W':
 		match, err := is_next_word_match(src, "while")
-		if err != types.exit_codes.OK {
+		if error.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, _ := consume_word(src)
+			word, word_err := consume_word(src)
+			if error.is_error(word_err) {
+				return nil, word_err
+			}
 			return token.create(src, types.token_type_t.WHILE, word), types.exit_codes.OK
 		}
 	case '&':
-		if source_code.peek(src, 1) == '&' {
-			source_code.advance(src)
-			source_code.advance(src)
+		second_char, second_char_err := source_code.peek(src, 1)
+		if error.is_error(second_char_err) {
+			return nil, second_char_err
+		}
+		if second_char == '&' {
+			_, adv_err := source_code.advance(src)
+			if error.is_error(adv_err) {
+				return nil, adv_err
+			}
+			_, adv_err = source_code.advance(src)
+			if error.is_error(adv_err) {
+				return nil, adv_err
+			}
 			return token.create(src, types.token_type_t.AND, "&&"), types.exit_codes.OK
 		}
 	case '|':
-		if source_code.peek(src, 1) == '|' {
-			source_code.advance(src)
-			source_code.advance(src)
+		second_char, second_char_err := source_code.peek(src, 1)
+		if error.is_error(second_char_err) {
+			return nil, second_char_err
+		}
+		if second_char == '|' {
+			_, err := source_code.advance(src)
+			if error.is_error(err) {
+				return nil, err
+			}
+			_, err = source_code.advance(src)
+			if error.is_error(err) {
+				return nil, err
+			}
 			return token.create(src, types.token_type_t.OR, "||"), types.exit_codes.OK
 		}
 	}
 	return nil, types.exit_codes.OK
 }
-
 
 run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes) {
 	if src == nil {
@@ -462,7 +634,11 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 	list := token_list.create()
 	for !src.is_at_end {
 		tmp := (list.length > 0) ? list.list[list.length - 1] : nil
-		character := source_code.advance(src)
+		character, character_err := source_code.advance(src)
+		if error.is_error(character_err) &&
+		   character_err != types.exit_codes.EOF_IN_SOURCE_CODE_REACHED {
+			return nil, character_err
+		}
 		switch (character) {
 		case '(':
 			token_list.add(list, token.create(src, types.token_type_t.LEFT_PAREN, "("))
@@ -485,81 +661,155 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 		case ',':
 			token_list.add(list, token.create(src, types.token_type_t.COMMA, ","))
 		case ':':
-			if source_code.peek(src, 1) == '^' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '^' {
 				token_list.add(list, token.create(src, types.token_type_t.COLON_HAT, ":^"))
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.COLON, ":"))
 			}
 		case '.':
-			if is_number(source_code.peek(src, 1)) {
-				number, _ := consume_number(src)
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if is_number(second_char) {
+				number, number_err := consume_number(src)
+				if error.is_error(number_err) {
+					return nil, number_err
+				}
 				token_list.add(list, token.create(src, types.token_type_t.NUMBER, number))
-			} else if source_code.peek(src, 1) == '.' {
+			} else if second_char == '.' {
 				token_list.add(list, token.create(src, types.token_type_t.DOT_DOT, ".."))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.DOT, "."))
 			}
 		case '-':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.MINUS_EQUAL, "-="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.MINUS, "-"))
 			}
 		case '+':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.PLUS_EQUAL, "+="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.PLUS, "+"))
 			}
 		case '%':
 			token_list.add(list, token.create(src, types.token_type_t.MODULUS, "%"))
 		case '/':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) &&
+			   second_char_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.SLASH_EQUAL, "/="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.SLASH, "/"))
 			}
 		case '*':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.STAR_EQUAL, "*="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.STAR, "*"))
 			}
 		case '\'':
 			fallthrough
 		case '"':
-			str, _ := consume_string(src)
+			str, str_err := consume_string(src)
+			if error.is_error(str_err) {
+				return nil, str_err
+			}
 			token_list.add(list, token.create(src, types.token_type_t.STRING_WRAPPER, str))
 		case '!':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.BANG_EQUAL, "!="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.BANG, "!"))
 			}
 		case '=':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.EQUAL_EQUAL, "=="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.EQUAL, "="))
 			}
 		case '>':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.GREATER_EQUAL, ">="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.GREATER, ">"))
 			}
 		case '<':
-			if source_code.peek(src, 1) == '=' {
+			second_char, second_char_err := source_code.peek(src, 1)
+			if error.is_error(second_char_err) {
+				return nil, second_char_err
+			}
+			if second_char == '=' {
 				token_list.add(list, token.create(src, types.token_type_t.LESS_EQUAL, "<="))
-				source_code.advance(src)
+				_, adv_err := source_code.advance(src)
+				if error.is_error(adv_err) {
+					return nil, adv_err
+				}
 			} else {
 				token_list.add(list, token.create(src, types.token_type_t.LESS, "<"))
 			}
@@ -582,7 +832,10 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 		case '8':
 			fallthrough
 		case '9':
-			number, _ := consume_number(src)
+			number, number_err := consume_number(src)
+			if error.is_error(number_err) {
+				return nil, number_err
+			}
 			token_list.add(list, token.create(src, types.token_type_t.NUMBER, number))
 		case '\n':
 			if tmp == nil {
@@ -599,7 +852,10 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 		case '\t':
 		case ' ':
 		case '#':
-			_ = consume_comment(src)
+			err := consume_comment(src)
+			if error.is_error(err) {
+				return nil, err
+			}
 		case:
 			if src.is_at_end {
 				break
@@ -608,8 +864,14 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				break
 			}
 			res_word, err := consume_reserved_word(src)
+			if error.is_error(err) && err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+				return nil, err
+			}
 			if res_word == nil {
-				word, err := consume_identifier(src)
+				word, word_err := consume_identifier(src)
+				if error.is_error(word_err) && word_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
+					return nil, word_err
+				}
 				if len(word.literal) > 0 {
 					token_list.add(list, word)
 				}

@@ -1,6 +1,7 @@
 package main
 
 import "core:fmt"
+import "error"
 import "parser"
 import "scan"
 import "source_code"
@@ -8,8 +9,15 @@ import "token_list"
 import "types"
 
 main :: proc() {
-	src := source_code.from_file("test.jonx")
-	tokens, err := scan.run(src)
+	src, src_err := source_code.from_file("test.jonx")
+	if error.is_error(src_err) {
+		fmt.printf("%i\n", src_err)
+	}
+	tokens, tokens_err := scan.run(src)
+	if error.is_error(tokens_err) {
+
+		fmt.printf("%i\n", tokens_err)
+	}
 	synt, synt_err := parser.run(tokens, nil)
 	syntax_pretty_print(synt.statements[0], 0)
 	source_code.remove(src)
