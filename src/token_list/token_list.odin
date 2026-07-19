@@ -27,6 +27,9 @@ advance :: proc(list: ^types.token_list_t) -> (^types.token_t, types.exit_codes)
 		return token.generate_unknown_token()
 	}
 	list.pointer += 1
+	if list.pointer >= list.length {
+		return nil, types.exit_codes.RAN_OUT_OF_TOKENS
+	}
 	return list.list[list.pointer], types.exit_codes.OK
 }
 

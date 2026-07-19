@@ -2,10 +2,10 @@ package program
 
 import "../types"
 
-create :: proc(parent: ^types.program_t) -> (^types.program_t, bool) {
+create :: proc(parent: ^types.program_t) -> (^types.program_t, types.exit_codes) {
 	prog := new(types.program_t)
 	if prog == nil {
-		return nil, true
+		return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED
 	}
 	prog.length = 0
 	prog.pointer = 0
@@ -15,14 +15,14 @@ create :: proc(parent: ^types.program_t) -> (^types.program_t, bool) {
 	prog.ret_value = nil
 	prog.type = types.program_type_t.SOURCE
 	prog.parent = parent
-	return prog, false
+	return prog, types.exit_codes.OK
 }
 
-add :: proc(prog: ^types.program_t, statement: ^types.syntax_t) -> bool {
-	if prog == nil || statement == nil {
-		return true
+add :: proc(prog: ^types.program_t, statement: ^types.syntax_t) -> types.exit_codes {
+	if prog == nil {
+		return types.exit_codes.OBJECT_IS_NIL
 	}
 	append(&prog.statements, statement)
 	prog.length += 1
-	return false
+	return types.exit_codes.OK
 }
