@@ -2,58 +2,58 @@ package object
 
 import "../types"
 
-create_int :: proc(value: int) -> (^types.object_t, bool) {
+create_int :: proc(value: int) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.INT
 	obj.data = value
 	obj.ref_count = 1
-	return obj, false
+	return obj, .OK
 }
 
-create_bool :: proc(value: bool) -> (^types.object_t, bool) {
+create_bool :: proc(value: bool) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.BOOL
 	obj.data = value
 	obj.ref_count = 1
-	return obj, false
+	return obj, .OK
 }
 
-create_float :: proc(value: f32) -> (^types.object_t, bool) {
+create_float :: proc(value: f32) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.FLOAT
 	obj.data = value
 	obj.ref_count = 1
-	return obj, false
+	return obj, .OK
 }
 
-create_string :: proc(value: string) -> (^types.object_t, bool) {
+create_string :: proc(value: string) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.STRING
 	obj.data = value
 	obj.ref_count = 1
-	return obj, false
+	return obj, .OK
 }
 
-create_array :: proc() -> (^types.object_t, bool) {
+create_array :: proc() -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.ARRAY
@@ -61,7 +61,7 @@ create_array :: proc() -> (^types.object_t, bool) {
 	obj.data = types.object_array_t {
 		count = 0,
 	}
-	return obj, false
+	return obj, .OK
 }
 
 create_vector :: proc(
@@ -70,11 +70,11 @@ create_vector :: proc(
 	z: ^types.object_t,
 ) -> (
 	^types.object_t,
-	bool,
+	types.exit_codes,
 ) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.VECTOR
@@ -84,73 +84,73 @@ create_vector :: proc(
 		z = z,
 	}
 	obj.ref_count = 1
-	return obj, false
+	return obj, .OK
 }
 
 //TODO: Create procedure for function objects
 
-create_null :: proc() -> (^types.object_t, bool) {
+create_null :: proc() -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
 	obj.type = types.object_type_t.NULL
 	obj.ref_count = 1
-	return obj, false
+	return obj, .OK
 }
 
-set_null :: proc(obj: ^types.object_t) -> bool {
+set_null :: proc(obj: ^types.object_t) -> types.exit_codes {
 	if obj == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	obj.type = types.object_type_t.NULL
-	return false
+	return .OK
 }
 
-length :: proc(obj: ^types.object_t) -> (int, bool) {
+length :: proc(obj: ^types.object_t) -> (int, types.exit_codes) {
 	if obj == nil {
-		return -1, true
+		return -1, .OBJECT_IS_NIL
 	}
 	switch (obj.type) {
 	case .INT:
 		fallthrough
 	case .FLOAT:
-		return 1, false
+		return 1, .OK
 	case .STRING:
-		return len(obj.data.(string)), false
+		return len(obj.data.(string)), .OK
 	case .ARRAY:
-		return obj.data.(array_t).count, false
+		return obj.data.(types.object_array_t).count, .OK
 	case .VECTOR:
 	case .NULL:
 	case .BOOL:
 	case .FUNCTION:
 	}
-	return -1, true
+	return -1, .OBJECT_IS_UNKNOWN_TYPE
 }
 
-ref_dec :: proc(obj: ^types.object_t) -> bool {
+ref_dec :: proc(obj: ^types.object_t) -> types.exit_codes {
 	if obj == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	obj.ref_count -= 1
 	if obj.ref_count == 0 {
 		free(obj)
 	}
-	return false
+	return .OK
 }
 
-ref_inc :: proc(obj: ^types.object_t) -> bool {
+ref_inc :: proc(obj: ^types.object_t) -> types.exit_codes {
 	if obj == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	obj.ref_count += 1
-	return false
+	return .OK
 }
 
-remove :: proc(obj: ^types.object_t) -> bool {
+remove :: proc(obj: ^types.object_t) -> types.exit_codes {
 	if obj == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	switch (obj.type) {
 	case .INT:
@@ -165,26 +165,26 @@ remove :: proc(obj: ^types.object_t) -> bool {
 		fallthrough
 	case .FUNCTION:
 	case .ARRAY:
-		for i := 1; i < obj.data.(array_t).count; i += 1 {
-			free(&obj.data.(array_t).value[i])
+		for i := 1; i < obj.data.(types.object_array_t).count; i += 1 {
+			free(&obj.data.(types.object_array_t).value[i])
 		}
 	case .VECTOR:
-		free(obj.data.(vector_t).x)
-		free(obj.data.(vector_t).y)
-		free(obj.data.(vector_t).z)
+		free(obj.data.(types.object_vector_t).x)
+		free(obj.data.(types.object_vector_t).y)
+		free(obj.data.(types.object_vector_t).z)
 	}
 	free(obj)
-	return false
+	return .OK
 }
 
-copy :: proc(src: ^types.object_t) -> (^types.object_t, bool) {
+copy :: proc(src: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if src == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	obj, err := new(types.object_t)
 	if err != .None {
-		return nil, true
+		return nil, .MEMORY_ALLOCATION_FAILED
 	}
 	obj^ = src^
-	return obj, false
+	return obj, .OK
 }
