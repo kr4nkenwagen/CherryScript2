@@ -44,27 +44,28 @@ consume_string :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 	}
 	exit_char := start_char == '"' ? '"' : '\''
 	size := int(1)
-	for {
+	is_closed := false
+	for ; src.pointer + size <= src.length; size += 1 {
 		char, err := source_code.peek(src, size)
 		if sys.is_error(err) {
 			return "", err
 		}
 		if char == exit_char {
+			is_closed = true
 			break
 		}
-		size += 1
-		if src.pointer + size >= src.length {
-			return "", types.exit_codes.EOF_IN_STRING
-		}
 	}
-	i := 0
-	for i < size - 1 {
+	if !is_closed {
+		return "", types.exit_codes.EOF_IN_STRING
+	}
+	size -= 1
+	for i := 0; i < size + 1; i += 1 {
 		_, err := source_code.advance(src)
 		if sys.is_error(err) {
 			return "", err
 		}
 	}
-	return src.content[src.pointer:src.pointer + size], types.exit_codes.OK
+	return src.content[src.pointer - size:src.pointer], types.exit_codes.OK
 }
 
 is_number :: proc(character: rune) -> bool {
