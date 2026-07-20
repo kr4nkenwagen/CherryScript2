@@ -64,8 +64,7 @@ get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit
 	if stack == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-	i := 0
-	for i < stack.count {
+	for i := 0; i < stack.count; i += 1 {
 		if stack.data[i].name == name {
 			return stack.data[i], .OK
 		}

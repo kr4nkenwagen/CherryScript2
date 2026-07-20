@@ -38,12 +38,8 @@ int_len :: proc(num: int) -> (int, types.exit_codes) {
 }
 
 int_to_number :: proc(num: int) -> (string, types.exit_codes) {
-	res, err := int_len(num)
-	if sys.is_error(err) {
-		return "", err
-	}
-	str := fmt.tprintf("%d", res)
-	return str, err
+	str := fmt.tprintf("%d", num)
+	return str, .OK
 }
 
 join_string :: proc(

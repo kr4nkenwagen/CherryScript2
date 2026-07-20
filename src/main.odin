@@ -36,6 +36,7 @@ main :: proc() {
 	if sys.is_error(vm_err) {
 		sys.print_error(vm_err, tokens)
 	}
+
 	obj, obj_err := evaluation.run(synt, curr_vm)
 	if sys.is_error(obj_err) {
 		sys.print_error(obj_err, tokens)

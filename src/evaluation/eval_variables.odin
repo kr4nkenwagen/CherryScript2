@@ -134,6 +134,7 @@ eval_array_identifier :: proc(
 	return object.array_get(obj, int(index.data.(int)))
 }
 
+
 eval_identifier :: proc(
 	synt: ^types.syntax_t,
 	vmem: ^types.vm_t,

@@ -18,7 +18,6 @@ eval_primary_expression :: proc(
 	if syntax == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-
 	#partial switch syntax.token.type {
 	case .REMOVE:
 		return nil, eval_variable_remove(syntax, vm, program)
