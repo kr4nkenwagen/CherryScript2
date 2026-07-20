@@ -15,10 +15,12 @@ array_set :: proc(arr: ^types.object_t, index: int, obj: ^types.object_t) -> typ
 	if index > data.count {
 		for i := data.count; i < index; i += 1 {
 			nil_obj, nil_obj_err := object.create_null()
+			data.count += 1
 			if sys.is_error(nil_obj_err) {
 				return nil_obj_err
 			}
 			append(&data.value, nil_obj)
+			data.count += 1
 		}
 	}
 	return .OK
@@ -35,5 +37,5 @@ array_get :: proc(arr: ^types.object_t, index: int) -> (^types.object_t, types.e
 		return nil, .INDEX_OUT_OF_BOUNDS
 	}
 
-	return &arr.data.(types.object_array_t).value[index], .OK
+	return arr.data.(types.object_array_t).value[index], .OK
 }

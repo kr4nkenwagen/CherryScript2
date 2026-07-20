@@ -2,37 +2,37 @@ package stack
 
 import "../types"
 
-create :: proc() -> (^types.stack_t, bool) {
+create :: proc() -> (^types.stack_t, types.exit_codes) {
 	stack := new(types.stack_t)
 	if stack == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	stack.capacity = 8
 	stack.count = 0
 	stack.parent_references = 0
-	return stack, false
+	return stack, .OK
 }
 
-push :: proc(stack: ^types.stack_t, object: ^types.object_t) -> bool {
+push :: proc(stack: ^types.stack_t, object: ^types.object_t) -> types.exit_codes {
 	if object == nil || stack == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	stack.count += 1
 	append(&stack.data, object)
-	return false
+	return .OK
 }
 
-pop :: proc(stack: ^types.stack_t) -> (^types.object_t, bool) {
+pop :: proc(stack: ^types.stack_t) -> (^types.object_t, types.exit_codes) {
 	if stack == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	stack.count -= 1
-	return stack.data[stack.count], false
+	return stack.data[stack.count], .OK
 }
 
-remove :: proc(stack: ^types.stack_t) -> bool {
+remove :: proc(stack: ^types.stack_t) -> types.exit_codes {
 	if stack == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	i := 0
 	for i < stack.count {
@@ -40,12 +40,12 @@ remove :: proc(stack: ^types.stack_t) -> bool {
 		i += 1
 	}
 	free(stack)
-	return false
+	return .OK
 }
 
-remove_nulls :: proc(stack: ^types.stack_t) -> bool {
+remove_nulls :: proc(stack: ^types.stack_t) -> types.exit_codes {
 	if stack == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	new_count := 0
 	i := 0
@@ -57,25 +57,25 @@ remove_nulls :: proc(stack: ^types.stack_t) -> bool {
 	}
 	i += 1
 	stack.count = new_count
-	return false
+	return .OK
 }
 
-get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, bool) {
+get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit_codes) {
 	if stack == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	i := 0
 	for i < stack.count {
 		if stack.data[i].name == name {
-			return stack.data[i], false
+			return stack.data[i], .OK
 		}
 	}
-	return nil, true
+	return nil, .OK
 }
 
-remove_object :: proc(stack: ^types.stack_t, name: string) -> bool {
+remove_object :: proc(stack: ^types.stack_t, name: string) -> types.exit_codes {
 	if stack == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	i := 0
 	for i < stack.count {
@@ -86,5 +86,5 @@ remove_object :: proc(stack: ^types.stack_t, name: string) -> bool {
 		i += 1
 	}
 	remove_nulls(stack)
-	return false
+	return .OK
 }

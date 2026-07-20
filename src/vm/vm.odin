@@ -3,30 +3,34 @@ package vm
 import "../stack"
 import "../types"
 
-create :: proc() -> (^types.vm_t, bool) {
+create :: proc() -> (^types.vm_t, types.exit_codes) {
 	vm := new(types.vm_t)
 	if vm == nil {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
 	vm.count = 0
-	return vm, false
+	return vm, .OK
 }
 
-copy_references :: proc(target: ^types.stack_t, source: ^types.stack_t) -> bool {
+copy_references :: proc(target: ^types.stack_t, source: ^types.stack_t) -> types.exit_codes {
 	if target == nil || source == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	i := 0
 	for i < source.count {
 		stack.push(target, source.data[i])
 		i += 1
 	}
-	return false
+	return .OK
 }
 
-push_frame :: proc(vm: ^types.vm_t, stack: ^types.stack_t, inherit_stack: bool) -> bool {
+push_frame :: proc(
+	vm: ^types.vm_t,
+	stack: ^types.stack_t,
+	inherit_stack: bool,
+) -> types.exit_codes {
 	if vm == nil {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	if inherit_stack {
 		curr_frame, _ := current_frame(vm)
@@ -35,12 +39,12 @@ push_frame :: proc(vm: ^types.vm_t, stack: ^types.stack_t, inherit_stack: bool) 
 	}
 	vm.frames[vm.count] = stack
 	vm.count += 1
-	return false
+	return .OK
 }
 
-pop_frame :: proc(vm: ^types.vm_t) -> bool {
+pop_frame :: proc(vm: ^types.vm_t) -> types.exit_codes {
 	if vm == nil || vm.count == 0 {
-		return true
+		return .OBJECT_IS_NIL
 	}
 	frame, _ := current_frame(vm)
 	i := frame.parent_references
@@ -51,12 +55,12 @@ pop_frame :: proc(vm: ^types.vm_t) -> bool {
 	}
 	free(frame)
 	vm.count -= 1
-	return false
+	return .OK
 }
 
-current_frame :: proc(vm: ^types.vm_t) -> (^types.stack_t, bool) {
+current_frame :: proc(vm: ^types.vm_t) -> (^types.stack_t, types.exit_codes) {
 	if vm == nil || vm.count == 0 {
-		return nil, true
+		return nil, .OBJECT_IS_NIL
 	}
-	return vm.frames[vm.count - 1], false
+	return vm.frames[vm.count - 1], .OK
 }

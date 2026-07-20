@@ -31,7 +31,7 @@ object_t :: struct {
 
 object_array_t :: struct {
 	count: int,
-	value: [dynamic]object_t,
+	value: [dynamic]^object_t,
 }
 
 object_vector_t :: struct {

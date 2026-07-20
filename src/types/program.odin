@@ -16,5 +16,5 @@ program_t :: struct {
 	length:      int,
 	parent:      ^program_t,
 	statements:  [dynamic]^syntax_t,
-	ret_value:   ^program_t,
+	ret_value:   ^object_t,
 }
