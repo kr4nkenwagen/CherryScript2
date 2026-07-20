@@ -18,6 +18,7 @@ object_data_t :: union {
 	bool,
 	object_array_t,
 	object_vector_t,
+	rawptr,
 }
 
 object_t :: struct {

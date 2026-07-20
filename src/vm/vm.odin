@@ -37,7 +37,7 @@ push_frame :: proc(
 		copy_references(stack, curr_frame)
 		stack.parent_references = stack.count
 	}
-	vm.frames[vm.count] = stack
+	append(&vm.frames, stack)
 	vm.count += 1
 	return .OK
 }

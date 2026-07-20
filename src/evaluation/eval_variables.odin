@@ -160,9 +160,9 @@ eval_identifier :: proc(
 		if synt.left == nil {
 			return nil, .INTERPRETER_ERROR
 		}
-		func_syntax := (^types.syntax_t)(obj.data.v_funct)
-		func_syntax.value = synt.left
-		return eval_function_identifier(obj.data.v_funct, vmem, prog)
+		converted_ptr := transmute(^types.syntax_t)obj.data.(rawptr)
+		converted_ptr.value = synt.left
+		return function_identifier(converted_ptr, vmem)
 	}
 	return obj, .OK
 }

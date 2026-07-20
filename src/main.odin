@@ -1,12 +1,15 @@
 package main
 
 import "core:fmt"
+import "evaluation"
 import "parser"
 import "scan"
 import "source_code"
+import "stack"
 import "sys"
 import "token_list"
 import "types"
+import "vm"
 
 main :: proc() {
 	src, src_err := source_code.from_file("test.jonx")
@@ -20,6 +23,22 @@ main :: proc() {
 	synt, synt_err := parser.run(tokens, nil)
 	if sys.is_error(synt_err) {
 		sys.print_error(synt_err, tokens)
+	}
+	curr_vm, curr_vm_err := vm.create()
+	if sys.is_error(curr_vm_err) {
+		sys.print_error(curr_vm_err, tokens)
+	}
+	curr_stack, curr_stack_err := stack.create()
+	if sys.is_error(curr_stack_err) {
+		sys.print_error(curr_stack_err, tokens)
+	}
+	vm_err := vm.push_frame(curr_vm, curr_stack, false)
+	if sys.is_error(vm_err) {
+		sys.print_error(vm_err, tokens)
+	}
+	obj, obj_err := evaluation.run(synt, curr_vm)
+	if sys.is_error(obj_err) {
+		sys.print_error(obj_err, tokens)
 	}
 	for i in 0 ..< synt.length {
 		syntax_pretty_print(synt.statements[i], 0)

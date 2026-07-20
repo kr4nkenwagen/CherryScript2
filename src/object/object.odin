@@ -87,7 +87,18 @@ create_vector :: proc(
 	return obj, .OK
 }
 
-//TODO: Create procedure for function objects
+create_funct :: proc(synt: ^types.syntax_t) -> (^types.object_t, types.exit_codes) {
+	if synt == nil {
+		return nil, .OBJECT_IS_NIL
+	}
+	obj := new(types.object_t)
+	if obj == nil {
+		return nil, .MEMORY_ALLOCATION_FAILED
+	}
+	obj.type = .FUNCTION
+	obj.data = synt
+	return obj, .OK
+}
 
 create_null :: proc() -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)

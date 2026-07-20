@@ -1,6 +1,7 @@
 package evaluation
 
 import "../object"
+import "../predefined_functions"
 import "../sys"
 import "../types"
 import "core:strconv"
@@ -34,17 +35,17 @@ eval_primary_expression :: proc(
 	case .PRINT_LINE:
 		val, err := eval_primary_expression(syntax.value, vm, program)
 		if sys.is_error(err) do return nil, err
-		println(val)
+		predefined_functions.println(val)
 		return nil, .OK
 	case .FOR:
 		return nil, eval_for(syntax, vm, program)
 	case .PRINT:
 		val, err := eval_primary_expression(syntax.value, vm, program)
 		if sys.is_error(err) do return nil, err
-		print(val)
+		predefined_functions.print(val)
 		return nil, .OK
 	case .FUNCTION:
-		return nil, function_declaration(syntax, vm, program)
+		return nil, function_declaration(syntax, vm)
 	case .IF:
 		return nil, eval_if(syntax, vm, program)
 	case .LEFT_BRACKET:
