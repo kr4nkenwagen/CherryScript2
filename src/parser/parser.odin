@@ -5,6 +5,7 @@ import "../sys"
 import "../token_list"
 import "../types"
 
+import "core:fmt"
 branch :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
@@ -12,17 +13,21 @@ branch :: proc(
 	^types.program_t,
 	types.exit_codes,
 ) {
-	if tokens == nil || parent == nil {
+	if tokens == nil {
 		return nil, types.exit_codes.OBJECT_IS_NIL
 	}
 	curr_token, curr_token_err := token_list.peek(tokens, 0)
 	if sys.is_error(curr_token_err) {
 		return nil, curr_token_err
 	}
-	if curr_token.type == types.token_type_t.TERMINATOR {
-		token_list.advance(tokens)
+	if curr_token.type == .TERMINATOR {
+		curr_token, curr_token_err = token_list.advance(tokens)
+		if sys.is_error(curr_token_err) {
+			return nil, curr_token_err
+		}
 	}
 	if curr_token.type != types.token_type_t.LEFT_BRACE {
+		fmt.printf("----ddd%s\n", curr_token.type)
 		return nil, types.exit_codes.BRACKET_NOT_OPENED
 	}
 	_, adv_err := token_list.advance(tokens)
@@ -52,14 +57,31 @@ branch :: proc(
 					return nil, synt_err
 				}
 				prev_synt = synt
+				curr_token, curr_token_err = token_list.peek(tokens, 0)
+				if sys.is_error(curr_token_err) {
+					return nil, curr_token_err
+				}
+
 				continue
 			}
 			synt, err = statement(tokens, prog)
 			if sys.is_error(err) {
+				return nil, err
+			}
+			if synt == nil {
+				curr_token, curr_token_err = token_list.peek(tokens, 0)
+				if sys.is_error(curr_token_err) {
+					return nil, curr_token_err
+				}
+
 				continue
 			}
 			synt.left = prev_synt
 			prev_synt = synt
+			curr_token, curr_token_err = token_list.peek(tokens, 0)
+			if sys.is_error(curr_token_err) {
+				return nil, curr_token_err
+			}
 		}
 		_, adv_err := token_list.advance(tokens)
 		if sys.is_error(adv_err) {

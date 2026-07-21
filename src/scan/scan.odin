@@ -152,7 +152,11 @@ consume_word :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
 		if sys.is_error(err) {
 			return "", err
 		}
-		if is_end_of_word(char) {
+		next_char, next_char_err := source_code.peek(src, 1)
+		if sys.is_error(next_char_err) {
+			return "", next_char_err
+		}
+		if is_end_of_word(next_char) {
 			break
 		}
 	}
@@ -160,7 +164,7 @@ consume_word :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
 	if total_length <= 0 {
 		return "", types.exit_codes.WORD_NOT_FOUND
 	}
-	word := string(src.content[start_position:start_position + total_length])
+	word := string(src.content[start_position:start_position + total_length + 1])
 	return word, types.exit_codes.OK
 }
 
@@ -319,12 +323,12 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			return nil, err
 		}
 		if match {
-			first_char, first_char_err := source_code.peek(src, 6)
+			first_char, first_char_err := source_code.peek(src, 5)
 			if sys.is_error(first_char_err) &&
 			   first_char_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
 				return nil, first_char_err
 			}
-			second_char, second_char_err := source_code.peek(src, 7)
+			second_char, second_char_err := source_code.peek(src, 6)
 			if sys.is_error(second_char_err) &&
 			   second_char_err != types.exit_codes.PEEK_OUT_OF_BOUNDS {
 				return nil, second_char_err

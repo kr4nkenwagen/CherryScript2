@@ -31,7 +31,6 @@ run :: proc(prog: ^types.program_t, vmem: ^types.vm_t) -> (^types.object_t, type
 	return value, .OK
 }
 
-
 branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, types.exit_codes) {
 	if synt == nil {
 		return nil, .OBJECT_IS_NIL
@@ -48,6 +47,9 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 		value_data, value_data_err := run(synt.branch, vmem)
 		if sys.is_error(value_data_err) {
 			return nil, value_data_err
+		}
+		if value_data == nil {
+			return value_data, .OK
 		}
 		value, value_err := object.copy(value_data)
 		if sys.is_error(value_err) {

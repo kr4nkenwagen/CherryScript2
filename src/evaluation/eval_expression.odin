@@ -33,14 +33,18 @@ eval_primary_expression :: proc(
 		return nil, eval_return(syntax, vm, program)
 	case .PRINT_LINE:
 		val, err := eval_primary_expression(syntax.value, vm, program)
-		if sys.is_error(err) do return nil, err
+		if sys.is_error(err) {
+			return nil, err
+		}
 		predefined_functions.println(val)
 		return nil, .OK
 	case .FOR:
 		return nil, eval_for(syntax, vm, program)
 	case .PRINT:
 		val, err := eval_primary_expression(syntax.value, vm, program)
-		if sys.is_error(err) do return nil, err
+		if sys.is_error(err) {
+			return nil, err
+		}
 		predefined_functions.print(val)
 		return nil, .OK
 	case .FUNCTION:
