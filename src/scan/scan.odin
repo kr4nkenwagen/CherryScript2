@@ -472,7 +472,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			}
 			return token.create(src, types.token_type_t.OR, word)
 		}
-		match, err = is_next_word_match(src, "or")
+		match, err = is_next_word_match(src, "out")
 		if sys.is_error(err) {
 			return nil, err
 		}
