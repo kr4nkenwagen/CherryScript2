@@ -1,18 +1,32 @@
 package evaluator
 
+import "../debug"
 import "../object"
 import "../stack"
 import "../sys"
 import "../types"
 import "../vm"
 
-run :: proc(prog: ^types.program_t, vmem: ^types.vm_t) -> (^types.object_t, types.exit_codes) {
+g_debug: bool
+
+run :: proc(
+	prog: ^types.program_t,
+	vmem: ^types.vm_t,
+	debug_mode: bool,
+) -> (
+	^types.object_t,
+	types.exit_codes,
+) {
 	if prog == nil {
 		return nil, types.exit_codes.OBJECT_IS_NIL
 	}
+	g_debug = debug_mode
 	prog.pointer = 0
 	value: ^types.object_t
 	for prog.pointer < prog.length {
+		if g_debug {
+			debug.prompt_user(prog.statements[prog.pointer].token, vmem)
+		}
 		if prog.exit {
 			break
 		}
@@ -27,6 +41,7 @@ run :: proc(prog: ^types.program_t, vmem: ^types.vm_t) -> (^types.object_t, type
 			return nil, value_err
 		}
 		prog.pointer += 1
+
 	}
 	return value, .OK
 }
@@ -44,7 +59,7 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 		if sys.is_error(vm_err) {
 			return nil, vm_err
 		}
-		value_data, value_data_err := run(synt.branch, vmem)
+		value_data, value_data_err := run(synt.branch, vmem, g_debug)
 		if sys.is_error(value_data_err) {
 			return nil, value_data_err
 		}
@@ -73,7 +88,7 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 	if sys.is_error(vm_err) {
 		return nil, vm_err
 	}
-	_, eval_err := run(synt.args, vmem)
+	_, eval_err := run(synt.args, vmem, g_debug)
 	if sys.is_error(eval_err) {
 		return nil, eval_err
 	}
@@ -91,7 +106,7 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 		curr_stack.data[i].type =
 			arg_vals.data.(types.object_array_t).value[i - curr_stack.parent_references].type
 	}
-	value_data, value_data_err := run(synt.branch, vmem)
+	value_data, value_data_err := run(synt.branch, vmem, g_debug)
 	if sys.is_error(value_data_err) {
 		return nil, value_data_err
 	}

@@ -148,10 +148,6 @@ consume_word :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
 	}
 	start_position := src.pointer
 	for !src.is_at_end {
-		char, err := source_code.advance(src)
-		if sys.is_error(err) {
-			return "", err
-		}
 		next_char, next_char_err := source_code.peek(src, 1)
 		if sys.is_error(next_char_err) {
 			return "", next_char_err
@@ -159,12 +155,16 @@ consume_word :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
 		if is_end_of_word(next_char) {
 			break
 		}
+		_, err := source_code.advance(src)
+		if sys.is_error(err) {
+			return "", err
+		}
 	}
-	total_length := int(src.pointer - start_position)
+	total_length := int(src.pointer - start_position) + 1
 	if total_length <= 0 {
 		return "", types.exit_codes.WORD_NOT_FOUND
 	}
-	word := string(src.content[start_position:start_position + total_length + 1])
+	word := string(src.content[start_position:start_position + total_length])
 	return word, types.exit_codes.OK
 }
 
@@ -337,6 +337,10 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 				str1, str1_err := consume_word(src)
 				if sys.is_error(str1_err) {
 					return nil, str1_err
+				}
+				_, adv_err := source_code.advance(src)
+				if sys.is_error(adv_err) {
+					return nil, adv_err
 				}
 				str2, str2_err := consume_word(src)
 				if sys.is_error(str2_err) {

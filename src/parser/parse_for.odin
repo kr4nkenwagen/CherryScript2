@@ -54,5 +54,3 @@ for_statement :: proc(
 	curr_syntax.branch.type = types.program_type_t.LOOP
 	return curr_syntax, types.exit_codes.OK
 }
-
-

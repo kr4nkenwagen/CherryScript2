@@ -1,5 +1,6 @@
 package evaluator
 
+import "../debug"
 import "../object"
 import "../predefined_functions"
 import "../sys"
@@ -17,6 +18,9 @@ eval_primary_expression :: proc(
 ) {
 	if syntax == nil {
 		return nil, .OBJECT_IS_NIL
+	}
+	if g_debug {
+		debug.prompt_user(syntax.token, vm)
 	}
 	#partial switch syntax.token.type {
 	case .REMOVE:
@@ -36,7 +40,7 @@ eval_primary_expression :: proc(
 		if sys.is_error(err) {
 			return nil, err
 		}
-		predefined_functions.println(val)
+		predefined_functions.println(val, g_debug)
 		return nil, .OK
 	case .FOR:
 		return nil, eval_for(syntax, vm, program)
@@ -45,7 +49,7 @@ eval_primary_expression :: proc(
 		if sys.is_error(err) {
 			return nil, err
 		}
-		predefined_functions.print(val)
+		predefined_functions.print(val, g_debug)
 		return nil, .OK
 	case .FUNCTION:
 		return nil, function_declaration(syntax, vm)

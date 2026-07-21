@@ -1,11 +1,16 @@
 package predefined_functions
 
+import "../debug"
 import "../object"
 import "../sys"
 import "../types"
 import "core:fmt"
 
-print_out :: proc(str: string) {
+print_out :: proc(str: string, debug_mode: bool) {
+	if debug_mode {
+		append(&debug.g_output_log, str)
+		return
+	}
 	for i := 0; i < len(str); i += 1 {
 		if str[i] == '\\' && i + 1 < len(str) {
 			i += 1
@@ -24,17 +29,17 @@ print_out :: proc(str: string) {
 	}
 }
 
-print :: proc(obj: ^types.object_t) -> types.exit_codes {
+print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 	if obj == nil {
 		return .OBJECT_IS_NIL
 	}
 	switch obj.type {
 	case .STRING:
-		print_out(obj.data.(string))
+		print_out(obj.data.(string), debug_mode)
 	case .INT:
 		num, err := object.int_to_number(int(obj.data.(int)))
 		if !sys.is_error(err) {
-			print_out(num)
+			print_out(num, debug_mode)
 		}
 	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION:
 		break
@@ -42,7 +47,7 @@ print :: proc(obj: ^types.object_t) -> types.exit_codes {
 	return .OK
 }
 
-println :: proc(obj: ^types.object_t) -> types.exit_codes {
+println :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 	if obj == nil {
 		return .OBJECT_IS_NIL
 	}
@@ -54,5 +59,5 @@ println :: proc(obj: ^types.object_t) -> types.exit_codes {
 	if sys.is_error(formated_obj_err) {
 		return formated_obj_err
 	}
-	return print(formated_obj)
+	return print(formated_obj, debug_mode)
 }

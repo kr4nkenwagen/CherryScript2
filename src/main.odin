@@ -20,9 +20,7 @@ main :: proc() {
 	if sys.is_error(tokens_err) {
 		sys.print_error(tokens_err, tokens)
 	}
-	for i := 0; i < tokens.length; i += 1 {
-		fmt.printf("%s\n", tokens.list[i].type)
-	}
+	token_list_pretty_print(tokens)
 	synt, synt_err := parser.run(tokens, nil)
 	if sys.is_error(synt_err) {
 		sys.print_error(synt_err, tokens)
@@ -39,8 +37,7 @@ main :: proc() {
 	if sys.is_error(vm_err) {
 		sys.print_error(vm_err, tokens)
 	}
-	obj, obj_err := evaluator.run(synt, curr_vm)
-
+	obj, obj_err := evaluator.run(synt, curr_vm, true)
 	if sys.is_error(obj_err) {
 		sys.print_error(obj_err, tokens)
 	}
@@ -48,66 +45,9 @@ main :: proc() {
 	token_list.remove(tokens)
 }
 
-token_type_to_string :: proc(type: types.token_type_t) -> string {
-	#partial switch type {
-	case .IDENTIFIER:
-		return "IDENTIFIER"
-	case .NUMBER:
-		return "NUMBER"
-	case .STRING_WRAPPER:
-		return "STRING"
-	case .TRUE:
-		return "TRUE"
-	case .FALSE:
-		return "FALSE"
-	case .NIL:
-		return "NIL"
-	case .PLUS:
-		return "PLUS (+)"
-	case .MINUS:
-		return "MINUS (-)"
-	case .STAR:
-		return "STAR (*)"
-	case .SLASH:
-		return "SLASH (/)"
-	case .MODULUS:
-		return "MODULUS (%)"
-	case .DOT_DOT:
-		return "STRING_ADD (..)"
-	case .EQUAL_EQUAL:
-		return "EQUAL_EQUAL (==)"
-	case .BANG_EQUAL:
-		return "NOT_EQUAL (!=)"
-	case .GREATER:
-		return "GREATER (>)"
-	case .GREATER_EQUAL:
-		return "GREATER_EQUAL (>=)"
-	case .LESS:
-		return "LESS (<)"
-	case .LESS_EQUAL:
-		return "LESS_EQUAL (<=)"
-	case .EQUAL:
-		return "ASSIGN (=)"
-	case .PLUS_EQUAL:
-		return "PLUS_ASSIGN (+=)"
-	case .MINUS_EQUAL:
-		return "MINUS_ASSIGN (-=)"
-	case .STAR_EQUAL:
-		return "STAR_ASSIGN (*=)"
-	case .SLASH_EQUAL:
-		return "SLASH_ASSIGN (/=)"
-	case .BANG:
-		return "BANG (!)"
-	case .COLON:
-		return "COLON (:)"
-	case .COLON_HAT:
-		return "COLON_HAT (:^)"
-	case .LEFT_PAREN:
-		return "LEFT_PAREN"
-	case .RIGHT_PAREN:
-		return "RIGHT_PAREN"
-	case:
-		return "OTHER" // Acts as the default case
+token_list_pretty_print :: proc(tokens: ^types.token_list_t) {
+	for i := 0; i < tokens.length; i += 1 {
+		fmt.printf("%s\n", tokens.list[i].type)
 	}
 }
 
@@ -119,11 +59,10 @@ syntax_pretty_print :: proc(syntax: ^types.syntax_t, indent: int) {
 		fmt.print("  ")
 	}
 	if syntax.token != nil {
-		type_name := token_type_to_string(syntax.token.type)
 		if syntax.token.literal != "" {
-			fmt.printf("%s: '%s'\n", type_name, syntax.token.literal)
+			fmt.printf("%s: '%s'\n", syntax.token.type, syntax.token.literal)
 		} else {
-			fmt.printf("%s\n", type_name)
+			fmt.printf("%s\n", syntax.token.type)
 		}
 	} else {
 		fmt.println("UNKNOWN syntax")

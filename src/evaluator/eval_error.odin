@@ -12,6 +12,6 @@ eval_error :: proc(
 ) -> types.exit_codes {
 	val, err := eval_primary_expression(syntax.value, vm, program)
 	if sys.is_error(err) do return err
-	predefined_functions.print(val)
+	predefined_functions.print(val, g_debug)
 	return .OK
 }

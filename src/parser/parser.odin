@@ -5,7 +5,6 @@ import "../sys"
 import "../token_list"
 import "../types"
 
-import "core:fmt"
 branch :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
@@ -26,8 +25,8 @@ branch :: proc(
 			return nil, curr_token_err
 		}
 	}
+	curr_token, curr_token_err = token_list.peek(tokens, 0)
 	if curr_token.type != types.token_type_t.LEFT_BRACE {
-		fmt.printf("----ddd%s\n", curr_token.type)
 		return nil, types.exit_codes.BRACKET_NOT_OPENED
 	}
 	_, adv_err := token_list.advance(tokens)
@@ -118,6 +117,7 @@ line :: proc(
 	}
 	for curr_token.type != types.token_type_t.TERMINATOR &&
 	    curr_token.type != types.token_type_t.RIGHT_PAREN {
+
 		if curr_syntax == nil {
 			curr_syntax_err: types.exit_codes
 			curr_syntax, curr_syntax_err = statement(tokens, parent)
@@ -125,6 +125,10 @@ line :: proc(
 				return nil, curr_syntax_err
 			}
 			prev_syntax = curr_syntax
+			curr_token, curr_token_err = token_list.peek(tokens, 0)
+			if sys.is_error(curr_token_err) {
+				return nil, curr_token_err
+			}
 			continue
 		}
 		curr_syntax_err: types.exit_codes
@@ -133,6 +137,10 @@ line :: proc(
 			return nil, curr_syntax_err
 		}
 		if curr_syntax == nil {
+			curr_token, curr_token_err = token_list.peek(tokens, 0)
+			if sys.is_error(curr_token_err) {
+				return nil, curr_token_err
+			}
 			continue
 		}
 		curr_syntax.left = prev_syntax
