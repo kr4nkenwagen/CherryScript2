@@ -1,11 +1,10 @@
-package evaluation
+package evaluator
 
 import "../predefined_functions"
 import "../sys"
 import "../types"
 
-
-eval_error :: proc(
+eval_out :: proc(
 	syntax: ^types.syntax_t,
 	vm: ^types.vm_t,
 	program: ^types.program_t,

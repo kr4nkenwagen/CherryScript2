@@ -1,7 +1,7 @@
 package main
 
 import "core:fmt"
-import "evaluation"
+import "evaluator"
 import "parser"
 import "scan"
 import "source_code"
@@ -12,13 +12,16 @@ import "types"
 import "vm"
 
 main :: proc() {
-	src, src_err := source_code.from_file("test.jonx")
+	src, src_err := source_code.from_file("test2.jonx")
 	if sys.is_error(src_err) {
 		fmt.printf("%s\n", src_err)
 	}
 	tokens, tokens_err := scan.run(src)
 	if sys.is_error(tokens_err) {
 		sys.print_error(tokens_err, tokens)
+	}
+	for i := 0; i < tokens.length; i += 1 {
+		fmt.printf("%s\n", tokens.list[i].type)
 	}
 	synt, synt_err := parser.run(tokens, nil)
 	if sys.is_error(synt_err) {
@@ -36,13 +39,10 @@ main :: proc() {
 	if sys.is_error(vm_err) {
 		sys.print_error(vm_err, tokens)
 	}
+	obj, obj_err := evaluator.run(synt, curr_vm)
 
-	obj, obj_err := evaluation.run(synt, curr_vm)
 	if sys.is_error(obj_err) {
 		sys.print_error(obj_err, tokens)
-	}
-	for i in 0 ..< synt.length {
-		syntax_pretty_print(synt.statements[i], 0)
 	}
 	source_code.remove(src)
 	token_list.remove(tokens)
