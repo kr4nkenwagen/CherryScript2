@@ -9,6 +9,9 @@ eval_continue :: proc(
 ) -> types.exit_codes {
 	curr_prog := program
 	for curr_prog.type != .LOOP {
+		if curr_prog.parent == nil {
+			return .CONTINUE_STATEMENT_NOT_IN_A_LOOP
+		}
 		curr_prog.exit = true
 		curr_prog = curr_prog.parent
 	}
