@@ -19,8 +19,12 @@ branch :: proc(
 	if sys.is_error(curr_token_err) {
 		return nil, curr_token_err
 	}
-	if curr_token.type == .TERMINATOR {
-		curr_token, curr_token_err = token_list.advance(tokens)
+	for curr_token.type == types.token_type_t.TERMINATOR {
+		_, adv_err := token_list.advance(tokens)
+		if sys.is_error(adv_err) {
+			return nil, adv_err
+		}
+		curr_token, curr_token_err = token_list.peek(tokens, 0)
 		if sys.is_error(curr_token_err) {
 			return nil, curr_token_err
 		}
@@ -44,8 +48,8 @@ branch :: proc(
 		if curr_token.type == types.token_type_t.END_OF_FILE {
 			return nil, types.exit_codes.UNEXPECTED_EOF
 		}
-		synt: ^types.syntax_t
-		prev_synt: ^types.syntax_t
+		synt: ^types.syntax_t = nil
+		prev_synt: ^types.syntax_t = nil
 		for curr_token.type != types.token_type_t.TERMINATOR &&
 		    curr_token.type != types.token_type_t.RIGHT_BRACE {
 
@@ -60,7 +64,7 @@ branch :: proc(
 				if synt == nil {
 					synt = stmt
 				} else {
-					stmt.left = prev_synt
+					prev_synt.left = stmt
 				}
 				prev_synt = stmt
 			}
@@ -69,10 +73,14 @@ branch :: proc(
 				return nil, curr_token_err
 			}
 		}
-		if curr_token.type == types.token_type_t.TERMINATOR {
+		for curr_token.type == types.token_type_t.TERMINATOR {
 			_, adv_err = token_list.advance(tokens)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
+			}
+			curr_token, curr_token_err = token_list.peek(tokens, 0)
+			if sys.is_error(curr_token_err) {
+				return nil, curr_token_err
 			}
 		}
 		if synt != nil {
@@ -81,19 +89,14 @@ branch :: proc(
 				return nil, prog_err
 			}
 		}
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
 	}
 	_, adv_err = token_list.advance(tokens)
 	if sys.is_error(adv_err) {
 		return nil, adv_err
 	}
-	return prog, types.exit_codes.OK
-}
 
-line :: proc(
+	return prog, types.exit_codes.OK
+}; line :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (

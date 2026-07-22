@@ -43,9 +43,19 @@ for_statement :: proc(
 	if sys.is_error(curr_syntax_err) {
 		return nil, curr_syntax_err
 	}
-	_, adv_err = token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
+	curr_tok, tok_err := token_list.peek(tokens, 0)
+	if sys.is_error(tok_err) {
+		return nil, tok_err
+	}
+	for curr_tok.type != types.token_type_t.LEFT_BRACE {
+		_, adv_err = token_list.advance(tokens)
+		if sys.is_error(adv_err) {
+			return nil, adv_err
+		}
+		curr_tok, tok_err = token_list.peek(tokens, 0)
+		if sys.is_error(tok_err) {
+			return nil, tok_err
+		}
 	}
 	curr_syntax.branch, curr_syntax_err = branch(tokens, parent)
 	if sys.is_error(curr_syntax_err) {

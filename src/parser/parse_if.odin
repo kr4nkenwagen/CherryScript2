@@ -33,8 +33,14 @@ if_statement :: proc(
 		return nil, curr_token_err
 	}
 	for curr_token.type == types.token_type_t.TERMINATOR {
-		token_list.advance(tokens)
+		_, adv_err = token_list.advance(tokens)
+		if sys.is_error(adv_err) {
+			return nil, adv_err
+		}
 		curr_token, curr_token_err = token_list.peek(tokens, 0)
+		if sys.is_error(curr_token_err) {
+			return nil, curr_token_err
+		}
 	}
 	if curr_token.type != types.token_type_t.LEFT_BRACE {
 		return nil, types.exit_codes.UNEXPECTED_SYNTAX
@@ -45,25 +51,36 @@ if_statement :: proc(
 	}
 	syntax_parent.branch.type = types.program_type_t.IF
 	curr_syntax := syntax_parent
-	curr_token, curr_token_err = token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
+	lookahead_idx := 0
+	next_tok, tok_err := token_list.peek(tokens, lookahead_idx)
+	if sys.is_error(tok_err) {
+		return nil, tok_err
 	}
-	if curr_token.type == .TERMINATOR {
-		curr_token, curr_token_err = token_list.advance(tokens)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
+	for next_tok.type == types.token_type_t.TERMINATOR {
+		lookahead_idx += 1
+		next_tok, tok_err = token_list.peek(tokens, lookahead_idx)
+		if sys.is_error(tok_err) {
+			return nil, tok_err
 		}
 	}
-	for curr_token.type == types.token_type_t.ELSE_IF {
+	for next_tok.type == types.token_type_t.ELSE_IF {
+		// Consume intermediate terminators
+		for i := 0; i < lookahead_idx; i += 1 {
+			_, adv_err = token_list.advance(tokens)
+			if sys.is_error(adv_err) {
+				return nil, adv_err
+			}
+		}
 		curr_syntax_err: types.exit_codes
 		curr_syntax.right, curr_syntax_err = syntax.create()
 		if sys.is_error(curr_syntax_err) {
-
 			return nil, curr_syntax_err
 		}
-		curr_syntax.right.token = curr_token
-		_, adv_err := token_list.advance(tokens)
+		curr_syntax.right.token, curr_syntax_err = token_list.peek(tokens, 0)
+		if sys.is_error(curr_syntax_err) {
+			return nil, curr_syntax_err
+		}
+		_, adv_err = token_list.advance(tokens)
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
@@ -77,25 +94,36 @@ if_statement :: proc(
 		}
 		curr_syntax.right.branch.type = types.program_type_t.IF
 		curr_syntax = curr_syntax.right
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
+		lookahead_idx = 0
+		next_tok, tok_err = token_list.peek(tokens, lookahead_idx)
+		if sys.is_error(tok_err) {
+			return nil, tok_err
+		}
+		for next_tok.type == types.token_type_t.TERMINATOR {
+			lookahead_idx += 1
+			next_tok, tok_err = token_list.peek(tokens, lookahead_idx)
+			if sys.is_error(tok_err) {
+				return nil, tok_err
+			}
 		}
 	}
-	if curr_token.type == .TERMINATOR {
-		curr_token, curr_token_err = token_list.advance(tokens)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
+	if next_tok.type == types.token_type_t.ELSE {
+		for i := 0; i < lookahead_idx; i += 1 {
+			_, adv_err = token_list.advance(tokens)
+			if sys.is_error(adv_err) {
+				return nil, adv_err
+			}
 		}
-	}
-	if curr_token.type == types.token_type_t.ELSE {
 		curr_syntax_err: types.exit_codes
 		curr_syntax.right, curr_syntax_err = syntax.create()
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
-		curr_syntax.right.token = curr_token
-		_, adv_err := token_list.advance(tokens)
+		curr_syntax.right.token, curr_syntax_err = token_list.peek(tokens, 0)
+		if sys.is_error(curr_syntax_err) {
+			return nil, curr_syntax_err
+		}
+		_, adv_err = token_list.advance(tokens)
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
