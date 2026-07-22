@@ -1,6 +1,7 @@
 package main
 
 import "core:fmt"
+import "debug"
 import "evaluator"
 import "parser"
 import "scan"
@@ -20,7 +21,6 @@ main :: proc() {
 	if sys.is_error(tokens_err) {
 		sys.print_error(tokens_err, tokens)
 	}
-	token_list_pretty_print(tokens)
 	synt, synt_err := parser.run(tokens, nil)
 	if sys.is_error(synt_err) {
 		sys.print_error(synt_err, tokens)
@@ -40,6 +40,9 @@ main :: proc() {
 	obj, obj_err := evaluator.run(synt, curr_vm, true)
 	if sys.is_error(obj_err) {
 		sys.print_error(obj_err, tokens)
+	}
+	if true {
+		debug.inspect_snapshots()
 	}
 	source_code.remove(src)
 	token_list.remove(tokens)
