@@ -40,7 +40,7 @@ eval_for :: proc(
 	if condition.type != .BOOL {
 		return .TYPE_MISMATCH
 	}
-	for condition.data.(bool) == true {
+	for !syntax.branch.exit && condition.data.(bool) == true {
 		_, branch_err := branch(syntax, vmem)
 		if sys.is_error(branch_err) {
 			return branch_err

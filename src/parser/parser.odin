@@ -25,7 +25,6 @@ branch :: proc(
 			return nil, curr_token_err
 		}
 	}
-	curr_token, curr_token_err = token_list.peek(tokens, 0)
 	if curr_token.type != types.token_type_t.LEFT_BRACE {
 		return nil, types.exit_codes.BRACKET_NOT_OPENED
 	}
@@ -49,46 +48,38 @@ branch :: proc(
 		prev_synt: ^types.syntax_t
 		for curr_token.type != types.token_type_t.TERMINATOR &&
 		    curr_token.type != types.token_type_t.RIGHT_BRACE {
-			if synt == nil {
-				synt_err: types.exit_codes
-				synt, synt_err = statement(tokens, prog)
-				if sys.is_error(synt_err) {
-					return nil, synt_err
-				}
-				prev_synt = synt
-				curr_token, curr_token_err = token_list.peek(tokens, 0)
-				if sys.is_error(curr_token_err) {
-					return nil, curr_token_err
-				}
 
-				continue
+			if curr_token.type == types.token_type_t.END_OF_FILE {
+				return nil, types.exit_codes.UNEXPECTED_EOF
 			}
-			synt, err = statement(tokens, prog)
-			if sys.is_error(err) {
-				return nil, err
+			stmt, stmt_err := statement(tokens, prog)
+			if sys.is_error(stmt_err) {
+				return nil, stmt_err
 			}
-			if synt == nil {
-				curr_token, curr_token_err = token_list.peek(tokens, 0)
-				if sys.is_error(curr_token_err) {
-					return nil, curr_token_err
+			if stmt != nil {
+				if synt == nil {
+					synt = stmt
+				} else {
+					stmt.left = prev_synt
 				}
-
-				continue
+				prev_synt = stmt
 			}
-			synt.left = prev_synt
-			prev_synt = synt
 			curr_token, curr_token_err = token_list.peek(tokens, 0)
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
 			}
 		}
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
+		if curr_token.type == types.token_type_t.TERMINATOR {
+			_, adv_err = token_list.advance(tokens)
+			if sys.is_error(adv_err) {
+				return nil, adv_err
+			}
 		}
-		prog_err := program.add(prog, synt)
-		if sys.is_error(prog_err) {
-			return nil, prog_err
+		if synt != nil {
+			prog_err := program.add(prog, synt)
+			if sys.is_error(prog_err) {
+				return nil, prog_err
+			}
 		}
 		curr_token, curr_token_err = token_list.peek(tokens, 0)
 		if sys.is_error(curr_token_err) {

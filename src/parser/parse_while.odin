@@ -32,6 +32,6 @@ while :: proc(
 	if sys.is_error(curr_syntax_err) {
 		return nil, curr_syntax_err
 	}
-	curr_syntax.branch.type = types.program_type_t.LOOP
-	return curr_syntax, types.exit_codes.OK
+	curr_syntax.branch.type = .LOOP
+	return curr_syntax, .OK
 }

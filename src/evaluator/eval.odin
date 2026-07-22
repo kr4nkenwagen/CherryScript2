@@ -9,6 +9,8 @@ import "../vm"
 
 g_debug: bool
 
+import "core:fmt"
+
 run :: proc(
 	prog: ^types.program_t,
 	vmem: ^types.vm_t,
@@ -23,11 +25,12 @@ run :: proc(
 	g_debug = debug_mode
 	prog.pointer = 0
 	value: ^types.object_t
-	for prog.pointer < prog.length {
+	for prog.pointer < prog.length && !prog.exit {
 		if g_debug {
 			debug.prompt_user(prog.statements[prog.pointer].token, vmem)
 		}
 		if prog.exit {
+			fmt.printf("DDDADAD\n")
 			break
 		}
 		if prog.continueing {
