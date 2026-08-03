@@ -6,6 +6,7 @@ import "../token"
 import "../token_list"
 import "../types"
 
+
 variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	if tokens == nil {
 		return nil, types.exit_codes.OBJECT_IS_NIL

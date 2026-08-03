@@ -7,6 +7,8 @@ import "../token"
 import "../token_list"
 import "../types"
 
+import "core:fmt"
+
 function_args :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
@@ -34,7 +36,7 @@ function_args :: proc(
 			}
 		}
 		if curr_token.type != types.token_type_t.VAR &&
-		   curr_token.type == types.token_type_t.CONST {
+		   curr_token.type != types.token_type_t.CONST {
 			break
 		}
 		declaration, declaration_err := syntax.create()
@@ -53,11 +55,13 @@ function_args :: proc(
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
+		curr_syntax.token = curr_token
 		declaration.left = curr_syntax
 		eq_token, eq_token_err := token_list.advance(tokens)
 		if sys.is_error(eq_token_err) {
 			return nil, eq_token_err
 		}
+
 		if eq_token.type == types.token_type_t.EQUAL {
 			_, adv_err := token_list.advance(tokens)
 			if sys.is_error(adv_err) {
@@ -65,9 +69,12 @@ function_args :: proc(
 			}
 			curr_syntax.value, _ = expression(tokens)
 		} else {
+
 			curr_syntax.value, curr_syntax_err = syntax.create()
 			if sys.is_error(curr_syntax_err) {
 				return nil, curr_syntax_err
+			}
+			if curr_syntax.value.token == nil {
 			}
 			curr_syntax.value.token, curr_token_err = token.create(
 				nil,
@@ -97,7 +104,7 @@ function_args :: proc(
 		}
 	}
 	curr_token, curr_token_err = token_list.peek(tokens, 0)
-	if curr_token.type == types.token_type_t.RIGHT_PAREN {
+	if curr_token.type != types.token_type_t.RIGHT_PAREN {
 		return nil, types.exit_codes.UNEXPECTED_SYNTAX
 	}
 	_, adv_err := token_list.advance(tokens)
@@ -137,6 +144,10 @@ function :: proc(
 	}
 	if curr_syntax.token.type != types.token_type_t.IDENTIFIER {
 		return nil, types.exit_codes.UNEXPECTED_SYNTAX
+	}
+	_, adv_err = token_list.advance(tokens)
+	if sys.is_error(adv_err) {
+		return nil, adv_err
 	}
 	curr_syntax.args, _ = function_args(tokens, parent)
 	curr_token, curr_token_err := token_list.peek(tokens, 0)

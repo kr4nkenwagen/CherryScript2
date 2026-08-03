@@ -2,7 +2,6 @@ package token
 
 import "../types"
 
-
 create :: proc(
 	src: ^types.source_code_t,
 	type: types.token_type_t,
@@ -19,8 +18,11 @@ create :: proc(
 		return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED
 	}
 	token.literal = literal
-	token.column = src.column
-	token.line = src.line
+
+	if src != nil {
+		token.column = src.column
+		token.line = src.line
+	}
 	token.type = type
 	return token, types.exit_codes.OK
 }

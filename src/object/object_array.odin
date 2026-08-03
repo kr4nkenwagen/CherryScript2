@@ -15,7 +15,6 @@ array_set :: proc(arr: ^types.object_t, index: int, obj: ^types.object_t) -> typ
 	if index > data.count {
 		for i := data.count; i < index; i += 1 {
 			nil_obj, nil_obj_err := object.create_null()
-			data.count += 1
 			if sys.is_error(nil_obj_err) {
 				return nil_obj_err
 			}
@@ -23,6 +22,14 @@ array_set :: proc(arr: ^types.object_t, index: int, obj: ^types.object_t) -> typ
 			data.count += 1
 		}
 	}
+	if index == data.count {
+		append(&data.value, obj)
+		data.count += 1
+	} else {
+		free(data.value[index])
+		data.value[index] = obj
+	}
+	arr.data = data
 	return .OK
 }
 

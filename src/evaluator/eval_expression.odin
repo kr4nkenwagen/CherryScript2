@@ -8,6 +8,8 @@ import "../types"
 import "core:strconv"
 import "core:strings"
 
+import "core:fmt"
+
 eval_primary_expression :: proc(
 	syntax: ^types.syntax_t,
 	vm: ^types.vm_t,

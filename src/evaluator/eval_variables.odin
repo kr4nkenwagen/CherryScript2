@@ -6,7 +6,6 @@ import "../sys"
 import "../types"
 import "../vm"
 
-
 variable_declarations :: proc(
 	synt: ^types.syntax_t,
 	vmem: ^types.vm_t,
@@ -102,6 +101,7 @@ eval_array_declaration :: proc(
 		}
 		curr = curr.left
 	}
+	tmp, tmp_err := object.array_get(arr, 0)
 	return arr, .OK
 }
 

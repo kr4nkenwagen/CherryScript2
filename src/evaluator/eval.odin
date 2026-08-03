@@ -42,6 +42,9 @@ run :: proc(
 		}
 		prog.pointer += 1
 	}
+	if prog.exit {
+		return prog.ret_value, .OK
+	}
 	return value, .OK
 }
 
