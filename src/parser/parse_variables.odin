@@ -143,8 +143,8 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 				return nil, curr_token_err
 			}
 		}
-		if curr_token.type != .IDENTIFIER ||
-		   curr_token.type != .NUMBER ||
+		if curr_token.type != .IDENTIFIER &&
+		   curr_token.type != .NUMBER &&
 		   curr_token.type != .STRING_WRAPPER {
 			return nil, .UNEXPECTED_IDENTIFIER_OR_LITERAL
 		}

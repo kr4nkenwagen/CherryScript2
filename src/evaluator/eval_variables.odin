@@ -101,6 +101,7 @@ eval_array_declaration :: proc(
 		}
 		curr = curr.left
 	}
+
 	return arr, .OK
 }
 
@@ -113,17 +114,7 @@ eval_array_identifier :: proc(
 	^types.object_t,
 	types.exit_codes,
 ) {
-	if synt.right == nil || synt.right.token.type != .LEFT_BRACKET {
-		return obj, .OK
-	}
-	index_arr, err := eval_array_declaration(synt.right, vmem, prog)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	if index_arr == nil || index_arr.data.(types.object_array_t).count != 1 {
-		return nil, .EXPECTED_ARRAY_INDEX
-	}
-	index, index_err := object.array_get(index_arr, 0)
+	index, index_err := eval_primary_expression(synt.value, vmem, prog)
 	if sys.is_error(index_err) {
 		return nil, index_err
 	}
