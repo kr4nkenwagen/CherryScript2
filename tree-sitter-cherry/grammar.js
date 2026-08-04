@@ -36,13 +36,14 @@ module.exports = grammar({
     keyword: $ => choice(
       'and', 'break', 'class', 'const', 'continue', 'else', 'err',
       'for', 'false', 'fn', 'if', 'null', 'nil', 'module', 'or', 'out',
-      'println', 'print', 'return', 'remove', 'super', 'this', 'true', 'var', 'while'
+      'println', 'print', 'return', 'remove', 'super', 'this', 'true', 
+      'var', 'while', 'len'
     ),
 
     // Based on your switch statements for operators
     operator: $ => choice(
       ':^', '..', '-=', '+=', '/=', '*=', '!=', '==', '>=', '<=', '&&', '||',
-      '-', '+', '%', '/', '*', '!', '=', '>', '<'
+      '-', '+', '%', '/', '*', '!', '=', '>', '<', '->', '<-'
     ),
 
     // Standard punctuation characters from your lexer
