@@ -5,6 +5,8 @@ import "../object"
 import "../sys"
 import "../types"
 import "core:fmt"
+import "core:os"
+import "core:strings"
 
 print_out :: proc(str: string, debug_mode: bool) {
 	if debug_mode {
@@ -68,4 +70,16 @@ len_func :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 		return nil, length_err
 	}
 	return object.create_int(length)
+}
+
+in_func :: proc() -> (^types.object_t, types.exit_codes) {
+	buf: [256]byte
+	n, err := os.read(os.stdin, buf[:])
+	if err != nil {
+		return nil, .INTERPRETER_ERROR
+	}
+	raw_input := string(buf[:n])
+	input := strings.trim_space(raw_input)
+	heap_input := strings.clone(input)
+	return object.create_string(heap_input)
 }

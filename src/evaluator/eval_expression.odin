@@ -76,6 +76,8 @@ eval_primary_expression :: proc(
 		return object.create_string(syntax.token.literal)
 	case .AT:
 		return object.create_file(syntax.token.literal)
+	case .IN:
+		return predefined_functions.in_func()
 	case .NUMBER:
 		return eval_number(syntax)
 	case .NIL:

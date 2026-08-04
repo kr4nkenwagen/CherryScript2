@@ -26,6 +26,8 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return identifier(tokens)
 	case .LENGTH:
 		return function_len(tokens)
+	case .IN:
+		return function_in(tokens)
 	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NIL, .AT:
 		synt, err := syntax.create()
 		if sys.is_error(err) {
