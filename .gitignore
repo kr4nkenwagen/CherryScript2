@@ -1,0 +1,9 @@
+# Tree-sitter / Node.js
+tree-sitter-cherry/node_modules/
+tree-sitter-cherry/build/
+
+# Compiled C/C++ binaries
+*.so
+*.dylib
+*.dll
+*.o
