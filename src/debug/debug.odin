@@ -5,7 +5,6 @@ import "../vm"
 import "core:c"
 import "core:fmt"
 import "core:os"
-import "core:strings"
 import "core:sys/posix"
 
 g_output_log: [dynamic]string
