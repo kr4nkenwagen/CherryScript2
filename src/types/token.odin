@@ -64,6 +64,10 @@ token_type_t :: enum {
 	OUT,
 	ERROR,
 	REMOVE,
+	AT,
+	LEFT_ARROW,
+	RIGHT_ARROW,
+	LENGTH,
 }
 
 token_t :: struct {

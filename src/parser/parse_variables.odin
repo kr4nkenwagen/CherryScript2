@@ -9,7 +9,7 @@ import "../types"
 
 variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	if tokens == nil {
-		return nil, types.exit_codes.OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL
 	}
 	declaration, declaration_err := syntax.create()
 	if sys.is_error(declaration_err) {
@@ -25,14 +25,14 @@ variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 	}
 	prev_syntax := declaration
 	for {
-		if curr_token.type == types.token_type_t.COMMA {
+		if curr_token.type == .COMMA {
 			curr_token, curr_token_err = token_list.advance(tokens)
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
 			}
 		}
-		if curr_token.type != types.token_type_t.IDENTIFIER {
-			return nil, types.exit_codes.UNEXPECTED_SYNTAX
+		if curr_token.type != .IDENTIFIER {
+			return nil, .UNEXPECTED_SYNTAX
 		}
 		curr_syntax, curr_syntax_err := syntax.create()
 		if sys.is_error(curr_syntax_err) {
@@ -43,7 +43,7 @@ variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 		if sys.is_error(eq_token_err) {
 			return nil, eq_token_err
 		}
-		if eq_token.type == types.token_type_t.EQUAL {
+		if eq_token.type == .EQUAL {
 			_, adv_err := token_list.advance(tokens)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
@@ -53,18 +53,14 @@ variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 				return nil, curr_syntax_err
 			}
 		} else {
-			if declaration.token.type == types.token_type_t.CONST {
-				return nil, types.exit_codes.UNASSIGNED_CONST
+			if declaration.token.type == .CONST {
+				return nil, .UNASSIGNED_CONST
 			}
 			curr_syntax.value, curr_syntax_err = syntax.create()
 			if sys.is_error(curr_syntax_err) {
 				return nil, curr_syntax_err
 			}
-			curr_syntax.value.token, curr_syntax_err = token.create(
-				nil,
-				types.token_type_t.NIL,
-				"null",
-			)
+			curr_syntax.value.token, curr_syntax_err = token.create(nil, .NIL, "null")
 			if sys.is_error(curr_syntax_err) {
 				return nil, curr_syntax_err
 			}
@@ -75,11 +71,11 @@ variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 		}
 		prev_syntax.left = curr_syntax
 		prev_syntax = curr_syntax
-		if curr_token.type != types.token_type_t.COMMA {
+		if curr_token.type != .COMMA {
 			break
 		}
 	}
-	return declaration, types.exit_codes.OK
+	return declaration, .OK
 }
 
 variable_remove :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -98,14 +94,14 @@ variable_remove :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.
 	}
 	prev_syntax := declaration
 	for {
-		if curr_token.type == types.token_type_t.COMMA {
+		if curr_token.type == .COMMA {
 			curr_token, curr_token_err = token_list.advance(tokens)
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
 			}
 		}
-		if curr_token.type != types.token_type_t.IDENTIFIER {
-			return nil, types.exit_codes.UNEXPECTED_SYNTAX
+		if curr_token.type != .IDENTIFIER {
+			return nil, .UNEXPECTED_SYNTAX
 		}
 		curr_syntax, curr_syntax_err := syntax.create()
 		if sys.is_error(curr_syntax_err) {
@@ -118,11 +114,11 @@ variable_remove :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.
 		if sys.is_error(curr_token_err) {
 			return nil, curr_token_err
 		}
-		if curr_token.type != types.token_type_t.COMMA {
+		if curr_token.type != .COMMA {
 			break
 		}
 	}
-	return declaration, types.exit_codes.OK
+	return declaration, .OK
 }
 
 array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -141,16 +137,16 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 	}
 	prev_syntax := declaration
 	for {
-		if curr_token.type == types.token_type_t.COMMA {
+		if curr_token.type == .COMMA {
 			curr_token, curr_token_err = token_list.advance(tokens)
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
 			}
 		}
-		if !(curr_token.type == types.token_type_t.IDENTIFIER ||
-			   curr_token.type == types.token_type_t.NUMBER ||
-			   curr_token.type == types.token_type_t.STRING_WRAPPER) {
-			return nil, types.exit_codes.UNEXPECTED_IDENTIFIER_OR_LITERAL
+		if curr_token.type != .IDENTIFIER ||
+		   curr_token.type != .NUMBER ||
+		   curr_token.type != .STRING_WRAPPER {
+			return nil, .UNEXPECTED_IDENTIFIER_OR_LITERAL
 		}
 		curr_syntax, curr_syntax_err := syntax.create()
 		if sys.is_error(curr_syntax_err) {
@@ -163,26 +159,28 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 		if sys.is_error(curr_token_err) {
 			return nil, curr_token_err
 		}
-		if curr_token.type != types.token_type_t.COMMA {
+		if curr_token.type != .COMMA {
 			break
 		}
 	}
-	if curr_token.type != types.token_type_t.RIGHT_BRACKET {
-		return nil, types.exit_codes.BRACKET_NOT_CLOSED
+	if curr_token.type != .RIGHT_BRACKET {
+		return nil, .BRACKET_NOT_CLOSED
 	}
 	token_list.advance(tokens)
-	return declaration, types.exit_codes.OK
+	return declaration, .OK
 }
 
 identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	curr_syntax, _ := syntax.create()
-	curr_syntax_err: types.exit_codes
+	curr_syntax, curr_syntax_err := syntax.create()
+	if sys.is_error(curr_syntax_err) {
+		return nil, curr_syntax_err
+	}
 	curr_syntax.token, curr_syntax_err = token_list.peek(tokens, 0)
 	if sys.is_error(curr_syntax_err) {
 		return nil, curr_syntax_err
 	}
-	if curr_syntax.token.type != types.token_type_t.IDENTIFIER {
-		return nil, types.exit_codes.EXPECTED_IDENTIFIER
+	if curr_syntax.token.type != .IDENTIFIER {
+		return nil, .EXPECTED_IDENTIFIER
 	}
 	_, adv_err := token_list.advance(tokens)
 	if sys.is_error(adv_err) {
@@ -192,17 +190,33 @@ identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_
 	if sys.is_error(curr_token_err) {
 		return nil, curr_token_err
 	}
-	if curr_token.type == types.token_type_t.LEFT_BRACKET {
-		curr_syntax.right, curr_syntax_err = array_declaration(tokens)
+	if curr_token.type == .LEFT_BRACKET {
+		curr_token, curr_syntax_err = token_list.advance(tokens)
+		if sys.is_error(curr_syntax_err) {
+			return nil, curr_syntax_err
+		}
+		curr_syntax.value, curr_syntax_err = syntax.create()
+		if sys.is_error(curr_syntax_err) {
+			return nil, curr_syntax_err
+		}
+		curr_syntax.value.token = curr_token
+		curr_token, curr_syntax_err = token_list.advance(tokens)
+		if sys.is_error(curr_syntax_err) {
+			return nil, curr_syntax_err
+		}
+		if curr_token.type != .RIGHT_BRACKET {
+			return nil, .UNEXPECTED_SYNTAX
+		}
+		curr_token, curr_syntax_err = token_list.advance(tokens)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
 	}
-	if curr_token.type == types.token_type_t.LEFT_PAREN {
+	if curr_token.type == .LEFT_PAREN {
 		curr_syntax.left, curr_syntax_err = passed_function_args(tokens)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
 	}
-	return curr_syntax, types.exit_codes.OK
+	return curr_syntax, .OK
 }

@@ -8,8 +8,6 @@ import "../types"
 import "core:strconv"
 import "core:strings"
 
-import "core:fmt"
-
 eval_primary_expression :: proc(
 	syntax: ^types.syntax_t,
 	vm: ^types.vm_t,
@@ -76,6 +74,8 @@ eval_primary_expression :: proc(
 		return eval_identifier(syntax, vm, program)
 	case .STRING_WRAPPER:
 		return object.create_string(syntax.token.literal)
+	case .AT:
+		return object.create_file(syntax.token.literal)
 	case .NUMBER:
 		return eval_number(syntax)
 	case .NIL:
@@ -84,11 +84,45 @@ eval_primary_expression :: proc(
 		return object.create_bool(true)
 	case .FALSE:
 		return object.create_bool(false)
+	case .LENGTH:
+		val, err := eval_primary_expression(syntax.value, vm, program)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		return predefined_functions.len_func(val)
+	case .RIGHT_ARROW:
+		return eval_file_extraction(syntax, vm, program)
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:
 		return eval_binary_expression(syntax, vm, program)
 	case:
 		return nil, .INTERPRETER_ERROR
 	}
+}
+
+eval_file_extraction :: proc(
+	syntax: ^types.syntax_t,
+	vm: ^types.vm_t,
+	program: ^types.program_t,
+) -> (
+	^types.object_t,
+	types.exit_codes,
+) {
+	if syntax == nil {
+		return nil, .OBJECT_IS_NIL
+	}
+	file, file_err := eval_primary_expression(syntax.left, vm, program)
+	if sys.is_error(file_err) {
+		return nil, file_err
+	}
+	index, index_err := eval_primary_expression(syntax.right, vm, program)
+	if sys.is_error(index_err) {
+		return nil, index_err
+	}
+	content, content_err := object.file_get(file.data.(types.object_file_t).name, index.data.(int))
+	if sys.is_error(content_err) {
+		return nil, content_err
+	}
+	return object.create_string(content)
 }
 
 eval_number :: proc(syntax: ^types.syntax_t) -> (^types.object_t, types.exit_codes) {
@@ -307,6 +341,26 @@ eval_assignment_expression :: proc(
 ) -> types.exit_codes {
 	if syntax == nil {
 		return .OBJECT_IS_NIL
+	}
+	if syntax.left.token.type == .LEFT_ARROW {
+		right_hand_side, right_err := eval_primary_expression(syntax.right, vm, program)
+		if sys.is_error(right_err) {
+			return right_err
+		}
+		file, file_err := eval_primary_expression(syntax.left.left, vm, program)
+		if sys.is_error(file_err) {
+			return file_err
+		}
+		index, index_err := eval_primary_expression(syntax.left.right, vm, program)
+		if sys.is_error(index_err) {
+			return index_err
+		}
+		object.file_set(
+			file.data.(types.object_file_t).name,
+			right_hand_side.data.(string),
+			index.data.(int),
+		)
+		return .OK
 	}
 	left_hand_side, left_err := eval_primary_expression(syntax.left, vm, program)
 	if sys.is_error(left_err) {

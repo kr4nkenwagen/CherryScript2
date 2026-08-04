@@ -101,7 +101,6 @@ eval_array_declaration :: proc(
 		}
 		curr = curr.left
 	}
-	tmp, tmp_err := object.array_get(arr, 0)
 	return arr, .OK
 }
 
@@ -133,7 +132,6 @@ eval_array_identifier :: proc(
 	}
 	return object.array_get(obj, int(index.data.(int)))
 }
-
 
 eval_identifier :: proc(
 	synt: ^types.syntax_t,

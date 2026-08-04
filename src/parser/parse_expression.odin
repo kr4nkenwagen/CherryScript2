@@ -24,7 +24,9 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return array_declaration(tokens)
 	case .IDENTIFIER:
 		return identifier(tokens)
-	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NIL:
+	case .LENGTH:
+		return function_len(tokens)
+	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NIL, .AT:
 		synt, err := syntax.create()
 		if sys.is_error(err) {
 			return nil, err
@@ -61,8 +63,42 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 	}
 }
 
-string_operations :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
+file_operation :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	left, err := primary_expression(tokens)
+	if sys.is_error(err) {
+		return nil, err
+	}
+	curr_token, curr_token_err := token_list.peek(tokens, 0)
+	if sys.is_error(curr_token_err) {
+		return nil, curr_token_err
+	}
+	for curr_token != nil && (curr_token.type == .RIGHT_ARROW || curr_token.type == .LEFT_ARROW) {
+		op, alloc_err := syntax.create()
+		if sys.is_error(alloc_err) {
+			return nil, alloc_err
+		}
+		op.token = curr_token
+		op.left = left
+		_, adv_err := token_list.advance(tokens)
+		if sys.is_error(adv_err) {
+			return nil, adv_err
+		}
+		op.right, err = primary_expression(tokens)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		left = op
+		curr_token, curr_token_err = token_list.peek(tokens, 0)
+		if sys.is_error(curr_token_err) {
+			return nil, curr_token_err
+		}
+	}
+	return left, types.exit_codes.OK
+
+}
+
+string_operations :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
+	left, err := file_operation(tokens)
 	if sys.is_error(err) {
 		return nil, err
 	}
@@ -81,7 +117,7 @@ string_operations :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
-		op.right, err = primary_expression(tokens)
+		op.right, err = file_operation(tokens)
 		if sys.is_error(err) {
 			return nil, err
 		}
@@ -255,6 +291,7 @@ equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_co
 	}
 	return left, types.exit_codes.OK
 }
+
 
 assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	left, err := equality(tokens)

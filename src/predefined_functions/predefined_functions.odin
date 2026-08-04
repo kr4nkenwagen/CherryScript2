@@ -41,7 +41,7 @@ print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 		if !sys.is_error(err) {
 			print_out(num, debug_mode)
 		}
-	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION:
+	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
 		break
 	}
 	return .OK
@@ -60,4 +60,12 @@ println :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 		return formated_obj_err
 	}
 	return print(formated_obj, debug_mode)
+}
+
+len_func :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+	length, length_err := object.length(obj)
+	if sys.is_error(length_err) {
+		return nil, length_err
+	}
+	return object.create_int(length)
 }

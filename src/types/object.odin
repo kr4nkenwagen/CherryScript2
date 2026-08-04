@@ -9,6 +9,7 @@ object_type_t :: enum {
 	NULL,
 	BOOL,
 	FUNCTION,
+	FILE,
 }
 
 object_data_t :: union {
@@ -16,9 +17,10 @@ object_data_t :: union {
 	f32,
 	string,
 	bool,
+	rawptr,
 	object_array_t,
 	object_vector_t,
-	rawptr,
+	object_file_t,
 }
 
 object_t :: struct {
@@ -39,4 +41,8 @@ object_vector_t :: struct {
 	x: ^object_t,
 	y: ^object_t,
 	z: ^object_t,
+}
+
+object_file_t :: struct {
+	name: string,
 }

@@ -1,6 +1,9 @@
 package object
 
+import "../sys"
 import "../types"
+import "core:os"
+import "core:strings"
 
 create_int :: proc(value: int) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
@@ -77,7 +80,7 @@ create_vector :: proc(
 		return nil, .OBJECT_IS_NIL
 	}
 	obj.is_marked = false
-	obj.type = types.object_type_t.VECTOR
+	obj.type = .VECTOR
 	obj.data = types.object_vector_t {
 		x = x,
 		y = y,
@@ -97,6 +100,24 @@ create_funct :: proc(synt: ^types.syntax_t) -> (^types.object_t, types.exit_code
 	}
 	obj.type = .FUNCTION
 	obj.data = synt
+	return obj, .OK
+}
+
+create_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
+	if !os.exists(file) {
+		_, err := os.create(file)
+		if err != os.General_Error.None {
+			return nil, .FAILED_TO_CREATE_FILE
+		}
+	}
+	obj := new(types.object_t)
+	if obj == nil {
+		return nil, .MEMORY_ALLOCATION_FAILED
+	}
+	obj.type = .FILE
+	obj.data = types.object_file_t {
+		name = file,
+	}
 	return obj, .OK
 }
 
@@ -132,6 +153,8 @@ length :: proc(obj: ^types.object_t) -> (int, types.exit_codes) {
 		return len(obj.data.(string)), .OK
 	case .ARRAY:
 		return obj.data.(types.object_array_t).count, .OK
+	case .FILE:
+		return file_length(obj.data.(types.object_file_t).name)
 	case .VECTOR:
 	case .NULL:
 	case .BOOL:
@@ -173,6 +196,8 @@ remove :: proc(obj: ^types.object_t) -> types.exit_codes {
 	case .NULL:
 		fallthrough
 	case .BOOL:
+		fallthrough
+	case .FILE:
 		fallthrough
 	case .FUNCTION:
 	case .ARRAY:
