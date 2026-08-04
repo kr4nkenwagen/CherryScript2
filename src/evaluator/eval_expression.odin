@@ -189,7 +189,7 @@ eval_string_operation_expression :: proc(
 		}
 	case .DOT_DOT:
 		if left_hand_side.type == .STRING || right_hand_side.type == .STRING {
-			return object.add(left_hand_side, right_hand_side)
+			return object.join_string(left_hand_side, right_hand_side)
 		}
 		return nil, .ILLEGAL_OPERATION
 	}

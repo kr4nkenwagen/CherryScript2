@@ -210,12 +210,38 @@ is_next_word_match :: proc(src: ^types.source_code_t, word: string) -> (bool, ty
 	if src == nil {
 		return false, .OBJECT_IS_NIL
 	}
-	if src.pointer + len(word) >= src.length {
-		return false, types.exit_codes.OK
+
+	end_idx := src.pointer + len(word)
+
+	// Changed `>=` to `>` so it can still match a word at the exact end of the file
+	if end_idx > src.length {
+		return false, .OK
 	}
-	return strings.to_lower(src.content[src.pointer:src.pointer + len(word)]) == word,
-		types.exit_codes.OK
-}
+
+	// Use strings.equal_fold for case-insensitive comparison without allocating memory!
+	sliced := src.content[src.pointer:end_idx]
+	if !strings.equal_fold(sliced, word) {
+		return false, .OK
+	}
+
+	// Word Boundary Check:
+	// If we are not at the end of the file, make sure the next character isn't part of the word
+	if end_idx < src.length {
+		next_char := src.content[end_idx]
+
+		// If the next character is a letter, digit, or underscore, it's a longer word (like "ing")
+		is_alphanum :=
+			(next_char >= 'a' && next_char <= 'z') ||
+			(next_char >= 'A' && next_char <= 'Z') ||
+			(next_char >= '0' && next_char <= '9') ||
+			next_char == '_'
+
+		if is_alphanum {
+			return false, .OK
+		}
+	}
+
+	return true, .OK}
 
 consume_identifier :: proc(src: ^types.source_code_t) -> (^types.token_t, types.exit_codes) {
 	if src == nil {
@@ -797,6 +823,11 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				if sys.is_error(add_err) {
 					return nil, add_err
 				}
+				_, adv_err := source_code.advance(src)
+				if sys.is_error(adv_err) {
+					return nil, adv_err
+				}
+
 			} else {
 				tok, tok_err := token.create(src, .COLON, ":")
 				if sys.is_error(tok_err) {

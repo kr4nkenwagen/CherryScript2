@@ -43,18 +43,33 @@ int_to_number :: proc(num: int) -> (string, types.exit_codes) {
 }
 
 join_string :: proc(
-	a: string,
-	b: string,
+	a: ^types.object_t,
+	b: ^types.object_t,
 	allocator := context.allocator,
 ) -> (
-	string,
+	^types.object_t,
 	types.exit_codes,
 ) {
-	res, err := strings.concatenate({a, b}, allocator)
-	if err != .None {
-		return "", .FAILED_TO_CONCAT_STRING
+	a_str, b_str: string
+	if a.type == .INT {
+		a_str, _ = int_to_number(a.data.(int))
+	} else if a.type == .STRING {
+		a_str = a.data.(string)
+	} else {
+		return nil, .FAILED_TO_CONCAT_STRING
 	}
-	return res, .OK
+	if b.type == .INT {
+		b_str, _ = int_to_number(b.data.(int))
+	} else if b.type == .STRING {
+		b_str = b.data.(string)
+	} else {
+		return nil, .FAILED_TO_CONCAT_STRING
+	}
+	res, err := strings.concatenate({a_str, b_str}, allocator)
+	if err != .None {
+		return nil, .FAILED_TO_CONCAT_STRING
+	}
+	return create_string(res)
 }
 
 position_of_first_instance :: proc(
@@ -100,21 +115,12 @@ position_of_last_instance :: proc(
 	if obj.type != .STRING {
 		return -1, .STRING_OPERATION_ON_NON_STRING_OBJECT
 	}
-	obj_size, err := object.length(obj)
-	if sys.is_error(err) {
-		return -1, err
-	}
-	instance_size := len(instance)
-	if instance_size == 0 {
+	if len(instance) == 0 {
 		return -1, .OK
 	}
-	position := 0
-	for position := obj_size - instance_size; position > 0; position -= 0 {
-		if obj.data.(string)[position:position + instance_size] == instance {
-			return position, .OK
-		}
-	}
-	return -1, .OK
+	src := obj.data.(string)
+	position := strings.last_index(src, instance)
+	return position, .OK
 }
 
 substring :: proc(
@@ -135,14 +141,21 @@ substring :: proc(
 	if sys.is_error(obj_err) {
 		return nil, obj_err
 	}
+	if start < 0 || start > obj_size {
+		return nil, .SUBSTRING_LENGTH_TO_LONG
+	}
 	input_length := length
 	if length == -1 {
 		input_length = obj_size - start
 	}
-	if start + length > obj_size {
+	if input_length < 0 {
 		return nil, .SUBSTRING_LENGTH_TO_LONG
 	}
-	return object.create_string(obj.data.(string)[start:length])
+	if start + input_length > obj_size {
+		return nil, .SUBSTRING_LENGTH_TO_LONG
+	}
+	end_index := start + input_length
+	return object.create_string(obj.data.(string)[start:end_index])
 }
 
 strip_instances_from_string :: proc(
@@ -168,6 +181,40 @@ strip_instances_from_string :: proc(
 		return nil, .STRING_REPLACE_FAIL
 	}
 	return object.create_string(res)
+}
+
+lengthen_string :: proc(target, length: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+	if target == nil || length == nil {
+		return nil, .OBJECT_IS_NIL
+	}
+	if target.type != .STRING {
+		return nil, .STRING_OPERATION_ON_NON_STRING_OBJECT
+	}
+	len_val: int
+	if length.type == .INT {
+		len_val = int(length.data.(int))
+	} else if length.type == .FLOAT {
+		len_val = int(length.data.(f32))
+	} else {
+		return nil, .TYPE_MISMATCH
+	}
+	if len_val <= 0 {
+		return object.create_string(target.data.(string))
+	}
+	target_size, err := object.length(target)
+	if sys.is_error(err) {
+		return nil, err
+	}
+	if target_size == 0 {
+		return object.create_string("")
+	}
+	src := target.data.(string)
+	new_size := target_size + len_val
+	buf := make([]byte, new_size)
+	for i := 0; i < new_size; i += 1 {
+		buf[i] = src[i % target_size]
+	}
+	return object.create_string(string(buf))
 }
 
 shorten_string :: proc(target, length: ^types.object_t) -> (^types.object_t, types.exit_codes) {

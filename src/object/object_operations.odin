@@ -1,7 +1,6 @@
 package object
 
 import "../object"
-import "../sys"
 import "../types"
 
 add :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
@@ -15,11 +14,7 @@ add :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return object.create_int(a.data.(int) + b.data.(int))
 		}
 		if b.type == .STRING {
-			num, err := int_to_number(int(a.data.(int)))
-			if sys.is_error(err) do return nil, err
-			joined, concat_err := join_string(num, b.data.(string))
-			if sys.is_error(concat_err) do return nil, concat_err
-			return object.create_string(joined)
+			return join_string(a, b)
 		}
 	}
 	if a.type == .FLOAT {
@@ -31,15 +26,9 @@ add :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	}
 	if a.type == .STRING {
 		if b.type == .STRING {
-			joined, concat_err := join_string(a.data.(string), b.data.(string))
-			if sys.is_error(concat_err) do return nil, concat_err
-			return object.create_string(joined)
-		} else if b.type == .INT {
-			num, err := int_to_number(int(b.data.(int)))
-			if sys.is_error(err) do return nil, err
-			joined, concat_err := join_string(a.data.(string), num)
-			if sys.is_error(concat_err) do return nil, concat_err
-			return object.create_string(joined)
+			return join_string(a, b)
+		} else if b.type == .INT || b.type == .FLOAT {
+			return object.lengthen_string(a, b)
 		}
 	}
 	return nil, .TYPE_MISMATCH
