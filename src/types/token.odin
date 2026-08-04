@@ -69,6 +69,7 @@ token_type_t :: enum {
 	RIGHT_ARROW,
 	LENGTH,
 	IN,
+	KEY,
 }
 
 token_t :: struct {

@@ -478,6 +478,20 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			}
 			return token.create(src, .TERMINATOR, "")
 		}
+	case 'k':
+		fallthrough
+	case 'K':
+		match, err := is_next_word_match(src, "key")
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			word, word_err := consume_word(src)
+			if sys.is_error(word_err) {
+				return nil, word_err
+			}
+			return token.create(src, .KEY, word)
+		}
 	case 'o':
 		fallthrough
 	case 'O':
