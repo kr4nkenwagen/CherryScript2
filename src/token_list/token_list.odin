@@ -41,6 +41,9 @@ peek :: proc(list: ^types.token_list_t, distance: int) -> (^types.token_t, types
 }
 
 remove :: proc(list: ^types.token_list_t) -> types.exit_codes {
+	if list == nil {
+		return .OK
+	}
 	delete(list.list)
 	free(list)
 	return types.exit_codes.OK
