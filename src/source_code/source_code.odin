@@ -46,6 +46,7 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 	strings.write_byte(&b, '\n')
 	strings.write_string(&b, target.content[target.pointer:])
 	target.content = strings.to_string(b)
+	target.length = len(target.content)
 	return types.exit_codes.OK
 }
 
