@@ -5,6 +5,7 @@ import "../stack"
 import "../sys"
 import "../types"
 import "../vm"
+import "vendor:stb/rect_pack"
 
 variable_declarations :: proc(
 	synt: ^types.syntax_t,

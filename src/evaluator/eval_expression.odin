@@ -89,11 +89,11 @@ eval_primary_expression :: proc(
 	case .FALSE:
 		return object.create_bool(false)
 	case .LENGTH:
-		val, err := eval_primary_expression(syntax.value, vm, program)
+		val, err := eval_array_declaration(syntax.value, vm, program)
 		if sys.is_error(err) {
 			return nil, err
 		}
-		return predefined_functions.len_func(val)
+		return predefined_functions.len_func(val.data.(types.object_array_t).value[0])
 	case .RIGHT_ARROW:
 		return eval_file_extraction(syntax, vm, program)
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:

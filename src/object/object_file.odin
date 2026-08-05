@@ -64,7 +64,9 @@ file_length :: proc(filepath: string) -> (int, types.exit_codes) {
 		return 0, .FAILED_FILE_MANIPULATION
 	}
 	defer delete(data)
-	lines := strings.split_lines(string(data))
-	defer delete(lines)
-	return len(lines), .OK
-}
+	text := strings.trim_right_space(string(data))
+	if len(text) == 0 {
+		return 0, .OK
+	}
+	line_count := strings.count(text, "\n") + 1
+	return line_count, .OK}
