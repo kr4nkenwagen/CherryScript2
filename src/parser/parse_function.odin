@@ -198,37 +198,24 @@ passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 	if sys.is_error(adv_err) {
 		return nil, adv_err
 	}
-	prev_syntax := declaration
-	for curr_token.type != types.token_type_t.RIGHT_PAREN {
+	branch_err: types.exit_codes
+	declaration.branch, branch_err = program.create(nil)
+	for curr_token.type != types.token_type_t.TERMINATOR {
 		if curr_token.type == types.token_type_t.COMMA {
 			curr_token, adv_err = token_list.advance(tokens)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
 			}
 		}
-		if !(curr_token.type == types.token_type_t.IDENTIFIER ||
-			   curr_token.type == types.token_type_t.NUMBER ||
-			   curr_token.type == types.token_type_t.STRING_WRAPPER) {
-			return nil, types.exit_codes.EXPECTED_IDENTIFIER_OR_LITERAL
-		}
-		curr_syntax, curr_syntax_err := syntax.create()
+		curr_syntax, curr_syntax_err := expression(tokens)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
-		curr_syntax.token = curr_token
-		prev_syntax.left = curr_syntax
-		prev_syntax = curr_syntax
+		program.add(declaration.branch, curr_syntax)
 		curr_token, adv_err = token_list.advance(tokens)
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
-	}
-	if curr_token.type != types.token_type_t.RIGHT_PAREN {
-		return nil, types.exit_codes.UNCLOSED_PARENTHESIS
-	}
-	_, adv_err = token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
 	}
 	return declaration, types.exit_codes.OK
 }

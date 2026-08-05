@@ -1,0 +1,57 @@
+module "utils/assert.cherry"
+
+var str = "Hello ", ing = "World";
+var string = str + ing;
+assert(string == "Hello World", "string addition")
+remove str, ing, string
+
+var str = "Hello World";
+var string = str + 3;
+assert(string == "Hello WorldHel", "string lengthen")
+remove str, string
+
+var str = "Hello WorldHel";
+var string = str - 3;
+assert(string == "Hello World", "string shorten")
+remove str, string
+
+var str = "Hello World";
+var string = str * 2;
+assert(string == "Hello WorldHello World", "string multiplication")
+remove str, string
+
+var str = "Hello World";
+var string = str / 2
+assert(string == "Hello", "string division")
+remove str, string
+
+var str = "Hello World";
+var string = str .. 1;
+assert(string == "Hello World1", "string concatination")
+remove str, string
+
+var str = "Hello World";
+var string = str % 2
+assert(string == "d", "string modulus")
+remove str, string
+
+var str = "Hello World";
+var string = str:5;
+assert(string == "Hello", "string splicing")
+remove str, string
+
+var str = "Hello World";
+var string = str:"d";
+assert(string == "Hello Worl", "string letter splicing")
+remove str, string
+
+var str = "Hello World";
+var string = str:^"W"
+assert(string == "orld", "string last letter splicing")
+remove str, string
+
+var str = "Hello World";
+var string = str:^5;
+assert(string == "World", "string last splicing")
+remove str, string
+

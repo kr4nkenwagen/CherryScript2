@@ -120,7 +120,6 @@ variable_remove :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.
 	}
 	return declaration, .OK
 }
-
 array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	declaration, err := syntax.create()
 	if sys.is_error(err) {
@@ -143,16 +142,10 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 				return nil, curr_token_err
 			}
 		}
-		if curr_token.type != .IDENTIFIER &&
-		   curr_token.type != .NUMBER &&
-		   curr_token.type != .STRING_WRAPPER {
-			return nil, .UNEXPECTED_IDENTIFIER_OR_LITERAL
-		}
-		curr_syntax, curr_syntax_err := syntax.create()
+		curr_syntax, curr_syntax_err := expression(tokens)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
-		curr_syntax.token = curr_token
 		prev_syntax.left = curr_syntax
 		prev_syntax = curr_syntax
 		curr_token, curr_token_err = token_list.advance(tokens)

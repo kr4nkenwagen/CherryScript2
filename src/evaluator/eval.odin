@@ -80,13 +80,22 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 	// -------------------------------------------------------------
 	// Path 2: synt.args != nil
 	// -------------------------------------------------------------
-	arg_vals, arg_vals_err := eval_array_declaration(synt.value, vmem, synt.branch)
-	if sys.is_error(arg_vals_err) {
-		return nil, arg_vals_err
-	}
 	new_stack, new_stack_err := stack.create()
 	if sys.is_error(new_stack_err) {
 		return nil, new_stack_err
+	}
+	vm_prev, vm_prev_err := vm.current_frame(vmem)
+	if sys.is_error(vm_prev_err) {
+		return nil, vm_prev_err
+	}
+	arg_vals: [dynamic]^types.object_t
+	defer delete(arg_vals)
+	for &i in synt.value.branch.statements {
+		arg_val, arg_vals_err := eval_primary_expression(i, vmem, nil)
+		if sys.is_error(arg_vals_err) {
+			return nil, arg_vals_err
+		}
+		append(&arg_vals, arg_val)
 	}
 	vm_err := vm.push_frame(vmem, new_stack, false)
 	if sys.is_error(vm_err) {
@@ -104,14 +113,13 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 	if sys.is_error(curr_stack_err) {
 		return nil, curr_stack_err
 	}
-	args_array := arg_vals.data.(types.object_array_t)
-	if curr_stack.count - curr_stack.parent_references != args_array.count {
+	if curr_stack.count - curr_stack.parent_references != synt.value.branch.length {
 		return nil, .INCORRECT_NUMBER_OF_REFERENCES
 	}
 	for i := curr_stack.parent_references; i < curr_stack.count; i += 1 {
 		idx := i - curr_stack.parent_references
-		curr_stack.data[i].data = args_array.value[idx].data
-		curr_stack.data[i].type = args_array.value[idx].type
+		curr_stack.data[i].data = arg_vals[idx].data
+		curr_stack.data[i].type = arg_vals[idx].type
 	}
 	value_data, value_data_err := run(synt.branch, vmem, g_debug)
 	if sys.is_error(value_data_err) {

@@ -1,0 +1,6 @@
+fn log(var msg) {
+  var log_file = @"log"
+  log_file<-len(log_file) = msg
+  out len(log_file)
+}
+

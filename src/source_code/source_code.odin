@@ -1,6 +1,8 @@
 package source_code
 
+import "../sys"
 import "../types"
+import "core:fmt"
 import "core:os"
 import "core:strings"
 
@@ -23,7 +25,12 @@ from_file :: proc(file: string) -> (^types.source_code_t, types.exit_codes) {
 	if err != nil {
 		return nil, types.exit_codes.FAILED_TO_READ_SOURCE_CODE_FILE
 	}
-	return create(string(data))
+	src, src_err := create(string(data))
+	if sys.is_error(src_err) {
+		return nil, src_err
+	}
+	src.location = os.dir(file)
+	return src, .OK
 }
 
 from_repl :: proc(line: string) -> (^types.source_code_t, types.exit_codes) {
@@ -31,6 +38,10 @@ from_repl :: proc(line: string) -> (^types.source_code_t, types.exit_codes) {
 }
 
 import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exit_codes {
+	src_path := src_path
+	if len(src_path) > 0 && src_path[0] != '/' {
+		src_path = fmt.tprintf("%s/%s", target.location, src_path)
+	}
 	file_data, err := os.read_entire_file(src_path, context.allocator)
 	if err != nil {
 		return types.exit_codes.FAILED_TO_READ_SOURCE_CODE_FILE

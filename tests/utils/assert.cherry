@@ -1,0 +1,7 @@
+fn assert(var assertion, var msg) {
+    if(assertion) {
+      out "PASSED: " .. msg .. "\n"
+    } else {
+      err "FAILED: " .. msg .. "\n"
+    }
+  }

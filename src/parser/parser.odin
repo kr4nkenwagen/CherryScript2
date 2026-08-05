@@ -94,9 +94,10 @@ branch :: proc(
 	if sys.is_error(adv_err) {
 		return nil, adv_err
 	}
-
 	return prog, types.exit_codes.OK
-}; line :: proc(
+}
+
+line :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
