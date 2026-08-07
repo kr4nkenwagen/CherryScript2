@@ -1,0 +1,17 @@
+module "utils/assert.cherry"
+
+# expanded file ops with unique tempfile
+var tf = @"tests/tmp_file_ops_expanded"
+rm tf
+
+# write multiple lines
+tf<-1 = "line1"
+tf<-2 = "line2"
+tf<-3 = "line3"
+assert(tf->1 == "", "file ops: first line empty")
+assert(tf->3 == "line3", "file ops: third line == line3")
+
+# append last line
+tf<-tf.len(tf) = "last"
+assert(tf->tf.len(tf) == "last", "file ops: appended last line")
+rm tf

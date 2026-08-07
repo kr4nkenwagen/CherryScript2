@@ -1,0 +1,8 @@
+# WARNING: These are intentionally erroneous cases to exercise error handling.
+# Run manual or under CI harness that expects failures.
+
+# Unclosed paren (should cause parse error)
+(1 + 2
+
+# Unexpected token (incomplete expression)
+var a = 1 +

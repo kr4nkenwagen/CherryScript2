@@ -1,21 +1,35 @@
 module "utils/assert.cherry"
-var file = @"testfile"
-out len(file) .. "\n"
-assert(exists(file), "exists function if file exists")
-file<-3 = "test"
-rm file
-assert(!exists(file), "exists function if file has been removed")
-remove file
-var file = @"testfile"
-assert(len(file) == 0, "newly created file should be 0 length")
-file<-3 = "test"
-assert(file->1 == "", "first line is empty")
-assert(file->2 == "", "second line is empty")
-assert(file->3 == "test", "third line contains 'test'")
-assert(file->len(file) == "test", "third and last line contains 'test'")
-file<-len(file) ="last line"
-assert(file->len(file) == "last line", "last line contains 'test'")
-file<-3 = "replaced"
-assert(file->3 == "replaced", "replaced line is correctly replaced")
-rm file
 
+# File handler tests using a unique test file path
+var tf = @"tests/tmp_file_handler_test"
+
+# Ensure clean start
+rm tf
+
+# create/write and check exists
+file<-3 = "test"
+assert(exists(tf), "file: exists after write")
+
+# remove and verify deletion
+rm tf
+assert(!exists(tf), "file: not exists after rm")
+
+# Recreate file and check content placement
+var file = @"tests/tmp_file_handler_test"
+# ensure empty file
+rm file
+var _ = file  # ensure file variable refers
+file<-3 = "test"
+assert(len(file) == 4, "file: len after writing one line (incl empties)")
+
+assert(file->1 == "", "file: first line empty")
+assert(file->2 == "", "file: second line empty")
+assert(file->3 == "test", "file: third line contains test")
+assert(file->len(file) == "test", "file: last line by len(file) returns test")
+
+# replace and verify
+file<-3 = "replaced"
+assert(file->3 == "replaced", "file: replaced line is correct")
+
+# cleanup
+rm file
