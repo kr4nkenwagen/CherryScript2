@@ -6,10 +6,39 @@ import "../sys"
 import "../types"
 import "core:fmt"
 import "core:os"
+import "core:strconv"
 import "core:strings"
 import "core:sys/posix"
 
+translate_hex_colors :: proc(input: string, allocator := context.allocator) -> string {
+	b := strings.builder_make(allocator)
+	i := 0
+	for i < len(input) {
+		if i + 3 <= len(input) && input[i:i + 3] == "[#]" {
+			strings.write_string(&b, "\x1b[0m")
+			i += 3
+			continue
+		}
+		if i + 9 <= len(input) && input[i:i + 2] == "[#" && input[i + 8] == ']' {
+			hex_str := input[i + 2:i + 8]
+			r, ok1 := strconv.parse_int(hex_str[0:2], 16)
+			g, ok2 := strconv.parse_int(hex_str[2:4], 16)
+			b_val, ok3 := strconv.parse_int(hex_str[4:6], 16)
+			if ok1 && ok2 && ok3 {
+				fmt.sbprintf(&b, "\x1b[38;2;%d;%d;%dm", r, g, b_val)
+				i += 9
+				continue
+			}
+		}
+		strings.write_byte(&b, input[i])
+		i += 1
+	}
+	return strings.to_string(b)
+}
+
+
 print_out :: proc(str: string, debug_mode: bool) {
+	str := translate_hex_colors(str)
 	if debug_mode {
 		append(&debug.g_output_log, str)
 		return
