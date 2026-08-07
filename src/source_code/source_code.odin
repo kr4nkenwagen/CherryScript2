@@ -50,7 +50,6 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 	append(&target.included_sources, src_path)
 	file_data, err := os.read_entire_file(src_path, context.allocator)
 	if err != nil {
-		fmt.printf("%s\n", src_path)
 		return types.exit_codes.FAILED_TO_READ_SOURCE_CODE_FILE
 	}
 	defer delete(file_data)

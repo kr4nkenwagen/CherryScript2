@@ -185,6 +185,7 @@ function :: proc(
 	return declaration, types.exit_codes.OK
 }
 
+import "core:fmt"
 passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	declaration, declaration_err := syntax.create()
 	if sys.is_error(declaration_err) {
@@ -195,6 +196,7 @@ passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 		return nil, declaration_err
 	}
 	curr_token, adv_err := token_list.advance(tokens)
+	fmt.printf("*%s\n", curr_token.type)
 	if sys.is_error(adv_err) {
 		return nil, adv_err
 	}
@@ -207,9 +209,15 @@ passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 				return nil, adv_err
 			}
 		}
+
+		fmt.printf("--%s\n", curr_token.type)
 		curr_syntax, curr_syntax_err := expression(tokens)
+		tmp, _ := token_list.peek(tokens, 0)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
+		}
+		if tmp.type == .RIGHT_PAREN {
+			break
 		}
 		program.add(declaration.branch, curr_syntax)
 		curr_token, adv_err = token_list.advance(tokens)
@@ -217,6 +225,7 @@ passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 			return nil, adv_err
 		}
 	}
+	fmt.printf("*END\n")
 	return declaration, types.exit_codes.OK
 }
 

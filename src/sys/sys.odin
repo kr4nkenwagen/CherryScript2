@@ -4,8 +4,13 @@ import "../token_list"
 import "../types"
 import "core:fmt"
 
-is_error :: proc(exit_code: types.exit_codes) -> bool {
-	return exit_code != types.exit_codes.OK
+is_error :: proc(exit_code: types.exit_codes, loc := #caller_location) -> bool {
+	if exit_code != types.exit_codes.OK {
+		fmt.printfln("ERROR! Called from %v (line %v)", loc.procedure, loc.line)
+		fmt.printfln("File: %v:%v:%v", loc.file_path, loc.line, loc.column)
+		return true
+	}
+	return false
 }
 
 print_error :: proc(error_code: types.exit_codes, tokens: ^types.token_list_t) {

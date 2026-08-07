@@ -174,32 +174,32 @@ run :: proc(
 	}
 	for curr_token != nil && curr_token.type != types.token_type_t.END_OF_FILE {
 		for curr_token != nil &&
-		    curr_token.type != types.token_type_t.TERMINATOR &&
-		    curr_token.type != types.token_type_t.RIGHT_BRACE &&
-		    curr_token.type != types.token_type_t.LEFT_BRACE {
-
+		    curr_token.type != .TERMINATOR &&
+		    curr_token.type != .RIGHT_BRACE &&
+		    curr_token.type != .LEFT_BRACE &&
+		    curr_token.type != .RIGHT_PAREN {
 			synt, synt_err := statement(tokens, parent)
 			if sys.is_error(synt_err) {
 				return nil, synt_err
 			}
-
 			if synt != nil {
 				prog_err := program.add(prog, synt)
 				if sys.is_error(prog_err) {
 					return nil, prog_err
 				}
 			}
-
 			curr_token, curr_token_err = token_list.peek(tokens, 0)
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
 			}
-		}
 
+		}
+		fmt.printf("%s\n", curr_token.type)
 		if curr_token != nil &&
 		   (curr_token.type == .TERMINATOR ||
 				   curr_token.type == .RIGHT_BRACE ||
-				   curr_token.type == .LEFT_BRACE) {
+				   curr_token.type == .LEFT_BRACE ||
+				   curr_token.type == .RIGHT_PAREN) {
 			_, adv_err := token_list.advance(tokens)
 			if adv_err == types.exit_codes.RAN_OUT_OF_TOKENS {
 				break
@@ -208,7 +208,6 @@ run :: proc(
 				return nil, adv_err
 			}
 		}
-
 		curr_token, curr_token_err = token_list.peek(tokens, 0)
 		if sys.is_error(curr_token_err) {
 			return nil, curr_token_err
@@ -216,3 +215,4 @@ run :: proc(
 	}
 	return prog, types.exit_codes.OK
 }
+import "core:fmt"

@@ -28,7 +28,7 @@ consume_comment :: proc(src: ^types.source_code_t) -> types.exit_codes {
 			return .OK
 		}
 	}
-	return types.exit_codes.OK
+	return .OK
 }
 
 consume_string :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
@@ -165,7 +165,7 @@ consume_word :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
 		return "", .WORD_NOT_FOUND
 	}
 	word := string(src.content[start_position:start_position + total_length])
-	return word, types.exit_codes.OK
+	return word, .OK
 }
 
 consume_number :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) {
@@ -203,45 +203,34 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 	}
 	total_length := int(src.pointer - start_position) + 1
 	result := string(src.content[start_position:start_position + total_length])
-	return result, types.exit_codes.OK
+	return result, .OK
 }
 
 is_next_word_match :: proc(src: ^types.source_code_t, word: string) -> (bool, types.exit_codes) {
 	if src == nil {
 		return false, .OBJECT_IS_NIL
 	}
-
 	end_idx := src.pointer + len(word)
-
-	// Changed `>=` to `>` so it can still match a word at the exact end of the file
 	if end_idx > src.length {
 		return false, .OK
 	}
-
-	// Use strings.equal_fold for case-insensitive comparison without allocating memory!
 	sliced := src.content[src.pointer:end_idx]
 	if !strings.equal_fold(sliced, word) {
 		return false, .OK
 	}
-
-	// Word Boundary Check:
-	// If we are not at the end of the file, make sure the next character isn't part of the word
 	if end_idx < src.length {
 		next_char := src.content[end_idx]
-
-		// If the next character is a letter, digit, or underscore, it's a longer word (like "ing")
 		is_alphanum :=
 			(next_char >= 'a' && next_char <= 'z') ||
 			(next_char >= 'A' && next_char <= 'Z') ||
 			(next_char >= '0' && next_char <= '9') ||
 			next_char == '_'
-
 		if is_alphanum {
 			return false, .OK
 		}
 	}
-
-	return true, .OK}
+	return true, .OK
+}
 
 consume_identifier :: proc(src: ^types.source_code_t) -> (^types.token_t, types.exit_codes) {
 	if src == nil {
@@ -265,12 +254,14 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 	if src == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-	prev_char, prev_char_err := source_code.peek(src, -1)
-	if sys.is_error(prev_char_err) && prev_char_err != .PEEK_OUT_OF_BOUNDS {
-		return nil, prev_char_err
-	}
-	if unicode.is_alpha(prev_char) {
-		return nil, .UNEXPECTED_CHARACTER
+	if src.pointer > 0 {
+		prev_char, prev_char_err := source_code.peek(src, -1)
+		if sys.is_error(prev_char_err) && prev_char_err != .PEEK_OUT_OF_BOUNDS {
+			return nil, prev_char_err
+		}
+		if unicode.is_alpha(prev_char) {
+			return nil, .UNEXPECTED_CHARACTER
+		}
 	}
 	character, peek_err := source_code.peek(src, 0)
 	if sys.is_error(peek_err) {
@@ -492,7 +483,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			source_code.advance(src)
 			path, path_err := consume_string(src)
 			if sys.is_error(path_err) {
-				return nil, types.exit_codes.PATH_CANT_BE_PARSED
+				return nil, .PATH_CANT_BE_PARSED
 			}
 			_, adv_err := source_code.advance(src)
 			if sys.is_error(adv_err) {
@@ -541,7 +532,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if sys.is_error(word_err) {
 				return nil, err
 			}
-			return token.create(src, types.token_type_t.OUT, word)
+			return token.create(src, .OUT, word)
 		}
 	case 'l':
 		fallthrough
@@ -718,6 +709,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 	return nil, .OK
 }
 
+import "core:fmt"
 run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes) {
 	if src == nil {
 		return nil, .OBJECT_IS_NIL
@@ -729,8 +721,11 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 	for !src.is_at_end {
 		tmp := (list.length > 0) ? list.list[list.length - 1] : nil
 		character, character_err := source_code.advance(src)
-		if sys.is_error(character_err) && character_err != .EOF_IN_SOURCE_CODE_REACHED {
-			return nil, character_err
+		if character_err != .EOF_IN_SOURCE_CODE_REACHED {
+			if sys.is_error(character_err) {
+				fmt.printf("%s\n", character)
+				return nil, character_err
+			}
 		}
 		switch (character) {
 		case '(':
@@ -764,7 +759,7 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 			if tmp == nil {
 				break
 			}
-			if tmp.type != types.token_type_t.TERMINATOR {
+			if tmp.type != .TERMINATOR {
 				tok, tok_err := token.create(src, .TERMINATOR, ";")
 				if sys.is_error(tok_err) {
 					return nil, tok_err
