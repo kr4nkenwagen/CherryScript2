@@ -1,0 +1,11 @@
+module "utils/assert.cherry"
+
+# Functions: declaration, arguments, recursion
+function fact(var n) {
+  if (n == 0) {
+    return 1
+  }
+  return n * fact(n - 1)
+}
+
+assert(fact(5) == 120, "functions: factorial recursion")

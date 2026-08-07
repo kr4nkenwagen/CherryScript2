@@ -1,21 +1,30 @@
 module "utils/assert.cherry"
-var arr = [1,2,3]
-assert(len(arr) == 3, "length of array")
+
+# Test: len() for various types
+# - arrays
+var arr = [1, 2, 3]
+assert(len(arr) == 3, "len: array length == 3")
 remove arr
 
+# - strings
 var str = "Hello World"
-assert(len(str) == 11, "length of string")
+assert(len(str) == 11, "len: string length == 11")
 remove str
 
+# - integers
 var number = 1234567890
-assert(len(number) == 10, "length of int")
-remove int
+assert(len(number) == 10, "len: integer digit count == 10")
+remove number
 
+# - floats
 var float = 12.34
-assert(len(float) == 5, "length of float")
+assert(len(float) == 5, "len: float representation length == 5")
 remove float
 
-var file = @"tmp"
+# - file lines
+var file = @"tests/tmp_len_test_file"
+# ensure file is clean
+rm file
 file<-3 = "test"
-assert(len(file) == 4, "length of file")
-remove file
+assert(len(file) == 4, "len: file length (lines) == 4")
+rm file

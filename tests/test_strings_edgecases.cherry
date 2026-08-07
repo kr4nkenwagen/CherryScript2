@@ -1,0 +1,12 @@
+module "utils/assert.cherry"
+
+# empty string
+var s = ""
+assert(len(s) == 0, "strings: empty length == 0")
+remove s
+
+# repeat/edge: small string repeat
+var a = "a"
+var r = a * 3
+assert(r == "aaa", "strings: repeat produces 'aaa'")
+remove a, r

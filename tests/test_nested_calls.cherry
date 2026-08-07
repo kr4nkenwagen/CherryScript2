@@ -1,0 +1,6 @@
+module "utils/assert.cherry"
+
+# Nested calls and expressions (regression for nested parsing)
+var ok = (len([1,2,3]) == 3) && (len("abc") == 3) && (len(12) == 2)
+assert(ok, "nested: nested len() calls in boolean expression")
+remove ok

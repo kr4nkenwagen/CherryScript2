@@ -1,57 +1,77 @@
 module "utils/assert.cherry"
 
-var str = "Hello ", ing = "World";
-var string = str + ing;
-assert(string == "Hello World", "string addition")
-remove str, ing, string
+# String addition / concatenation
+var a = "Hello ", b = "World"
+var s = a + b
+assert(s == "Hello World", "string: concatenation")
 
-var str = "Hello World";
-var string = str + 3;
-assert(string == "Hello WorldHel", "string lengthen")
-remove str, string
+remove a, b, s
 
-var str = "Hello WorldHel";
-var string = str - 3;
-assert(string == "Hello World", "string shorten")
-remove str, string
+# String + int (lengthen by N chars)
+var s1 = "Hello World"
+var s2 = s1 + 3
+assert(s2 == "Hello WorldHel", "string: lengthen by integer")
 
-var str = "Hello World";
-var string = str * 2;
-assert(string == "Hello WorldHello World", "string multiplication")
-remove str, string
+remove s1, s2
 
-var str = "Hello World";
-var string = str / 2
-assert(string == "Hello", "string division")
-remove str, string
+# String subtraction (shorten)
+var s3 = "Hello WorldHel"
+var s4 = s3 - 3
+assert(s4 == "Hello World", "string: shorten by integer")
 
-var str = "Hello World";
-var string = str .. 1;
-assert(string == "Hello World1", "string concatination")
-remove str, string
+remove s3, s4
 
-var str = "Hello World";
-var string = str % 2
-assert(string == "d", "string modulus")
-remove str, string
+# Multiply (repeat)
+var s5 = "Hello"
+var s6 = s5 * 2
+assert(s6 == "HelloHello", "string: repeat * operator")
 
-var str = "Hello World";
-var string = str:5;
-assert(string == "Hello", "string splicing")
-remove str, string
+remove s5, s6
 
-var str = "Hello World";
-var string = str:"d";
-assert(string == "Hello Worl", "string letter splicing")
-remove str, string
+# Division (split/truncate)
+var s7 = "Hello World"
+var s8 = s7 / 2
+assert(s8 == "Hello", "string: division")
 
-var str = "Hello World";
-var string = str:^"W"
-assert(string == "orld", "string last letter splicing")
-remove str, string
+remove s7, s8
 
-var str = "Hello World";
-var string = str:^5;
-assert(string == "World", "string last splicing")
-remove str, string
+# Dot concat or other dot ops (ensure consistent behavior)
+var s9 = "Hello World"
+var s10 = s9 .. 1
+assert(s10 == "Hello World1", "string: .. concatenation with number")
 
+remove s9, s10
+
+# Modulus as character extraction
+var s11 = "Hello World"
+var s12 = s11 % 2
+assert(s12 == "d", "string: modulus returns character at pos")
+
+remove s11, s12
+
+# Splicing by index
+var s13 = "Hello World"
+var s14 = s13:5
+assert(s14 == "Hello", "string: left splice up to index")
+
+remove s13, s14
+
+# Splicing by literal character removal
+var s15 = "Hello World"
+var s16 = s15:"d"
+assert(s16 == "Hello Worl", "string: remove first instance of char")
+
+remove s15, s16
+
+# Last-letter / last-splice forms
+var s17 = "Hello World"
+var s18 = s17:^"W"
+assert(s18 == "orld", "string: last letter splice by literal")
+
+remove s17, s18
+
+var s19 = "Hello World"
+var s20 = s19:^5
+assert(s20 == "World", "string: last splice by count")
+
+remove s19, s20
