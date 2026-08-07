@@ -1,0 +1,21 @@
+module "utils/assert.cherry"
+var arr = [1,2,3]
+assert(len(arr) == 3, "length of array")
+remove arr
+
+var str = "Hello World"
+assert(len(str) == 11, "length of string")
+remove str
+
+var number = 1234567890
+assert(len(number) == 10, "length of int")
+remove int
+
+var float = 12.34
+assert(len(float) == 5, "length of float")
+remove float
+
+var file = @"tmp"
+file<-3 = "test"
+assert(len(file) == 4, "length of file")
+remove file
