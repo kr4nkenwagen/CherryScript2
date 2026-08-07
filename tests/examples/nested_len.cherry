@@ -1,0 +1,5 @@
+# nested expression with len in a comparison
+println(len("abc") == 3)
+# float value example
+var f = 12.34
+println(f)
