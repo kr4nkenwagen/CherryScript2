@@ -1,9 +1,7 @@
 package object
 
-import "../sys"
 import "../types"
 import "core:os"
-import "core:strings"
 
 create_int :: proc(value: int) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
@@ -146,9 +144,9 @@ length :: proc(obj: ^types.object_t) -> (int, types.exit_codes) {
 	}
 	switch (obj.type) {
 	case .INT:
-		fallthrough
+		return int_len(obj.data.(int))
 	case .FLOAT:
-		return 1, .OK
+		return float_len(obj.data.(f32))
 	case .STRING:
 		return len(obj.data.(string)), .OK
 	case .ARRAY:

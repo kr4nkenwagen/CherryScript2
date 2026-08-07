@@ -192,9 +192,7 @@ run :: proc(
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
 			}
-
 		}
-		fmt.printf("%s\n", curr_token.type)
 		if curr_token != nil &&
 		   (curr_token.type == .TERMINATOR ||
 				   curr_token.type == .RIGHT_BRACE ||
@@ -215,4 +213,3 @@ run :: proc(
 	}
 	return prog, types.exit_codes.OK
 }
-import "core:fmt"

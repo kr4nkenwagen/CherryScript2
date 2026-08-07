@@ -6,35 +6,22 @@ import "../types"
 import "core:fmt"
 import "core:strings"
 
-int_len :: proc(num: int) -> (int, types.exit_codes) {
-	if num >= 1000000000 {
-		return 10, .OK
+int_len :: proc(n: int) -> (int, types.exit_codes) {
+	if n == 0 {
+		return 1, .OK
 	}
-	if num >= 100000000 {
-		return 9, .OK
+	count := 0
+	num := abs(n)
+	for num > 0 {
+		num /= 10
+		count += 1
 	}
-	if num >= 10000000 {
-		return 8, .OK
-	}
-	if num >= 1000000 {
-		return 7, .OK
-	}
-	if num >= 100000 {
-		return 6, .OK
-	}
-	if num >= 10000 {
-		return 5, .OK
-	}
-	if num >= 1000 {
-		return 4, .OK
-	}
-	if num >= 100 {
-		return 3, .OK
-	}
-	if num >= 10 {
-		return 2, .OK
-	}
-	return 1, .OK
+	return count, .OK
+}
+
+float_len :: proc(n: f32) -> (int, types.exit_codes) {
+	s := fmt.tprintf("%v", n)
+	return len(s), .OK
 }
 
 int_to_number :: proc(num: int) -> (string, types.exit_codes) {

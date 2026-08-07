@@ -192,7 +192,7 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 			}
 			is_float = true
 		}
-		if is_number(second_char) {
+		if is_number(second_char) || second_char == '.' {
 			_, adv_err := source_code.advance(src)
 			if sys.is_error(adv_err) {
 				return "", adv_err
@@ -709,7 +709,6 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 	return nil, .OK
 }
 
-import "core:fmt"
 run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes) {
 	if src == nil {
 		return nil, .OBJECT_IS_NIL
@@ -723,7 +722,6 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 		character, character_err := source_code.advance(src)
 		if character_err != .EOF_IN_SOURCE_CODE_REACHED {
 			if sys.is_error(character_err) {
-				fmt.printf("%s\n", character)
 				return nil, character_err
 			}
 		}

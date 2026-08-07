@@ -185,7 +185,6 @@ function :: proc(
 	return declaration, types.exit_codes.OK
 }
 
-import "core:fmt"
 passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	declaration, declaration_err := syntax.create()
 	if sys.is_error(declaration_err) {
@@ -196,36 +195,39 @@ passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 		return nil, declaration_err
 	}
 	curr_token, adv_err := token_list.advance(tokens)
-	fmt.printf("*%s\n", curr_token.type)
 	if sys.is_error(adv_err) {
 		return nil, adv_err
 	}
 	branch_err: types.exit_codes
 	declaration.branch, branch_err = program.create(nil)
-	for curr_token.type != .TERMINATOR {
+	for curr_token.type != .RIGHT_PAREN && curr_token.type != .END_OF_FILE {
 		if curr_token.type == .COMMA {
 			curr_token, adv_err = token_list.advance(tokens)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
 			}
 		}
-
-		fmt.printf("--%s\n", curr_token.type)
 		curr_syntax, curr_syntax_err := expression(tokens)
-		tmp, _ := token_list.peek(tokens, 0)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
-		if tmp.type == .RIGHT_PAREN {
-			break
-		}
 		program.add(declaration.branch, curr_syntax)
+		curr_token, curr_syntax_err = token_list.peek(tokens, 0)
+		if curr_token.type == .RIGHT_PAREN {
+			continue
+		}
 		curr_token, adv_err = token_list.advance(tokens)
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
 	}
-	fmt.printf("*END\n")
+	if curr_token.type != .RIGHT_PAREN {
+		return nil, .UNCLOSED_PARENTHESIS
+	}
+	_, adv_err = token_list.advance(tokens)
+	if sys.is_error(adv_err) {
+		return nil, adv_err
+	}
 	return declaration, types.exit_codes.OK
 }
 
