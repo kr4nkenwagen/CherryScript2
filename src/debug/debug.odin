@@ -55,7 +55,7 @@ get_terminal_rows :: proc(raw_fd: posix.FD) -> int {
 	return 24 // Fallback if ioctl fails
 }
 // Called every instruction state to passively record execution history
-prompt_user :: proc(token: ^types.token_t, vmem: ^types.vm_t) {
+prompt_user :: proc(token: ^types.token_t, stck: ^types.vm_t) {
 	if token.type == .END_OF_FILE || token.type == .TERMINATOR {
 		return
 	}
@@ -68,7 +68,7 @@ prompt_user :: proc(token: ^types.token_t, vmem: ^types.vm_t) {
 	snap.syntax = token
 
 	// Deep copy stack objects at this exact point in time
-	curr_stack, _ := vm.current_frame(vmem)
+	curr_stack, _ := vm.current_frame(stck)
 	for i := 0; i < curr_stack.count; i += 1 {
 		original_obj := curr_stack.data[i]
 

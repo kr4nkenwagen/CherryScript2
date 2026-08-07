@@ -8,7 +8,7 @@ import "../vm"
 
 function_identifier :: proc(
 	synt: ^types.syntax_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 ) -> (
 	^types.object_t,
 	types.exit_codes,
@@ -16,10 +16,10 @@ function_identifier :: proc(
 	if synt == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-	return branch(synt, vmem)
+	return branch(synt, stck)
 }
 
-function_declaration :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> types.exit_codes {
+function_declaration :: proc(synt: ^types.syntax_t, stck: ^types.vm_t) -> types.exit_codes {
 	if synt == nil {
 		return .OBJECT_IS_NIL
 	}
@@ -28,7 +28,7 @@ function_declaration :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> types.
 		return funct_err
 	}
 	funct.name = synt.right.token.literal
-	curr_stack, curr_stack_err := vm.current_frame(vmem)
+	curr_stack, curr_stack_err := vm.current_frame(stck)
 	if sys.is_error(curr_stack_err) {
 		return curr_stack_err
 	}

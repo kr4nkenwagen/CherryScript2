@@ -5,7 +5,7 @@ import "../types"
 
 eval_return :: proc(
 	syntax: ^types.syntax_t,
-	vm: ^types.vm_t,
+	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> types.exit_codes {
 	if program == nil {
@@ -20,7 +20,7 @@ eval_return :: proc(
 	if syntax.value == nil {
 		return .OK
 	}
-	val, err := eval_primary_expression(syntax.value, vm, program)
+	val, err := eval_primary_expression(syntax.value, stck, program)
 	if sys.is_error(err) {
 		return err
 	}

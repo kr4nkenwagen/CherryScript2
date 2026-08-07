@@ -5,7 +5,7 @@ import "../types"
 
 eval_key :: proc(
 	syntax: ^types.syntax_t,
-	vm: ^types.vm_t,
+	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
 	^types.object_t,

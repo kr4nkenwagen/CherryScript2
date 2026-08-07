@@ -5,11 +5,10 @@ import "../stack"
 import "../sys"
 import "../types"
 import "../vm"
-import "vendor:stb/rect_pack"
 
 variable_declarations :: proc(
 	synt: ^types.syntax_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 	prog: ^types.program_t,
 ) -> types.exit_codes {
 	if synt == nil {
@@ -18,7 +17,7 @@ variable_declarations :: proc(
 	is_const := synt.token.type == .CONST
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {
-		curr_stack, curr_stack_err := vm.current_frame(vmem)
+		curr_stack, curr_stack_err := vm.current_frame(stck)
 		if sys.is_error(curr_stack_err) {
 			return curr_stack_err
 		}
@@ -29,14 +28,14 @@ variable_declarations :: proc(
 		if obj != nil {
 			return .REDECLARATION_ERROR
 		}
-		obj, obj_err = eval_primary_expression(curr.value, vmem, prog)
+		obj, obj_err = eval_primary_expression(curr.value, stck, prog)
 		if sys.is_error(obj_err) {
 			return obj_err
 		}
 
 		obj.name = curr.token.literal
 		obj.is_const = is_const
-		curr_stack, curr_stack_err = vm.current_frame(vmem)
+		curr_stack, curr_stack_err = vm.current_frame(stck)
 		if sys.is_error(curr_stack_err) {
 			return curr_stack_err
 		}
@@ -51,7 +50,7 @@ variable_declarations :: proc(
 
 eval_variable_remove :: proc(
 	synt: ^types.syntax_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 	prog: ^types.program_t,
 ) -> types.exit_codes {
 	if synt == nil {
@@ -59,7 +58,7 @@ eval_variable_remove :: proc(
 	}
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {
-		curr_stack, curr_stack_err := vm.current_frame(vmem)
+		curr_stack, curr_stack_err := vm.current_frame(stck)
 		if sys.is_error(curr_stack_err) {
 			return curr_stack_err
 		}
@@ -77,7 +76,7 @@ eval_variable_remove :: proc(
 
 eval_array_declaration :: proc(
 	synt: ^types.syntax_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 	prog: ^types.program_t,
 ) -> (
 	^types.object_t,
@@ -92,7 +91,7 @@ eval_array_declaration :: proc(
 	}
 	curr := synt.left
 	for curr != nil {
-		obj, obj_err := eval_primary_expression(curr, vmem, prog)
+		obj, obj_err := eval_primary_expression(curr, stck, prog)
 		if sys.is_error(obj_err) {
 			return nil, obj_err
 		}
@@ -108,32 +107,39 @@ eval_array_declaration :: proc(
 
 eval_array_identifier :: proc(
 	synt: ^types.syntax_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 	obj: ^types.object_t,
 	prog: ^types.program_t,
 ) -> (
 	^types.object_t,
 	types.exit_codes,
 ) {
-	index, index_err := eval_primary_expression(synt.value, vmem, prog)
-	if sys.is_error(index_err) {
-		return nil, index_err
+	if synt.value != nil {
+		index, index_err := eval_primary_expression(synt.value, stck, prog)
+		if sys.is_error(index_err) {
+			return nil, index_err
+		}
+		if index.type != .INT {
+			return nil, .EXPECTED_ARRAY_INDEX
+		}
+		return object.array_get(obj, int(index.data.(int)))
 	}
-	if index.type != .INT {
-		return nil, .EXPECTED_ARRAY_INDEX
+	curr_stack, curr_stack_err := vm.current_frame(stck)
+	if sys.is_error(curr_stack_err) {
+		return nil, curr_stack_err
 	}
-	return object.array_get(obj, int(index.data.(int)))
+	return stack.get(curr_stack, synt.token.literal)
 }
 
 eval_identifier :: proc(
 	synt: ^types.syntax_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 	prog: ^types.program_t,
 ) -> (
 	^types.object_t,
 	types.exit_codes,
 ) {
-	curr_stack, curr_stack_err := vm.current_frame(vmem)
+	curr_stack, curr_stack_err := vm.current_frame(stck)
 	if sys.is_error(curr_stack_err) {
 		return nil, curr_stack_err
 	}
@@ -145,7 +151,7 @@ eval_identifier :: proc(
 		return nil, .IDENTIFIER_DOES_NOT_EXIST
 	}
 	if obj.type == .ARRAY {
-		return eval_array_identifier(synt, vmem, obj, prog)
+		return eval_array_identifier(synt, stck, obj, prog)
 	}
 	if obj.type == .FUNCTION {
 		if synt.left == nil {
@@ -153,7 +159,7 @@ eval_identifier :: proc(
 		}
 		converted_ptr := transmute(^types.syntax_t)obj.data.(rawptr)
 		converted_ptr.value = synt.left
-		return function_identifier(converted_ptr, vmem)
+		return function_identifier(converted_ptr, stck)
 	}
 	return obj, .OK
 }

@@ -7,17 +7,17 @@ import "../types"
 
 primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	if tokens == nil {
-		return nil, types.exit_codes.OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL
 	}
 	curr_token, curr_token_err := token_list.peek(tokens, 0)
 	if sys.is_error(curr_token_err) {
 		return nil, curr_token_err
 	}
 	if curr_token == nil {
-		return nil, types.exit_codes.OK
+		return nil, .OK
 	}
-	if curr_token.type == types.token_type_t.END_OF_FILE {
-		return nil, types.exit_codes.OK
+	if curr_token.type == .END_OF_FILE {
+		return nil, .OK
 	}
 	#partial switch (curr_token.type) {
 	case .LEFT_BRACKET:
@@ -55,15 +55,15 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 			return nil, next_token_err
 		}
 		if next_token == nil || next_token.type != .RIGHT_PAREN {
-			return nil, types.exit_codes.UNCLOSED_PARENTHESIS
+			return nil, .UNCLOSED_PARENTHESIS
 		}
 		_, adv_err = token_list.advance(tokens)
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
-		return synt, types.exit_codes.OK
+		return synt, .OK
 	case:
-		return nil, types.exit_codes.OK
+		return nil, .OK
 	}
 }
 
@@ -295,7 +295,6 @@ equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_co
 	}
 	return left, types.exit_codes.OK
 }
-
 
 assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	left, err := equality(tokens)

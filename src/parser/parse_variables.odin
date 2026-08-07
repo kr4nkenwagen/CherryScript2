@@ -120,6 +120,7 @@ variable_remove :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.
 	}
 	return declaration, .OK
 }
+
 array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	declaration, err := syntax.create()
 	if sys.is_error(err) {
@@ -148,7 +149,7 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 		}
 		prev_syntax.left = curr_syntax
 		prev_syntax = curr_syntax
-		curr_token, curr_token_err = token_list.advance(tokens)
+		curr_token, curr_token_err = token_list.peek(tokens, 0)
 		if sys.is_error(curr_token_err) {
 			return nil, curr_token_err
 		}
@@ -159,7 +160,10 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 	if curr_token.type != .RIGHT_BRACKET {
 		return nil, .BRACKET_NOT_CLOSED
 	}
-	token_list.advance(tokens)
+	_, curr_token_err = token_list.advance(tokens)
+	if sys.is_error(curr_token_err) {
+		return nil, curr_token_err
+	}
 	return declaration, .OK
 }
 

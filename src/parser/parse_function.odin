@@ -200,8 +200,8 @@ passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 	}
 	branch_err: types.exit_codes
 	declaration.branch, branch_err = program.create(nil)
-	for curr_token.type != types.token_type_t.TERMINATOR {
-		if curr_token.type == types.token_type_t.COMMA {
+	for curr_token.type != .TERMINATOR {
+		if curr_token.type == .COMMA {
 			curr_token, adv_err = token_list.advance(tokens)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
@@ -238,7 +238,6 @@ function_in :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit
 		return nil, parent_err
 	}
 	return parent, types.exit_codes.OK
-
 }
 
 function_key :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -259,28 +258,8 @@ function_key :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exi
 		return nil, parent_err
 	}
 	return parent, types.exit_codes.OK
-
 }
 
-function_len :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	parent, parent_err := syntax.create()
-	if sys.is_error(parent_err) {
-		return nil, parent_err
-	}
-	parent.token, parent_err = token_list.peek(tokens, 0)
-	if sys.is_error(parent_err) {
-		return nil, parent_err
-	}
-	_, adv_err := token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	parent.value, parent_err = passed_function_args(tokens)
-	if sys.is_error(parent_err) {
-		return nil, parent_err
-	}
-	return parent, types.exit_codes.OK
-}
 
 function_print :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	parent, parent_err := syntax.create()

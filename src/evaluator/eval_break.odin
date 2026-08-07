@@ -4,7 +4,7 @@ import "../types"
 
 eval_break :: proc(
 	syntax: ^types.syntax_t,
-	vm: ^types.vm_t,
+	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> types.exit_codes {
 	curr_prog := program

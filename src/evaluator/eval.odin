@@ -10,7 +10,7 @@ g_debug: bool
 
 run :: proc(
 	prog: ^types.program_t,
-	vmem: ^types.vm_t,
+	stck: ^types.vm_t,
 	debug_mode: bool,
 ) -> (
 	^types.object_t,
@@ -32,7 +32,7 @@ run :: proc(
 			continue
 		}
 		value_err: types.exit_codes
-		value, value_err = eval_primary_expression(prog.statements[prog.pointer], vmem, prog)
+		value, value_err = eval_primary_expression(prog.statements[prog.pointer], stck, prog)
 		if sys.is_error(value_err) {
 			return nil, value_err
 		}
@@ -44,7 +44,7 @@ run :: proc(
 	return value, .OK
 }
 
-branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, types.exit_codes) {
+branch :: proc(synt: ^types.syntax_t, stck: ^types.vm_t) -> (^types.object_t, types.exit_codes) {
 	if synt == nil {
 		return nil, .OBJECT_IS_NIL
 	}
@@ -56,15 +56,15 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 		if sys.is_error(new_stack_err) {
 			return nil, new_stack_err
 		}
-		vm_err := vm.push_frame(vmem, new_stack, true)
+		vm_err := vm.push_frame(stck, new_stack, true)
 		if sys.is_error(vm_err) {
 			return nil, vm_err
 		}
-		defer vm_err = vm.pop_frame(vmem)
+		defer vm_err = vm.pop_frame(stck)
 		if sys.is_error(vm_err) {
 			return nil, vm_err
 		}
-		value_data, value_data_err := run(synt.branch, vmem, g_debug)
+		value_data, value_data_err := run(synt.branch, stck, g_debug)
 		if sys.is_error(value_data_err) {
 			return nil, value_data_err
 		}
@@ -84,32 +84,32 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 	if sys.is_error(new_stack_err) {
 		return nil, new_stack_err
 	}
-	vm_prev, vm_prev_err := vm.current_frame(vmem)
+	vm_prev, vm_prev_err := vm.current_frame(stck)
 	if sys.is_error(vm_prev_err) {
 		return nil, vm_prev_err
 	}
 	arg_vals: [dynamic]^types.object_t
 	defer delete(arg_vals)
 	for &i in synt.value.branch.statements {
-		arg_val, arg_vals_err := eval_primary_expression(i, vmem, nil)
+		arg_val, arg_vals_err := eval_primary_expression(i, stck, nil)
 		if sys.is_error(arg_vals_err) {
 			return nil, arg_vals_err
 		}
 		append(&arg_vals, arg_val)
 	}
-	vm_err := vm.push_frame(vmem, new_stack, false)
+	vm_err := vm.push_frame(stck, new_stack, false)
 	if sys.is_error(vm_err) {
 		return nil, vm_err
 	}
-	defer vm_err = vm.pop_frame(vmem)
+	defer vm_err = vm.pop_frame(stck)
 	if sys.is_error(vm_err) {
 		return nil, vm_err
 	}
-	_, eval_err := run(synt.args, vmem, g_debug)
+	_, eval_err := run(synt.args, stck, g_debug)
 	if sys.is_error(eval_err) {
 		return nil, eval_err
 	}
-	curr_stack, curr_stack_err := vm.current_frame(vmem)
+	curr_stack, curr_stack_err := vm.current_frame(stck)
 	if sys.is_error(curr_stack_err) {
 		return nil, curr_stack_err
 	}
@@ -121,7 +121,7 @@ branch :: proc(synt: ^types.syntax_t, vmem: ^types.vm_t) -> (^types.object_t, ty
 		curr_stack.data[i].data = arg_vals[idx].data
 		curr_stack.data[i].type = arg_vals[idx].type
 	}
-	value_data, value_data_err := run(synt.branch, vmem, g_debug)
+	value_data, value_data_err := run(synt.branch, stck, g_debug)
 	if sys.is_error(value_data_err) {
 		return nil, value_data_err
 	}

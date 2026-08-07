@@ -23,32 +23,32 @@ copy_references :: proc(target: ^types.stack_t, source: ^types.stack_t) -> types
 }
 
 push_frame :: proc(
-	vm: ^types.vm_t,
+	stck: ^types.vm_t,
 	frame_stack: ^types.stack_t,
 	inherit_stack: bool,
 ) -> types.exit_codes {
-	if vm == nil || frame_stack == nil {
+	if stck == nil || frame_stack == nil {
 		return .OBJECT_IS_NIL
 	}
 
-	if inherit_stack && len(vm.frames) > 0 {
-		curr_frame, err := current_frame(vm)
+	if inherit_stack && len(stck.frames) > 0 {
+		curr_frame, err := current_frame(stck)
 		if err == .OK && curr_frame != nil {
 			copy_references(frame_stack, curr_frame)
 			frame_stack.parent_references = len(frame_stack.data)
 		}
 	}
 
-	append(&vm.frames, frame_stack)
-	vm.count = len(vm.frames)
+	append(&stck.frames, frame_stack)
+	stck.count = len(stck.frames)
 	return .OK
 }
 
-pop_frame :: proc(vm: ^types.vm_t) -> types.exit_codes {
-	if vm == nil || len(vm.frames) == 0 {
+pop_frame :: proc(stck: ^types.vm_t) -> types.exit_codes {
+	if stck == nil || len(stck.frames) == 0 {
 		return .OBJECT_IS_NIL
 	}
-	frame := pop(&vm.frames)
+	frame := pop(&stck.frames)
 	if frame == nil {
 		return .OBJECT_IS_NIL
 	}
@@ -59,17 +59,17 @@ pop_frame :: proc(vm: ^types.vm_t) -> types.exit_codes {
 			}
 		}
 	}
-	vm.count = len(vm.frames)
+	stck.count = len(stck.frames)
 	delete(frame.data)
 	free(frame)
 
-	vm.count = len(vm.frames)
+	stck.count = len(stck.frames)
 	return .OK
 }
 
-current_frame :: proc(vm: ^types.vm_t) -> (^types.stack_t, types.exit_codes) {
-	if vm == nil || len(vm.frames) == 0 {
+current_frame :: proc(stck: ^types.vm_t) -> (^types.stack_t, types.exit_codes) {
+	if stck == nil || len(stck.frames) == 0 {
 		return nil, .OBJECT_IS_NIL
 	}
-	return vm.frames[len(vm.frames) - 1], .OK
+	return stck.frames[len(stck.frames) - 1], .OK
 }
