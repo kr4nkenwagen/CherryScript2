@@ -39,11 +39,18 @@ from_repl :: proc(line: string) -> (^types.source_code_t, types.exit_codes) {
 
 import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exit_codes {
 	src_path := src_path
-	if len(src_path) > 0 && src_path[0] != '/' {
+	if len(src_path) > 0 && src_path[0] != '/' && !os.exists(src_path) {
 		src_path = fmt.tprintf("%s/%s", target.location, src_path)
 	}
+	for i in target.included_sources {
+		if i == src_path {
+			return .OK
+		}
+	}
+	append(&target.included_sources, src_path)
 	file_data, err := os.read_entire_file(src_path, context.allocator)
 	if err != nil {
+		fmt.printf("%s\n", src_path)
 		return types.exit_codes.FAILED_TO_READ_SOURCE_CODE_FILE
 	}
 	defer delete(file_data)
