@@ -10,7 +10,7 @@ assert(len(f) == 5, "numbers: float 12.34 length == 5")
 remove f
 
 var lf = .34
-assert(len(lf) == 3, "numbers: leading-dot .34 length == 3")
+assert(len(lf) == 4, "numbers: leading-dot .34 length == 4(Cherry will add 0 before .")
 remove lf
 
 # Dot vs range operator: ensure .. is not eaten by number parsing

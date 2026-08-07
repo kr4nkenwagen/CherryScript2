@@ -21,6 +21,7 @@ run :: proc(
 	}
 	g_debug = debug_mode
 	prog.pointer = 0
+	prog.exit = false
 	value: ^types.object_t
 	for prog.pointer < prog.length && !prog.exit {
 		if prog.exit {
@@ -97,6 +98,10 @@ branch :: proc(synt: ^types.syntax_t, stck: ^types.vm_t) -> (^types.object_t, ty
 		}
 		append(&arg_vals, arg_val)
 	}
+	fn_obj, fn_obj_err := stack.get(vm_prev, synt.token.literal)
+	if sys.is_error(fn_obj_err) {
+		return nil, fn_obj_err
+	}
 	vm_err := vm.push_frame(stck, new_stack, false)
 	if sys.is_error(vm_err) {
 		return nil, vm_err
@@ -120,6 +125,16 @@ branch :: proc(synt: ^types.syntax_t, stck: ^types.vm_t) -> (^types.object_t, ty
 		idx := i - curr_stack.parent_references
 		curr_stack.data[i].data = arg_vals[idx].data
 		curr_stack.data[i].type = arg_vals[idx].type
+	}
+	if fn_obj != nil && fn_obj.type == .FUNCTION {
+		fn_copy, fn_copy_err := object.copy(fn_obj)
+		if sys.is_error(fn_copy_err) && fn_copy_err != .OBJECT_IS_NIL {
+			return nil, fn_copy_err
+		}
+		push_err := stack.push(curr_stack, fn_copy)
+		if sys.is_error(push_err) {
+			return nil, push_err
+		}
 	}
 	value_data, value_data_err := run(synt.branch, stck, g_debug)
 	if sys.is_error(value_data_err) {

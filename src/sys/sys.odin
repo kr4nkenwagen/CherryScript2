@@ -3,12 +3,15 @@ package sys
 import "../token_list"
 import "../types"
 import "core:fmt"
-import "core:os"
-import "core:path/filepath"
-import "core:strings"
+
+g_has_errored := false
 
 is_error :: proc(exit_code: types.exit_codes, loc := #caller_location) -> bool {
 	if exit_code != types.exit_codes.OK {
+		if g_has_errored {
+			return true
+		}
+		g_has_errored = true
 		fmt.printfln("ERROR! Called from %v (line %v)", loc.procedure, loc.line)
 		fmt.printfln("File: %v:%v:%v", loc.file_path, loc.line, loc.column)
 		return true

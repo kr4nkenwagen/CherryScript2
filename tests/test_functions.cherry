@@ -1,7 +1,6 @@
 module "utils/assert.cherry"
-
 # Functions: declaration, arguments, recursion
-function fact(var n) {
+fn fact(var n) {
   if (n == 0) {
     return 1
   }

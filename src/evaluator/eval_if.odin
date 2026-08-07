@@ -3,8 +3,6 @@ package evaluator
 import "../sys"
 import "../types"
 
-import "core:fmt"
-
 eval_if :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
