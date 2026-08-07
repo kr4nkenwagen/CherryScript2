@@ -3,6 +3,9 @@ package sys
 import "../token_list"
 import "../types"
 import "core:fmt"
+import "core:os"
+import "core:path/filepath"
+import "core:strings"
 
 is_error :: proc(exit_code: types.exit_codes, loc := #caller_location) -> bool {
 	if exit_code != types.exit_codes.OK {
