@@ -381,6 +381,18 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			}
 			return token.create(src, .ERROR, word)
 		}
+		match, err = is_next_word_match(src, "exists")
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			word, word_err := consume_word(src)
+			if sys.is_error(word_err) {
+				return nil, word_err
+			}
+			return token.create(src, .EXISTS, word)
+		}
+
 	case 'f':
 		fallthrough
 	case 'F':
@@ -587,6 +599,17 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 				return nil, word_err
 			}
 			return token.create(src, .RETURN, word)
+		}
+		match, err = is_next_word_match(src, "rm")
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			word, word_err := consume_word(src)
+			if sys.is_error(word_err) {
+				return nil, word_err
+			}
+			return token.create(src, .RM, word)
 		}
 		match, err = is_next_word_match(src, "remove")
 		if sys.is_error(err) {

@@ -26,6 +26,8 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return identifier(tokens)
 	case .LENGTH:
 		return function_len(tokens)
+	case .EXISTS:
+		return function_exists(tokens)
 	case .IN:
 		return function_in(tokens)
 	case .KEY:
@@ -378,6 +380,8 @@ statement :: proc(
 		return error(tokens)
 	case .REMOVE:
 		return variable_remove(tokens)
+	case .RM:
+		return parse_rm(tokens)
 	case:
 		return expression(tokens)
 	}

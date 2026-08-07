@@ -70,6 +70,8 @@ token_type_t :: enum {
 	LENGTH,
 	IN,
 	KEY,
+	RM,
+	EXISTS,
 }
 
 token_t :: struct {

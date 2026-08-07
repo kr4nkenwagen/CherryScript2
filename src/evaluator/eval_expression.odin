@@ -24,6 +24,8 @@ eval_primary_expression :: proc(
 	#partial switch syntax.token.type {
 	case .REMOVE:
 		return nil, eval_variable_remove(syntax, stck, program)
+	case .RM:
+		return nil, eval_file_remove(syntax, stck, program)
 	case .ERROR:
 		return nil, eval_error(syntax, stck, program)
 	case .OUT:
@@ -93,6 +95,13 @@ eval_primary_expression :: proc(
 			return nil, err
 		}
 		return predefined_functions.len_func(val)
+	case .EXISTS:
+		val, err := eval_primary_expression(syntax.value.branch.statements[0], stck, program)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		return predefined_functions.exists_func(val)
+
 	case .RIGHT_ARROW:
 		return eval_file_extraction(syntax, stck, program)
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:
@@ -120,6 +129,11 @@ eval_file_extraction :: proc(
 	index, index_err := eval_primary_expression(syntax.right, stck, program)
 	if sys.is_error(index_err) {
 		return nil, index_err
+	}
+	if syntax.right.token.type == .LENGTH {
+		if syntax.left.token.literal == syntax.right.value.branch.statements[0].token.literal {
+			index.data = index.data.(int) - 1
+		}
 	}
 	content, content_err := object.file_get(file.data.(types.object_file_t).name, index.data.(int))
 	if sys.is_error(content_err) {
@@ -239,12 +253,12 @@ eval_unary_expression :: proc(
 	if syntax == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-	right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(right_err) {
-		return nil, right_err
+	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
+	if sys.is_error(left_err) {
+		return nil, left_err
 	}
-	if right_hand_side != nil && right_hand_side.type == .BOOL {
-		return object.create_bool(!right_hand_side.data.(bool))
+	if left_hand_side != nil && left_hand_side.type == .BOOL {
+		return object.create_bool(!left_hand_side.data.(bool))
 	}
 	return nil, .ILLEGAL_OPERATION
 }

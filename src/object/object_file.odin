@@ -58,6 +58,10 @@ file_get :: proc(filename: string, index: int) -> (string, types.exit_codes) {
 	return result, .OK
 }
 
+file_exists :: proc(filename: string) -> (bool, types.exit_codes) {
+	return os.exists(filename), .OK
+}
+
 file_length :: proc(filepath: string) -> (int, types.exit_codes) {
 	data, read_ok := os.read_entire_file(filepath, context.allocator)
 	if read_ok != os.General_Error.None {
