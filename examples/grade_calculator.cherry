@@ -1,0 +1,40 @@
+# Grade Calculator
+# Demonstrates: functions, loops, array processing, and averaging
+# Real-world use case: Calculate student average grade from test scores
+
+fn calculate_average(var scores) {
+    var sum = 0
+    var count = len(scores)
+    for (var i = 0; i < count; i = i + 1) {
+        sum = sum + scores[i]
+    }
+    return sum / count
+}
+
+fn grade_letter(var average) {
+    if (average >= 90) {
+        return "A"
+    }
+    if (average >= 80) {
+        return "B"
+    }
+    if (average >= 70) {
+        return "C"
+    }
+    if (average >= 60) {
+        return "D"
+    }
+    return "F"
+}
+
+# Student test scores
+var student_name = "Alice"
+var test_scores = [92, 85, 88, 95, 89]
+
+var average = calculate_average(test_scores)
+var letter_grade = grade_letter(average)
+
+println("Student: " + student_name)
+println("Test Scores: " + test_scores)
+println("Average: " + average)
+println("Grade: " + letter_grade)
