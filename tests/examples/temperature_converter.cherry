@@ -1,0 +1,46 @@
+# Temperature Converter
+# Demonstrates: functions, arithmetic, conditionals, user interaction
+# Real-world use case: Convert temperatures between measurement systems
+
+function celsius_to_fahrenheit(var celsius) {
+    return (celsius * 9 / 5) + 32
+}
+
+function fahrenheit_to_celsius(var fahrenheit) {
+    return (fahrenheit - 32) * 5 / 9
+}
+
+function get_conversion_status(var original, var converted) {
+    if (converted > 100) {
+        return "Very Hot"
+    }
+    if (converted > 30) {
+        return "Warm"
+    }
+    if (converted > 0) {
+        return "Cool"
+    }
+    return "Freezing"
+}
+
+# Example conversions
+var temps_celsius = [0, 25, 37, 100]
+
+println("=== Celsius to Fahrenheit Conversions ===")
+for (var i = 0; i < len(temps_celsius); i = i + 1) {
+    var celsius = temps_celsius[i]
+    var fahrenheit = celsius_to_fahrenheit(celsius)
+    var status = get_conversion_status(celsius, fahrenheit)
+    println(celsius + "C = " + fahrenheit + "F (" + status + ")")
+}
+
+# Reverse example
+println()
+println("=== Fahrenheit to Celsius Conversions ===")
+var temps_fahrenheit = [32, 68, 98.6, 212]
+for (var i = 0; i < len(temps_fahrenheit); i = i + 1) {
+    var fahrenheit = temps_fahrenheit[i]
+    var celsius = fahrenheit_to_celsius(fahrenheit)
+    var status = get_conversion_status(celsius, fahrenheit)
+    println(fahrenheit + "F = " + celsius + "C (" + status + ")")
+}

@@ -1,0 +1,67 @@
+# Bank Account Simulator
+# Demonstrates: state management, function composition, logging
+# Real-world use case: Simulate basic banking operations
+
+var account_balance = 1000
+var transaction_log = []
+
+function log_transaction(var action, var amount, var balance) {
+    var log_entry = action + ": " + amount + " | Balance: " + balance
+    transaction_log = transaction_log + [log_entry]
+    return true
+}
+
+function deposit(var amount) {
+    if (amount <= 0) {
+        println("Error: Deposit amount must be positive")
+        return false
+    }
+    account_balance = account_balance + amount
+    log_transaction("DEPOSIT", amount, account_balance)
+    println("Deposited: $" + amount + " | New Balance: $" + account_balance)
+    return true
+}
+
+function withdraw(var amount) {
+    if (amount <= 0) {
+        println("Error: Withdrawal amount must be positive")
+        return false
+    }
+    if (amount > account_balance) {
+        println("Error: Insufficient funds (Balance: $" + account_balance + ")")
+        return false
+    }
+    account_balance = account_balance - amount
+    log_transaction("WITHDRAWAL", amount, account_balance)
+    println("Withdrawn: $" + amount + " | New Balance: $" + account_balance)
+    return true
+}
+
+function check_balance() {
+    println("Current Balance: $" + account_balance)
+    return account_balance
+}
+
+function print_transaction_history() {
+    println()
+    println("=== Transaction History ===")
+    for (var i = 0; i < len(transaction_log); i = i + 1) {
+        println(transaction_log[i])
+    }
+}
+
+# Simulate banking operations
+println("=== Bank Account Simulator ===")
+println("Starting Balance: $" + account_balance)
+println()
+
+# Perform transactions
+deposit(500)
+withdraw(200)
+deposit(150)
+withdraw(50)
+withdraw(1500)
+check_balance()
+
+# Show history
+print_transaction_history()

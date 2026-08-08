@@ -1,7 +1,7 @@
 # Cherry — Language Reference & Project README
 
 ## What Cherry is
-Cherry is a small, interpreted scripting language implemented in Odin. It emphasizes simplicity and readability while providing arrays, strings, functions, and common control flow constructs. This repository contains the Cherry interpreter (lexer, parser, evaluator/VM), a tree-sitter grammar, and several examples.
+Cherry is a small, interpreted scripting language implemented in Odin. It emphasizes simplicity and readability while providing arrays, strings, functions, and common control flow constructs. This [...]
 
 ### Stack
 - **Language(s):** Odin (implementation). Cherry is the language implemented by the repo.
@@ -27,7 +27,7 @@ tests/                         # Example files and tests (examples/)
 ```
 
 **How it fits together**
-- `main` reads source files -> `scan` tokenizes -> `parser` builds AST/program -> `evaluator` runs on a VM/frame stack. Predefined functions live in `predefined_functions` and are invoked by the evaluator.
+- `main` reads source files -> `scan` tokenizes -> `parser` builds AST/program -> `evaluator` runs on a VM/frame stack. Predefined functions live in `predefined_functions` and are invoked by the e[...]
 
 ## How to build and run
 
@@ -60,14 +60,14 @@ Lexical elements
 - Strings: single- or double-quoted string wrappers.
 - Special punctuation: parentheses `()`, braces `{}`, brackets `[]`, comma `,`, dot `.`, semicolon/terminator, colon `:`.
 - Operators: `+ - * / %`, comparisons `== != > < >= <=`, assignment `=`, compound `+=` etc., range/operator `..`, and arrow file ops `->` `<-`.
-- Keywords: `var`, `const`, `function` (FUNCTION token), `if`, `else`, `else if`, `for`, `while`, `return`, `break`, `continue`, `print`, `println`, `len`, `in`, `key`, `out`, `import`, and others implemented in `src/scan/scan.odin`.
+- Keywords: `var`, `const`, `function` (FUNCTION token), `if`, `else`, `else if`, `for`, `while`, `return`, `break`, `continue`, `print`, `println`, `len`, `in`, `key`, `out`, `import`, and others[...]
 
 Types
 - INT, FLOAT, STRING, ARRAY, BOOL, NULL/NIL, FUNCTION, FILE (as seen in object modules and evaluator).
 
 Control flow
 - `if` / `else if` / `else` blocks
-- `for` loops with three-part parentheses (parser reads three line() pieces inside parens) and block body
+- `for` loops with three-part parentheses (parser reads three line() pieces inside parens, separated by semicolons) and block body
 - `while` loops
 - `break` / `continue`
 
@@ -104,10 +104,10 @@ statement    ::= variable_decl
 variable_decl ::= ("var" | "const") identifier { "," (identifier ["=" expression]) } TERMINATOR
 
 function_decl ::= "function" identifier "(" [ function_args ] ")" ("{" program "}" | statement)
-function_args ::= ( ("var" | "const") identifier ["=" expression] { "," ("var" | "const") identifier ["=" expression] } )
+function_args ::= ( ("var" | "const") identifier ["=" expression] { ";" ("var" | "const") identifier ["=" expression] } )
 
 if_statement ::= "if" expression ("{" program "}") { "else if" expression ("{" program "}") } ["else" ("{" program "}")]
-for_statement ::= "for" "(" line "," line "," line ")" "{" program "}"   ; parser treats three line() entries
+for_statement ::= "for" "(" line ";" line ";" line ")" "{" program "}"   ; parser treats three line() entries separated by semicolons
 while_statement ::= "while" "(" expression ")" "{" program "}"
 return_statement ::= "return" expression
 out_statement ::= "out" expression
@@ -160,6 +160,8 @@ Comments and whitespace are ignored by the scanner.
 ## Examples (inline and in tests/examples/)
 Below are runnable examples and the path to example files added under `tests/examples/`.
 
+### Basic Examples
+
 1) Hello world — `tests/examples/hello.cherry`
 ```
 println("Hello, Cherry")
@@ -196,6 +198,32 @@ var f = 12.34
 println(f)
 ```
 
+### Real-World Examples
+
+6) **Grade Calculator** — `tests/examples/grade_calculator.cherry`
+   - Processes student scores and computes average
+   - Uses loops and functions to aggregate data
+   - Demonstrates letter grade assignment logic
+
+7) **CSV Data Processing** — `tests/examples/csv_processor.cherry`
+   - Parses a simple dataset (student names and scores)
+   - Demonstrates array manipulation and filtering
+   - Useful for understanding data aggregation
+
+8) **Temperature Converter** — `tests/examples/temperature_converter.cherry`
+   - Converts temperature between Celsius and Fahrenheit
+   - Shows function composition and conditional logic
+
+9) **Word Frequency Counter** — `tests/examples/word_frequency.cherry`
+   - Counts word occurrences in a text array
+   - Demonstrates array searching and aggregation
+   - Shows practical text analysis techniques
+
+10) **Bank Account Simulator** — `tests/examples/bank_account.cherry`
+    - Simulates basic account operations (deposit, withdraw, balance inquiry)
+    - Shows state management and transaction logging
+    - Demonstrates practical banking logic
+
 To run any example:
 ```
 odin run src/main.odin -- tests/examples/hello.cherry
@@ -207,4 +235,4 @@ odin run src/main.odin -- tests/examples/hello.cherry
 - Evaluator: `src/evaluator/*` executes AST nodes and uses objects from `src/object`.
 
 ## Acknowledgements
-This README and grammar were produced by inspecting the repository source files. For deeper changes (new syntax, new runtime types), please add tests under `tests/examples/` and open a PR with changes to both parser and scanner.
+This README and grammar were produced by inspecting the repository source files. For deeper changes (new syntax, new runtime types), please add tests under `tests/examples/` and open a PR with ch[...]
