@@ -14,7 +14,7 @@ create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 	src.content = content
 	src.length = len(src.content)
 	src.pointer = -1
-	src.line = 0
+	src.line = 1
 	src.column = 0
 	src.is_at_end = false
 	return src, types.exit_codes.OK

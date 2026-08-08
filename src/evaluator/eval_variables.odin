@@ -89,26 +89,18 @@ eval_array_declaration :: proc(
 	if sys.is_error(arr_err) {
 		return nil, arr_err
 	}
-
-	// 1. Start at the first child element
 	curr := synt.left
-
 	for curr != nil {
-		// 2. Use full expression evaluation so nested arrays (and complex items) work recursively
 		obj, obj_err := eval_primary_expression(curr, stck, prog)
 		if sys.is_error(obj_err) {
 			return nil, obj_err
 		}
-
 		obj_err = object.array_set(arr, arr.data.(types.object_array_t).count, obj)
 		if sys.is_error(obj_err) {
 			return nil, obj_err
 		}
-
-		// 3. Advance to the next sibling element in the current array level
 		curr = curr.right
 	}
-
 	return arr, .OK
 }
 
@@ -133,7 +125,20 @@ eval_array_identifier :: proc(
 			return nil, .EXPECTED_ARRAY_INDEX
 		}
 		obj_err: types.exit_codes
+		if index.data.(int) > obj.data.(types.object_array_t).count {
+			null_obj, null_obj_err := object.create_null()
+			if sys.is_error(null_obj_err) {
+				return nil, null_obj_err
+			}
+			obj_err = object.array_set(obj, index.data.(int), null_obj)
+			if sys.is_error(obj_err) {
+				return nil, obj_err
+			}
+		}
 		obj, obj_err = object.array_get(obj, int(index.data.(int)))
+		if sys.is_error(obj_err) {
+			return nil, obj_err
+		}
 	}
 	if curr_synt != synt {
 		return obj, .OK

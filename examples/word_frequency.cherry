@@ -3,48 +3,48 @@
 # Real-world use case: Analyze text to find most common words
 
 fn word_exists_in_list(var word, var word_list) {
-    for (var i = 0; i < len(word_list); i = i + 1) {
-        if (word_list[i] == word) {
-            return true
-        }
+  for (var i = 0; i < len(word_list); i = i + 1) {
+    if (word_list[i] == word) {
+      return true
     }
-    return false
+  }
+  return false
 }
 
 fn count_word_occurrence(var word, var text_array) {
-    var count = 0
-    for (var i = 0; i < len(text_array); i = i + 1) {
-        if (text_array[i] == word) {
-            count = count + 1
-        }
+  var count = 0
+  for (var i = 0; i < len(text_array); i = i + 1) {
+    if (text_array[i] == word) {
+      count = count + 1
     }
-    return count
+  }
+  return count
 }
 
 # Sample text (array of words)
 var text = [
-    "hello", "world", "hello", "cherry",
-    "hello", "world", "cherry", "code",
-    "hello", "programming", "world"
+  "hello", "world", "hello", "cherry",
+  "hello", "world", "cherry", "code",
+  "hello", "programming", "world"
 ]
 
 # Find unique words
 var unique_words = []
 for (var i = 0; i < len(text); i = i + 1) {
-    var word = text[i]
-    if (! word_exists_in_list(word, unique_words)) {
-        unique_words = unique_words + [word]
-    }
+  var word = text[i]
+  if (! word_exists_in_list(word, unique_words)) {
+    var length = len(unique_words)
+    unique_words[length] = word
+  }
 }
-
 println("=== Word Frequency Analysis ===")
-println("Total words: " + len(text))
-println("Unique words: " + len(unique_words))
-println()
+println("Total words: " .. len(text))
+println("Unique words: " .. len(unique_words))
+println("")
 
 # Count and display frequencies
 for (var i = 0; i < len(unique_words); i = i + 1) {
-    var word = unique_words[i]
-    var frequency = count_word_occurrence(word, text)
-    println(word + ": " + frequency + " occurrence(s)")
+  var word = unique_words[i]
+  var frequency = count_word_occurrence(word, text)
+  println(word .. ": " .. frequency .. " occurrence(s)")
 }

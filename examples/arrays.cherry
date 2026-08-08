@@ -1,3 +1,0 @@
-var arr = [1, 2, 3]
-println(len(arr))
-println(arr[0])

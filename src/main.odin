@@ -58,6 +58,10 @@ step_1 :: proc(path: string, args: ^types.arguments_t) -> ^types.token_list_t {
 		token_list.remove(tokens)
 		return nil
 	}
+	if args.debug_level == .EVAL {
+		debug.g_source_code = new(types.source_code_t)
+		debug.g_source_code^ = src^
+	}
 	return tokens
 }
 

@@ -41,7 +41,11 @@ array_get :: proc(arr: ^types.object_t, index: int) -> (^types.object_t, types.e
 		return nil, .ARRAY_OPERATION_ON_NON_ARRAY_OBJECT
 	}
 	if index >= arr.data.(types.object_array_t).count {
-		return nil, .INDEX_OUT_OF_BOUNDS
+		null_obj, null_obj_err := object.create_null()
+		if sys.is_error(null_obj_err) {
+			return nil, null_obj_err
+		}
+		array_set(arr, index, null_obj)
 	}
 	return arr.data.(types.object_array_t).value[index], .OK
 }

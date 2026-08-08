@@ -137,7 +137,7 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 	}
 	prev_syntax: ^types.syntax_t = nil
 	for {
-		if curr_token.type == .COMMA {
+		for curr_token.type == .COMMA || curr_token.type == .TERMINATOR {
 			curr_token, curr_token_err = token_list.advance(tokens)
 			if sys.is_error(curr_token_err) {
 				return nil, curr_token_err
@@ -157,7 +157,7 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 		if sys.is_error(curr_token_err) {
 			return nil, curr_token_err
 		}
-		if curr_token.type != .COMMA {
+		if curr_token.type != .COMMA && curr_token.type != .TERMINATOR {
 			break
 		}
 	}

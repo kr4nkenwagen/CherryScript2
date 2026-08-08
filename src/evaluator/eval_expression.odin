@@ -39,9 +39,6 @@ eval_primary_expression :: proc(
 		return nil, eval_return(syntax, stck, program)
 	case .PRINT_LINE:
 		val, err := eval_primary_expression(syntax.value, stck, program)
-		if sys.is_error(err) {
-			return nil, err
-		}
 		predefined_functions.println(val, g_debug)
 		return nil, .OK
 	case .FOR:
