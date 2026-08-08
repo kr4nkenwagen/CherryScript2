@@ -7,7 +7,7 @@ var tf = @"tests/tmp_file_handler_test"
 rm tf
 
 # create/write and check exists
-file<-3 = "test"
+tf<-3 = "test"
 assert(exists(tf), "file: exists after write")
 
 # remove and verify deletion
@@ -18,7 +18,6 @@ assert(!exists(tf), "file: not exists after rm")
 var file = @"tests/tmp_file_handler_test"
 # ensure empty file
 rm file
-var _ = file  # ensure file variable refers
 file<-3 = "test"
 assert(len(file) == 4, "file: len after writing one line (incl empties)")
 

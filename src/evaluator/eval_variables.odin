@@ -89,17 +89,24 @@ eval_array_declaration :: proc(
 	if sys.is_error(arr_err) {
 		return nil, arr_err
 	}
+
+	// 1. Start at the first child element
 	curr := synt.left
+
 	for curr != nil {
+		// 2. Use full expression evaluation so nested arrays (and complex items) work recursively
 		obj, obj_err := eval_primary_expression(curr, stck, prog)
 		if sys.is_error(obj_err) {
 			return nil, obj_err
 		}
+
 		obj_err = object.array_set(arr, arr.data.(types.object_array_t).count, obj)
 		if sys.is_error(obj_err) {
 			return nil, obj_err
 		}
-		curr = curr.left
+
+		// 3. Advance to the next sibling element in the current array level
+		curr = curr.right
 	}
 
 	return arr, .OK
@@ -114,15 +121,22 @@ eval_array_identifier :: proc(
 	^types.object_t,
 	types.exit_codes,
 ) {
-	if synt.value != nil {
-		index, index_err := eval_primary_expression(synt.value, stck, prog)
+	curr_synt := synt
+	obj := obj
+	for curr_synt.value != nil && obj.type == .ARRAY {
+		curr_synt = curr_synt.value
+		index, index_err := eval_primary_expression(curr_synt, stck, prog)
 		if sys.is_error(index_err) {
 			return nil, index_err
 		}
 		if index.type != .INT {
 			return nil, .EXPECTED_ARRAY_INDEX
 		}
-		return object.array_get(obj, int(index.data.(int)))
+		obj_err: types.exit_codes
+		obj, obj_err = object.array_get(obj, int(index.data.(int)))
+	}
+	if curr_synt != synt {
+		return obj, .OK
 	}
 	curr_stack, curr_stack_err := vm.current_frame(stck)
 	if sys.is_error(curr_stack_err) {

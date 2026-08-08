@@ -135,7 +135,7 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 	if sys.is_error(curr_token_err) {
 		return nil, curr_token_err
 	}
-	prev_syntax := declaration
+	prev_syntax: ^types.syntax_t = nil
 	for {
 		if curr_token.type == .COMMA {
 			curr_token, curr_token_err = token_list.advance(tokens)
@@ -147,7 +147,11 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
-		prev_syntax.left = curr_syntax
+		if declaration.left == nil {
+			declaration.left = curr_syntax
+		} else {
+			prev_syntax.right = curr_syntax
+		}
 		prev_syntax = curr_syntax
 		curr_token, curr_token_err = token_list.peek(tokens, 0)
 		if sys.is_error(curr_token_err) {
@@ -169,6 +173,7 @@ array_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 
 identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	curr_syntax, curr_syntax_err := syntax.create()
+	declaration := curr_syntax
 	if sys.is_error(curr_syntax_err) {
 		return nil, curr_syntax_err
 	}
@@ -187,7 +192,13 @@ identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_
 	if sys.is_error(curr_token_err) {
 		return nil, curr_token_err
 	}
-	if curr_token.type == .LEFT_BRACKET {
+	for curr_token.type == .LEFT_BRACKET {
+		if curr_syntax == nil {
+			curr_syntax, curr_syntax_err = syntax.create()
+			if sys.is_error(curr_syntax_err) {
+				return nil, curr_syntax_err
+			}
+		}
 		curr_token, curr_syntax_err = token_list.advance(tokens)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
@@ -208,7 +219,9 @@ identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
+		curr_syntax = curr_syntax.value
 	}
+	curr_syntax = declaration
 	if curr_token.type == .LEFT_PAREN {
 		curr_syntax.left, curr_syntax_err = passed_function_args(tokens)
 		if sys.is_error(curr_syntax_err) {

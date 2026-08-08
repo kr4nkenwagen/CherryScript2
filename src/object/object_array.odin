@@ -43,6 +43,5 @@ array_get :: proc(arr: ^types.object_t, index: int) -> (^types.object_t, types.e
 	if index >= arr.data.(types.object_array_t).count {
 		return nil, .INDEX_OUT_OF_BOUNDS
 	}
-
 	return arr.data.(types.object_array_t).value[index], .OK
 }

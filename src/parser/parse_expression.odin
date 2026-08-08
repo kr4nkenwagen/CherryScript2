@@ -298,8 +298,41 @@ equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_co
 	return left, types.exit_codes.OK
 }
 
-assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
+and_or :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	left, err := equality(tokens)
+	if sys.is_error(err) {
+		return nil, err
+	}
+	curr_token, curr_token_err := token_list.peek(tokens, 0)
+	if sys.is_error(curr_token_err) {
+		return nil, curr_token_err
+	}
+	for curr_token != nil && (curr_token.type == .AND || curr_token.type == .OR) {
+		op, alloc_err := syntax.create()
+		if sys.is_error(alloc_err) {
+			return nil, alloc_err
+		}
+		op.token = curr_token
+		op.left = left
+		_, adv_err := token_list.advance(tokens)
+		if sys.is_error(adv_err) {
+			return nil, adv_err
+		}
+		op.right, err = equality(tokens)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		left = op
+		curr_token, curr_token_err = token_list.peek(tokens, 0)
+		if sys.is_error(curr_token_err) {
+			return nil, curr_token_err
+		}
+	}
+	return left, types.exit_codes.OK
+}
+
+assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
+	left, err := and_or(tokens)
 	if sys.is_error(err) {
 		return nil, err
 	}
