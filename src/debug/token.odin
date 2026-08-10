@@ -20,7 +20,7 @@ print_token_list :: proc(list: ^types.token_list_t) {
 	)
 
 	fmt.printf(
-		"%s%-5s  │ %-9s │ %-8s │ %-18s │ %s%s\n",
+		"%s%-5s │ %-10s │ %-8s │ %-18s │ %s%s\n",
 		ANSI_GRAY,
 		"INDEX",
 		"LINE",
@@ -30,7 +30,7 @@ print_token_list :: proc(list: ^types.token_list_t) {
 		ANSI_RESET,
 	)
 	fmt.printf(
-		"%s───────┼───────────┼──────────┼────────────────────┼───────────────────%s\n",
+		"%s──────┼────────────┼──────────┼────────────────────┼─────────────────%s\n",
 		ANSI_GRAY,
 		ANSI_RESET,
 	)
@@ -59,7 +59,7 @@ print_token_list :: proc(list: ^types.token_list_t) {
 
 		// %q wraps the literal in quotes and safely escapes newlines (\n) or tabs (\t)
 		fmt.printf(
-			"%s[%03d] %s│ Line: %s%-4d %s│ Col: %s%-3d %s│ %s%-18v %s│ %s%q%s\n",
+			"%s[%03d] %s│ Line: %s%04d %s│ Col: %s%-3d %s│ %s%-18v %s│ %s%q%s\n",
 			ANSI_GRAY,
 			i,
 			ANSI_GRAY,
