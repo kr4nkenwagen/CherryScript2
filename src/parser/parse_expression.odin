@@ -26,6 +26,8 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return identifier(tokens)
 	case .LENGTH:
 		return function_len(tokens)
+	case .TIME:
+		return time(tokens)
 	case .EXISTS:
 		return function_exists(tokens)
 	case .IN:
@@ -68,10 +70,10 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return nil, .OK
 	}
 }
-
 file_operation :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	left, err := primary_expression(tokens)
 	if sys.is_error(err) {
+
 		return nil, err
 	}
 	curr_token, curr_token_err := token_list.peek(tokens, 0)
@@ -99,8 +101,7 @@ file_operation :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.e
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
-
+	return left, .OK
 }
 
 string_operations :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -133,7 +134,7 @@ string_operations :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, type
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 unary :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -155,7 +156,7 @@ unary :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes
 		if sys.is_error(err) {
 			return nil, err
 		}
-		return op, types.exit_codes.OK
+		return op, .OK
 	}
 	return string_operations(tokens)
 }
@@ -191,7 +192,7 @@ multiplicitive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.e
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 additive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -225,7 +226,7 @@ additive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_co
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 comparision :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -262,7 +263,7 @@ comparision :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -295,7 +296,7 @@ equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_co
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 and_or :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -328,7 +329,7 @@ and_or :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_code
 			return nil, curr_token_err
 		}
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -360,9 +361,9 @@ assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_
 		if sys.is_error(err) {
 			return nil, err
 		}
-		return op, types.exit_codes.OK
+		return op, .OK
 	}
-	return left, types.exit_codes.OK
+	return left, .OK
 }
 
 expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
@@ -384,7 +385,7 @@ statement :: proc(
 		return nil, curr_token_err
 	}
 	if curr_token == nil {
-		return nil, types.exit_codes.OK
+		return nil, .OK
 	}
 	#partial switch (curr_token.type) {
 	case .FUNCTION:

@@ -75,6 +75,8 @@ eval_primary_expression :: proc(
 		return eval_identifier(syntax, stck, program)
 	case .STRING_WRAPPER:
 		return object.create_string(syntax.token.literal)
+	case .TIME:
+		return eval_time(syntax, stck, program)
 	case .AT:
 		return object.create_file(syntax.token.literal)
 	case .IN:

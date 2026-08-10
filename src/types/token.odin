@@ -1,6 +1,5 @@
 package types
 
-
 token_type_t :: enum {
 	UNKNOWN_TOKEN,
 	LEFT_PAREN,
@@ -72,6 +71,7 @@ token_type_t :: enum {
 	KEY,
 	RM,
 	EXISTS,
+	TIME,
 }
 
 token_t :: struct {

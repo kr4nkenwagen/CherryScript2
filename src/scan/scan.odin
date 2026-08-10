@@ -269,7 +269,7 @@ match_and_consume :: proc(
 		if sys.is_error(match_err) {
 			return "", false, match_err
 		}
-		return "", true, .OK
+		return word, true, .OK
 	}
 	return "", false, .OK
 }
@@ -383,6 +383,13 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		}
 		if match {
 			return token.create(src, .IF, word)
+		}
+		word, match, err = match_and_consume(src, grammar.IN)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .IN, word)
 		}
 	case 'n':
 		fallthrough
@@ -498,6 +505,13 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		}
 		if match {
 			return token.create(src, .TRUE, word)
+		}
+		word, match, err = match_and_consume(src, grammar.TIME)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .TIME, word)
 		}
 	case 'v':
 		fallthrough
