@@ -9,7 +9,7 @@ import "core:strings"
 create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 	src := new(types.source_code_t)
 	if src == nil {
-		return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED
+		return nil, .MEMORY_ALLOCATION_FAILED
 	}
 	src.content = content
 	src.length = len(src.content)
@@ -17,7 +17,7 @@ create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 	src.line = 1
 	src.column = 0
 	src.is_at_end = false
-	return src, types.exit_codes.OK
+	return src, .OK
 }
 
 from_file :: proc(file: string) -> (^types.source_code_t, types.exit_codes) {
@@ -50,7 +50,7 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 	append(&target.included_sources, src_path)
 	file_data, err := os.read_entire_file(src_path, context.allocator)
 	if err != nil {
-		return types.exit_codes.FAILED_TO_READ_SOURCE_CODE_FILE
+		return .FAILED_TO_READ_SOURCE_CODE_FILE
 	}
 	defer delete(file_data)
 	obj_src := string(file_data)
@@ -64,41 +64,44 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 	strings.write_string(&b, target.content[target.pointer:])
 	target.content = strings.to_string(b)
 	target.length = len(target.content)
-	return types.exit_codes.OK
+	return .OK
 }
 
 advance :: proc(src: ^types.source_code_t) -> (rune, types.exit_codes) {
 	if src == nil {
-		return 0, types.exit_codes.OBJECT_IS_NIL
+		return 0, .OBJECT_IS_NIL
 	}
+  if src.is_at_end {
+		return 0, .EOF_IN_SOURCE_CODE_REACHED
+  }
 	src.pointer += 1
-	if src.pointer == src.length {
+	if src.pointer >= src.length {
 		src.is_at_end = true
-		return 0, types.exit_codes.EOF_IN_SOURCE_CODE_REACHED
+		return 0, .EOF_IN_SOURCE_CODE_REACHED
 	}
 	src.column += 1
 	if src.content[src.pointer] == '\n' {
 		src.line += 1
 		src.column = 0
 	}
-	return rune(src.content[src.pointer]), types.exit_codes.OK
+	return rune(src.content[src.pointer]), .OK
 }
 
 peek :: proc(src: ^types.source_code_t, distance := int(0)) -> (rune, types.exit_codes) {
 	if src == nil {
-		return 0, types.exit_codes.OBJECT_IS_NIL
+		return 0, .OBJECT_IS_NIL
 	}
 	if src.pointer + distance >= src.length || src.pointer + distance < 0 {
-		return 0, types.exit_codes.PEEK_OUT_OF_BOUNDS
+		return 0, .PEEK_OUT_OF_BOUNDS
 	}
-	return rune(src.content[src.pointer + distance]), types.exit_codes.OK
+	return rune(src.content[src.pointer + distance]), .OK
 }
 
 remove :: proc(src: ^types.source_code_t) -> types.exit_codes {
 	if src == nil {
-		return types.exit_codes.OBJECT_IS_NIL
+		return .OBJECT_IS_NIL
 	}
 	delete(src.content)
 	free(src)
-	return types.exit_codes.OK
+	return .OK
 }
