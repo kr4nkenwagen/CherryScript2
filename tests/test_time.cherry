@@ -24,25 +24,21 @@ assert(time.minutes >= 0 && time.minutes <= 59, "time: minute alias range (0-59)
 
 # - Seconds (0-59)
 assert(time.second >= 0 && time.second <= 59, "time: second range (0-59)")
-assert(time.seconds >= 0 && time.seconds <= 59, "time: second alias range (0-59)")
+assert(time.seconds >= 0 && time.seconds <= 59, "time: second alias range (1-59)")
 
 # - Sub-second precisions
 assert(time.millisecond >= 0 && time.millisecond <= 999, "time: millisecond range (0-999)")
 assert(time.microsecond >= 0 && time.microsecond <= 999999, "time: microsecond range (0-999999)")
 assert(time.nanosecond >= 0 && time.nanosecond <= 999999999, "time: nanosecond range (0-999999999)")
 
-# - Weekday (String checks)
+# - Weekday Name (String check)
 var day_name = time.weekday
-assert(
-    day_name == "monday" || day_name == "tuesday" || day_name == "wednesday" || day_name == "thursday" || day_name == "friday" || day_name == "saturday" || day_name == "sunday", "time: weekday returns a valid day name")
+assert( day_name == "monday" || day_name == "tuesday" || day_name == "wednesday" || day_name == "thursday" || day_name == "friday" || day_name == "saturday" || day_name == "sunday", "time: weekday returns a valid day name")
+assert(len(day_name) >= 6 && len(day_name) <= 9, "time: weekday string length between 6 and 9")
 remove day_name
 
-var day_of_week_name = time.day_of_week
-assert( day_of_week_name == "monday" || day_of_week_name == "tuesday" || day_of_week_name == "wednesday" || day_of_week_name == "thursday" || day_of_week_name == "friday" || day_of_week_name == "saturday" || day_of_week_name == "sunday", "time: day_of_week alias returns a valid day name")
-remove day_of_week_name
-
-# Check that string representation length is reasonable (e.g. "friday" is 6, "wednesday" is 9)
-assert(len(time.weekday) >= 6 && len(time.weekday) <= 9, "time: weekday string length between 6 and 9")
+# - Day of Week (Numeric check: 1-7)
+assert(time.day_of_week >= 1 && time.day_of_week <= 7, "time: day_of_week range (1-7)")
 
 # - Day of Year
 assert(time.day_of_year >= 1 && time.day_of_year <= 366, "time: day_of_year range (1-366)")

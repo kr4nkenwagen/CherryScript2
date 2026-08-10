@@ -46,9 +46,28 @@ eval_time :: proc(
 
 	case "nanosecond", "nanoseconds", "nano":
 		return object.create_int(int(dt.nano))
-	case "weekday", "day_of_week":
+	case "weekday":
 		weekday := calculate_day_of_week(int(dt.year), int(dt.month), int(dt.day))
 		return object.create_string(weekday)
+	case "day_of_week":
+		weekday := calculate_day_of_week(int(dt.year), int(dt.month), int(dt.day))
+		switch (weekday) {
+		case "monday":
+			return object.create_int(0)
+		case "tuesday":
+			return object.create_int(1)
+		case "wednesday":
+			return object.create_int(2)
+		case "thursday":
+			return object.create_int(3)
+		case "friday":
+			return object.create_int(4)
+		case "saturday":
+			return object.create_int(5)
+		case "sunday":
+			return object.create_int(6)
+		}
+		return object.create_null()
 	case "day_of_year", "year_day":
 		doy := calculate_day_of_year(int(dt.year), int(dt.month), int(dt.day))
 		return object.create_int(doy)
