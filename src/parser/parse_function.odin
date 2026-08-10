@@ -76,7 +76,7 @@ function_args :: proc(
 			}
 			curr_syntax.value.token, curr_token_err = token.create(
 				nil,
-				types.token_type_t.NIL,
+				types.token_type_t.NULL,
 				"null",
 			)
 			if sys.is_error(curr_token_err) {

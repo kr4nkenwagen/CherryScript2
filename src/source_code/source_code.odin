@@ -67,27 +67,29 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 	return .OK
 }
 
-advance :: proc(src: ^types.source_code_t) -> (rune, types.exit_codes) {
+advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_codes) {
 	if src == nil {
 		return 0, .OBJECT_IS_NIL
 	}
-  if src.is_at_end {
-		return 0, .EOF_IN_SOURCE_CODE_REACHED
-  }
-	src.pointer += 1
-	if src.pointer >= src.length {
-		src.is_at_end = true
-		return 0, .EOF_IN_SOURCE_CODE_REACHED
-	}
-	src.column += 1
-	if src.content[src.pointer] == '\n' {
-		src.line += 1
-		src.column = 0
+	for i := 0; i < count; i += 1 {
+		if src.is_at_end {
+			return 0, .EOF_IN_SOURCE_CODE_REACHED
+		}
+		src.pointer += 1
+		if src.pointer >= src.length {
+			src.is_at_end = true
+			return 0, .EOF_IN_SOURCE_CODE_REACHED
+		}
+		src.column += 1
+		if src.content[src.pointer] == '\n' {
+			src.line += 1
+			src.column = 0
+		}
 	}
 	return rune(src.content[src.pointer]), .OK
 }
 
-peek :: proc(src: ^types.source_code_t, distance := int(0)) -> (rune, types.exit_codes) {
+peek :: proc(src: ^types.source_code_t, distance: int = 0) -> (rune, types.exit_codes) {
 	if src == nil {
 		return 0, .OBJECT_IS_NIL
 	}

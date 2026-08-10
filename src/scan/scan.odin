@@ -1,5 +1,6 @@
 package scan
 
+import "../grammar"
 import "../source_code"
 import "../sys"
 import "../token"
@@ -13,7 +14,7 @@ consume_comment :: proc(src: ^types.source_code_t) -> types.exit_codes {
 		return .OBJECT_IS_NIL
 	}
 	char, peek_err := source_code.peek(src, 0)
-	if char != '#' {
+	if char != grammar.COMMENT {
 		return .UNEXPECTED_CHARACTER
 	}
 	if sys.is_error(peek_err) {
@@ -24,7 +25,7 @@ consume_comment :: proc(src: ^types.source_code_t) -> types.exit_codes {
 		if sys.is_error(adv_err) {
 			return adv_err
 		}
-		if c == '\n' || c == '#' {
+		if c == grammar.NEWLINE || c == grammar.COMMENT {
 			return .OK
 		}
 	}
@@ -39,10 +40,11 @@ consume_string :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 	if sys.is_error(peek_err) {
 		return "", peek_err
 	}
-	if start_char != '\'' && start_char != '"' {
+	if start_char != grammar.CHAR_WRAPPER && start_char != grammar.STRING_WRAPPER {
 		return "", .UNEXPECTED_CHARACTER
 	}
-	exit_char := start_char == '"' ? '"' : '\''
+	exit_char :=
+		start_char == grammar.STRING_WRAPPER ? grammar.STRING_WRAPPER : grammar.CHAR_WRAPPER
 	size := int(1)
 	is_closed := false
 	for ; src.pointer + size <= src.length; size += 1 {
@@ -240,7 +242,7 @@ consume_identifier :: proc(src: ^types.source_code_t) -> (^types.token_t, types.
 	if sys.is_error(peek_err) {
 		return nil, peek_err
 	}
-	if unicode.is_alpha(prev_char) {
+	if unicode.is_alpha(prev_char) || is_number(prev_char) {
 		return nil, .UNEXPECTED_CHARACTER
 	}
 	word, err := consume_word(src)
@@ -248,6 +250,28 @@ consume_identifier :: proc(src: ^types.source_code_t) -> (^types.token_t, types.
 		return nil, err
 	}
 	return token.create(src, .IDENTIFIER, word)
+}
+
+match_and_consume :: proc(
+	src: ^types.source_code_t,
+	match_word: string,
+) -> (
+	string,
+	bool,
+	types.exit_codes,
+) {
+	match, err := is_next_word_match(src, match_word)
+	if sys.is_error(err) {
+		return "", false, err
+	}
+	if match {
+		word, match_err := consume_word(src)
+		if sys.is_error(match_err) {
+			return "", false, match_err
+		}
+		return "", true, .OK
+	}
+	return "", false, .OK
 }
 
 consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, types.exit_codes) {
@@ -268,221 +292,112 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		return nil, peek_err
 	}
 	switch (character) {
-	case 'a':
-		fallthrough
-	case 'A':
-		match, err := is_next_word_match(src, "and")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, err := consume_word(src)
-			if sys.is_error(err) {
-				return nil, err
-			}
-			return token.create(src, .AND, word)
-		}
 	case 'b':
 		fallthrough
 	case 'B':
-		match, err := is_next_word_match(src, "break")
+		word, match, err := match_and_consume(src, grammar.BREAK)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, err := consume_word(src)
-			if sys.is_error(err) {
-				return nil, err
-			}
 			return token.create(src, .BREAK, word)
 		}
 	case 'c':
 		fallthrough
 	case 'C':
-		match, err := is_next_word_match(src, "class")
+		word, match, err := match_and_consume(src, grammar.CONST)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, match_err := consume_word(src)
-			if sys.is_error(match_err) {
-				return nil, match_err
-			}
-			return token.create(src, .CLASS, word)
-		}
-		match, err = is_next_word_match(src, "const")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, match_err := consume_word(src)
-			if sys.is_error(match_err) {
-				return nil, match_err
-			}
 			return token.create(src, .CONST, word)
 		}
-		match, err = is_next_word_match(src, "continue")
+		word, match, err = match_and_consume(src, grammar.CONTINUE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, match_err := consume_word(src)
-			if sys.is_error(match_err) {
-				return nil, match_err
-			}
 			return token.create(src, .CONTINUE, word)
 		}
 	case 'e':
 		fallthrough
 	case 'E':
-		match, err := is_next_word_match(src, "else")
+		word, match, err := match_and_consume(src, grammar.ELSE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			first_char, first_char_err := source_code.peek(src, 5)
-			if sys.is_error(first_char_err) && first_char_err != .PEEK_OUT_OF_BOUNDS {
-				return nil, first_char_err
-			}
-			second_char, second_char_err := source_code.peek(src, 6)
-			if sys.is_error(second_char_err) && second_char_err != .PEEK_OUT_OF_BOUNDS {
-				return nil, second_char_err
-			}
-			if first_char == 'i' && second_char == 'f' {
-				str1, str1_err := consume_word(src)
-				if sys.is_error(str1_err) {
-					return nil, str1_err
-				}
-				_, adv_err := source_code.advance(src)
-				if sys.is_error(adv_err) {
-					return nil, adv_err
-				}
-				str2, str2_err := consume_word(src)
-				if sys.is_error(str2_err) {
-					return nil, str2_err
-				}
-				word := strings.concatenate({str1, string(" "), str2})
-				return token.create(src, .ELSE_IF, word)
-			}
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .ELSE, word)
 		}
-		match, err = is_next_word_match(src, "err")
+		word, match, err = match_and_consume(src, grammar.ELSE_IF)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
+			return token.create(src, .ELSE_IF, word)
+		}
+		word, match, err = match_and_consume(src, grammar.ERROR)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
 			return token.create(src, .ERROR, word)
 		}
-		match, err = is_next_word_match(src, "exists")
+		word, match, err = match_and_consume(src, grammar.EXISTS)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .EXISTS, word)
 		}
-
 	case 'f':
 		fallthrough
 	case 'F':
-		match, err := is_next_word_match(src, "for")
+		word, match, err := match_and_consume(src, grammar.FOR)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .FOR, word)
 		}
-		match, err = is_next_word_match(src, "false")
+		word, match, err = match_and_consume(src, grammar.FALSE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .FALSE, word)
 		}
-		match, err = is_next_word_match(src, "fn")
+		word, match, err = match_and_consume(src, grammar.FUNCTION)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .FUNCTION, word)
 		}
 	case 'i':
 		fallthrough
 	case 'I':
-		match, err := is_next_word_match(src, "if")
+		word, match, err := match_and_consume(src, grammar.IF)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .IF, word)
-		}
-		match, err = is_next_word_match(src, "in")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .IN, word)
 		}
 	case 'n':
 		fallthrough
 	case 'N':
-		match, err := is_next_word_match(src, "null")
+		word, match, err := match_and_consume(src, grammar.NULL)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .NIL, word)
-		}
-		match, err = is_next_word_match(src, "nil")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .NIL, word)
+			return token.create(src, .NULL, word)
 		}
 	case 'm':
 		fallthrough
 	case 'M':
-		match, err := is_next_word_match(src, "module")
+		match, err := is_next_word_match(src, grammar.MODULE)
 		if sys.is_error(err) {
 			return nil, err
 		}
@@ -491,13 +406,15 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			if sys.is_error(word_err) {
 				return nil, word_err
 			}
-			source_code.advance(src)
-			source_code.advance(src)
+			_, adv_err := source_code.advance(src, 2)
+			if sys.is_error(adv_err) {
+				return nil, adv_err
+			}
 			path, path_err := consume_string(src)
 			if sys.is_error(path_err) {
 				return nil, .PATH_CANT_BE_PARSED
 			}
-			_, adv_err := source_code.advance(src)
+			_, adv_err = source_code.advance(src)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
 			}
@@ -507,75 +424,37 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			}
 			return token.create(src, .TERMINATOR, "")
 		}
-	case 'k':
-		fallthrough
-	case 'K':
-		match, err := is_next_word_match(src, "key")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .KEY, word)
-		}
 	case 'o':
 		fallthrough
 	case 'O':
-		match, err := is_next_word_match(src, "or")
+		word, match, err := match_and_consume(src, "out")
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .OR, word)
-		}
-		match, err = is_next_word_match(src, "out")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, err
-			}
 			return token.create(src, .OUT, word)
 		}
 	case 'l':
 		fallthrough
 	case 'L':
-		match, err := is_next_word_match(src, "len")
+		word, match, err := match_and_consume(src, grammar.LENGTH)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .LENGTH, word)
 		}
-
 	case 'p':
 		fallthrough
 	case 'P':
-		match, err := is_next_word_match(src, "println")
+		word, match, err := match_and_consume(src, grammar.PRINT_LINE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .PRINT_LINE, word)
 		}
-		match, err = is_next_word_match(src, "print")
+		word, match, err = match_and_consume(src, grammar.PRINT)
 		if sys.is_error(err) {
 			return nil, err
 		}
@@ -589,104 +468,55 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 	case 'r':
 		fallthrough
 	case 'R':
-		match, err := is_next_word_match(src, "return")
+		word, match, err := match_and_consume(src, grammar.RETURN)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .RETURN, word)
 		}
-		match, err = is_next_word_match(src, "rm")
+		word, match, err = match_and_consume(src, grammar.FILE_REMOVE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .RM, word)
 		}
-		match, err = is_next_word_match(src, "remove")
+		word, match, err = match_and_consume(src, grammar.REMOVE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .REMOVE, word)
-		}
-	case 's':
-		fallthrough
-	case 'S':
-		match, err := is_next_word_match(src, "super")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .SUPER, word)
 		}
 	case 't':
 		fallthrough
 	case 'T':
-		match, err := is_next_word_match(src, "this")
+		word, match, err := match_and_consume(src, grammar.TRUE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
-			return token.create(src, .THIS, word)
-		}
-		match, err = is_next_word_match(src, "true")
-		if sys.is_error(err) {
-			return nil, err
-		}
-		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .TRUE, word)
 		}
 	case 'v':
 		fallthrough
 	case 'V':
-		match, err := is_next_word_match(src, "var")
+		word, match, err := match_and_consume(src, grammar.VAR)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .VAR, word)
 		}
 	case 'w':
 		fallthrough
 	case 'W':
-		match, err := is_next_word_match(src, "while")
+		word, match, err := match_and_consume(src, grammar.WHILE)
 		if sys.is_error(err) {
 			return nil, err
 		}
 		if match {
-			word, word_err := consume_word(src)
-			if sys.is_error(word_err) {
-				return nil, word_err
-			}
 			return token.create(src, .WHILE, word)
 		}
 	case '&':
@@ -695,11 +525,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			return nil, second_char_err
 		}
 		if second_char == '&' {
-			_, adv_err := source_code.advance(src)
-			if sys.is_error(adv_err) {
-				return nil, adv_err
-			}
-			_, adv_err = source_code.advance(src)
+			_, adv_err := source_code.advance(src, 2)
 			if sys.is_error(adv_err) {
 				return nil, adv_err
 			}
@@ -711,11 +537,7 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			return nil, second_char_err
 		}
 		if second_char == '|' {
-			_, err := source_code.advance(src)
-			if sys.is_error(err) {
-				return nil, err
-			}
-			_, err = source_code.advance(src)
+			_, err := source_code.advance(src, 2)
 			if sys.is_error(err) {
 				return nil, err
 			}

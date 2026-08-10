@@ -83,7 +83,7 @@ eval_primary_expression :: proc(
 		return predefined_functions.key_func()
 	case .NUMBER:
 		return eval_number(syntax)
-	case .NIL:
+	case .NULL:
 		return object.create_null()
 	case .TRUE:
 		return object.create_bool(true)

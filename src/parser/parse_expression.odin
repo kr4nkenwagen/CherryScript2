@@ -32,7 +32,7 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return function_in(tokens)
 	case .KEY:
 		return function_key(tokens)
-	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NIL, .AT:
+	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NULL, .AT:
 		synt, err := syntax.create()
 		if sys.is_error(err) {
 			return nil, err

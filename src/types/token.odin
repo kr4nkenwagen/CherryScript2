@@ -37,7 +37,7 @@ token_type_t :: enum {
 	FUNCTION,
 	FOR,
 	IF,
-	NIL,
+	NULL,
 	OR,
 	PRINT,
 	RETURN,

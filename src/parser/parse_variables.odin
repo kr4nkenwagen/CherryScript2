@@ -60,7 +60,7 @@ variable_declaration :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, t
 			if sys.is_error(curr_syntax_err) {
 				return nil, curr_syntax_err
 			}
-			curr_syntax.value.token, curr_syntax_err = token.create(nil, .NIL, "null")
+			curr_syntax.value.token, curr_syntax_err = token.create(nil, .NULL, "null")
 			if sys.is_error(curr_syntax_err) {
 				return nil, curr_syntax_err
 			}
