@@ -1,0 +1,49 @@
+module "utils/assert.cherry"
+
+# Test: time module properties and boundary checks
+
+# - Year (reasonable calendar year)
+assert(time.year >= 2024, "time: year is reasonable (>= 2024)")
+assert(time.years >= 2024, "time: year alias (years >= 2024)")
+
+# - Month (1-12)
+assert(time.month >= 1 && time.month <= 12, "time: month range (1-12)")
+assert(time.months >= 1 && time.months <= 12, "time: month alias range (1-12)")
+
+# - Day of month (1-31)
+assert(time.day >= 1 && time.day <= 31, "time: day range (1-31)")
+assert(time.days >= 1 && time.days <= 31, "time: day alias range (1-31)")
+
+# - Hours (0-23)
+assert(time.hour >= 0 && time.hour <= 23, "time: hour range (0-23)")
+assert(time.hours >= 0 && time.hours <= 23, "time: hour alias range (0-23)")
+
+# - Minutes (0-59)
+assert(time.minute >= 0 && time.minute <= 59, "time: minute range (0-59)")
+assert(time.minutes >= 0 && time.minutes <= 59, "time: minute alias range (0-59)")
+
+# - Seconds (0-59)
+assert(time.second >= 0 && time.second <= 59, "time: second range (0-59)")
+assert(time.seconds >= 0 && time.seconds <= 59, "time: second alias range (0-59)")
+
+# - Sub-second precisions
+assert(time.millisecond >= 0 && time.millisecond <= 999, "time: millisecond range (0-999)")
+assert(time.microsecond >= 0 && time.microsecond <= 999999, "time: microsecond range (0-999999)")
+assert(time.nanosecond >= 0 && time.nanosecond <= 999999999, "time: nanosecond range (0-999999999)")
+
+# - Weekday (String checks)
+var day_name = time.weekday
+assert(
+    day_name == "monday" || day_name == "tuesday" || day_name == "wednesday" || day_name == "thursday" || day_name == "friday" || day_name == "saturday" || day_name == "sunday", "time: weekday returns a valid day name")
+remove day_name
+
+var day_of_week_name = time.day_of_week
+assert( day_of_week_name == "monday" || day_of_week_name == "tuesday" || day_of_week_name == "wednesday" || day_of_week_name == "thursday" || day_of_week_name == "friday" || day_of_week_name == "saturday" || day_of_week_name == "sunday", "time: day_of_week alias returns a valid day name")
+remove day_of_week_name
+
+# Check that string representation length is reasonable (e.g. "friday" is 6, "wednesday" is 9)
+assert(len(time.weekday) >= 6 && len(time.weekday) <= 9, "time: weekday string length between 6 and 9")
+
+# - Day of Year
+assert(time.day_of_year >= 1 && time.day_of_year <= 366, "time: day_of_year range (1-366)")
+assert(time.year_day >= 1 && time.year_day <= 366, "time: year_day alias range (1-366)")
