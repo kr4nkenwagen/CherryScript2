@@ -34,10 +34,10 @@ module.exports = grammar({
 
     // Based on consume_reserved_word
     keyword: $ => choice(
-      'and', 'break', 'class', 'const', 'continue', 'else', 'err',
-      'for', 'false', 'fn', 'if', 'null', 'nil', 'module', 'or', 'out',
-      'println', 'print', 'return', 'remove', 'super', 'this', 'true', 
-      'var', 'while', 'len', 'in', 'key', "rm", "exists", "sleep", "time"
+      'break', 'const', 'continue', 'else', 'err', 'for', 'false',
+      'fn', 'if', 'null', 'module', 'out', 'println', 'print',
+      'return', 'remove', 'true', 'var', 'while', 'len', 'in',
+      "rm", "exists", "sleep", "time", "key"
     ),
 
     // Based on your switch statements for operators
