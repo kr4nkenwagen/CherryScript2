@@ -319,6 +319,14 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		if match {
 			return token.create(src, .CONTINUE, word)
 		}
+		word, match, err = match_and_consume(src, grammar.CLEAR)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .CLEAR, word)
+		}
+
 	case 'e':
 		fallthrough
 	case 'E':
