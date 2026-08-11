@@ -472,6 +472,16 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 			}
 			return token.create(src, .PRINT, word)
 		}
+	case 's':
+		fallthrough
+	case 'S':
+		word, match, err := match_and_consume(src, grammar.SLEEP)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .SLEEP, word)
+		}
 	case 'r':
 		fallthrough
 	case 'R':

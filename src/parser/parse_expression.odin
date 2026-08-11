@@ -410,6 +410,8 @@ statement :: proc(
 		return break_statement(tokens)
 	case .OUT:
 		return out(tokens)
+	case .SLEEP:
+		return parse_sleep(tokens)
 	case .ERROR:
 		return error(tokens)
 	case .REMOVE:

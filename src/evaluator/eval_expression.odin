@@ -31,6 +31,8 @@ eval_primary_expression :: proc(
 		return nil, eval_error(syntax, stck, program)
 	case .OUT:
 		return nil, eval_out(syntax, stck, program)
+	case .SLEEP:
+		return nil, eval_sleep(syntax, stck, program)
 	case .CONTINUE:
 		return nil, eval_continue(syntax, stck, program)
 	case .BREAK:

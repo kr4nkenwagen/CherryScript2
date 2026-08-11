@@ -37,7 +37,7 @@ module.exports = grammar({
       'and', 'break', 'class', 'const', 'continue', 'else', 'err',
       'for', 'false', 'fn', 'if', 'null', 'nil', 'module', 'or', 'out',
       'println', 'print', 'return', 'remove', 'super', 'this', 'true', 
-      'var', 'while', 'len', 'in', 'key', "rm", "exists"
+      'var', 'while', 'len', 'in', 'key', "rm", "exists", "sleep", "time"
     ),
 
     // Based on your switch statements for operators

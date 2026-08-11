@@ -72,6 +72,7 @@ token_type_t :: enum {
 	RM,
 	EXISTS,
 	TIME,
+	SLEEP,
 }
 
 token_t :: struct {
