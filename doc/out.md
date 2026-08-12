@@ -1,3 +1,3 @@
 # OUT
 ## Overview
-Shorthand for [`print`](print,d)
+Shorthand for [`print`](print.md)
