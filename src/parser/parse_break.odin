@@ -5,7 +5,7 @@ import "../sys"
 import "../token_list"
 import "../types"
 
-break_statement :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
+parse_break :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	curr_syntax, curr_syntax_err := syntax.create()
 	if sys.is_error(curr_syntax_err) {
 		return nil, curr_syntax_err
@@ -20,5 +20,3 @@ break_statement :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.
 	}
 	return curr_syntax, types.exit_codes.OK
 }
-
-

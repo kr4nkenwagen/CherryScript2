@@ -25,15 +25,15 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 	case .IDENTIFIER:
 		return identifier(tokens)
 	case .LENGTH:
-		return function_len(tokens)
+		return parse_len(tokens)
 	case .TIME:
-		return time(tokens)
+		return parse_time(tokens)
 	case .EXISTS:
-		return function_exists(tokens)
+		return parse_exists(tokens)
 	case .IN:
-		return function_in(tokens)
+		return parse_in(tokens)
 	case .KEY:
-		return function_key(tokens)
+		return parse_key(tokens)
 	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NULL, .AT:
 		synt, err := syntax.create()
 		if sys.is_error(err) {
@@ -389,33 +389,33 @@ statement :: proc(
 	}
 	#partial switch (curr_token.type) {
 	case .FUNCTION:
-		return function(tokens, parent)
+		return parse_function(tokens, parent)
 	case .FOR:
-		return for_statement(tokens, parent)
+		return parse_for(tokens, parent)
 	case .IF:
-		return if_statement(tokens, parent)
+		return parse_if(tokens, parent)
 	case .PRINT:
-		return function_print(tokens)
+		return parse_print(tokens)
 	case .RETURN:
-		return return_statement(tokens)
+		return parse_return(tokens)
 	case .VAR, .CONST:
 		return variable_declaration(tokens)
 	case .WHILE:
-		return while(tokens, parent)
+		return parse_while(tokens, parent)
 	case .PRINT_LINE:
-		return function_print_line(tokens)
+		return parse_println(tokens)
 	case .CONTINUE:
-		return continue_statement(tokens)
+		return parse_continue(tokens)
 	case .BREAK:
-		return break_statement(tokens)
+		return parse_break(tokens)
 	case .OUT:
-		return out(tokens)
+		return parse_out(tokens)
 	case .CLEAR:
 		return parse_clear(tokens)
 	case .SLEEP:
 		return parse_sleep(tokens)
 	case .ERROR:
-		return error(tokens)
+		return parse_error(tokens)
 	case .REMOVE:
 		return variable_remove(tokens)
 	case .RM:

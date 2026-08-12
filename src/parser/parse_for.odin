@@ -5,7 +5,7 @@ import "../sys"
 import "../token_list"
 import "../types"
 
-for_statement :: proc(
+parse_for :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
