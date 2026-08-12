@@ -10,6 +10,7 @@ variable_declarations :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
 	prog: ^types.program_t,
+	global: bool = false,
 ) -> types.exit_codes {
 	if synt == nil {
 		return .OBJECT_IS_NIL
@@ -39,9 +40,16 @@ variable_declarations :: proc(
 		if sys.is_error(curr_stack_err) {
 			return curr_stack_err
 		}
-		stack_err := stack.push(curr_stack, obj)
-		if sys.is_error(stack_err) {
-			return stack_err
+		if !global {
+			stack_err := stack.push(curr_stack, obj)
+			if sys.is_error(stack_err) {
+				return stack_err
+			}
+		} else {
+			stack_err := stack.push(curr_stack.global_data, obj)
+			if sys.is_error(stack_err) {
+				return stack_err
+			}
 		}
 		curr = curr.left
 	}

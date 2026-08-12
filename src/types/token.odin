@@ -74,6 +74,7 @@ token_type_t :: enum {
 	TIME,
 	SLEEP,
 	CLEAR,
+	GLOBAL,
 }
 
 token_t :: struct {

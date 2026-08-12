@@ -1,12 +1,18 @@
 package vm
 
 import "../stack"
+import "../sys"
 import "../types"
 
 create :: proc() -> (^types.vm_t, types.exit_codes) {
 	vm := new(types.vm_t)
 	if vm == nil {
 		return nil, .OBJECT_IS_NIL
+	}
+	global_err: types.exit_codes
+	vm.global_objects, global_err = stack.create()
+	if sys.is_error(global_err) {
+		return nil, global_err
 	}
 	vm.count = 0
 	return vm, .OK
@@ -71,5 +77,24 @@ current_frame :: proc(stck: ^types.vm_t) -> (^types.stack_t, types.exit_codes) {
 	if stck == nil || len(stck.frames) == 0 {
 		return nil, .OBJECT_IS_NIL
 	}
-	return stck.frames[len(stck.frames) - 1], .OK
+	stack := stck.frames[len(stck.frames) - 1]
+	if stack.global_data == nil {
+		stack.global_data = stck.global_objects
+	}
+	return stack, .OK
+}
+
+destroy :: proc(vm: ^types.vm_t) -> types.exit_codes {
+	if vm == nil {
+		return .OBJECT_IS_NIL
+	}
+	for len(vm.frames) > 0 {
+		pop_frame(vm)
+	}
+	delete(vm.frames)
+	if vm.global_objects != nil {
+		stack.remove(vm.global_objects)
+	}
+	free(vm)
+	return .OK
 }

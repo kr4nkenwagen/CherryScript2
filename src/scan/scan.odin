@@ -326,7 +326,6 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		if match {
 			return token.create(src, .CLEAR, word)
 		}
-
 	case 'e':
 		fallthrough
 	case 'E':
@@ -449,7 +448,6 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		if match {
 			return token.create(src, .KEY, word)
 		}
-
 	case 'o':
 		fallthrough
 	case 'O':
@@ -561,6 +559,16 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		}
 		if match {
 			return token.create(src, .WHILE, word)
+		}
+	case 'g':
+		fallthrough
+	case 'G':
+		word, match, err := match_and_consume(src, grammar.GLOBAL)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .GLOBAL, word)
 		}
 	case '&':
 		second_char, second_char_err := source_code.peek(src, 1)

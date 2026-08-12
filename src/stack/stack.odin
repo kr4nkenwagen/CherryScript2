@@ -73,6 +73,13 @@ get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit
 			return obj, .OK
 		}
 	}
+	if stack.global_data != nil {
+		for obj in stack.global_data.data {
+			if obj != nil && obj.name == name {
+				return obj, .OK
+			}
+		}
+	}
 	return nil, .OK
 }
 
@@ -85,7 +92,13 @@ remove_object :: proc(stack: ^types.stack_t, name: string) -> types.exit_codes {
 			free(stack.data[i])
 			stack.data[i] = nil
 		}
-	}
+		if stack.global_data != nil {
+			for obj in stack.global_data.data {
+				if obj != nil && obj.name == name {
+					return .OK
+				}
+			}
+		}}
 	remove_nulls(stack)
 	return .OK
 }

@@ -400,6 +400,8 @@ statement :: proc(
 		return parse_return(tokens)
 	case .VAR, .CONST:
 		return variable_declaration(tokens)
+	case .GLOBAL:
+		return parse_global(tokens)
 	case .WHILE:
 		return parse_while(tokens, parent)
 	case .PRINT_LINE:

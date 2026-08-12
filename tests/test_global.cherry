@@ -1,0 +1,13 @@
+module "utils/assert.cherry"
+global var a = 1
+global const b = 1
+assert(a == 1, "global: var is initalized")
+assert(b == 1, "global: const is initalized")
+remove a, b
+
+global var a = 1
+fn test() {
+  a += 1
+}
+test()
+assert(a == 2, "global: var is accessible from within a function")

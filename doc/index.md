@@ -17,6 +17,7 @@ This index groups the small topic files in this directory to make it easier to f
 ## Variables & Constants
 - [var](var.md)
 - [const](const.md)
+- [global](global.md)
 - [variables](variables.md)
 
 ## Control Flow

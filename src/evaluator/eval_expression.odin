@@ -73,6 +73,8 @@ eval_primary_expression :: proc(
 		return nil, err
 	case .CONST, .VAR:
 		return nil, variable_declarations(syntax, stck, program)
+	case .GLOBAL:
+		return nil, eval_global(syntax, stck, program)
 	case .AND, .OR:
 		return eval_and_or(syntax, stck, program)
 	case .IDENTIFIER:
