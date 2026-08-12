@@ -1,15 +1,16 @@
 # COMMENT
+
 ## Overview
-Everything after `#` will be ignored by the interpreter until next `#` or newline.
+A `#` starts a comment. The comment continues until the next `#` or until the end of the line.
 
-## Example
+## Examples
+Single-line comment (until end of line):
 ```
-#Commented line#
-```
-
-```
-#Commented line
-Uncommented line
-```
+# This is a comment
+println("This runs")
 ```
 
+Inline/wrapped comment (between two `#` characters):
+```
+#This is a wrapped comment#
+```

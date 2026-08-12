@@ -1,6 +1,7 @@
 # BREAK
+
 ## Overview
-`break` can be used to break out of loops.
+`break` is used to exit the innermost loop immediately.
 
 ## Example
 ```
@@ -8,5 +9,4 @@ while(true) {
   break
 }
 ```
-
-
+This example exits the while loop as soon as `break` is executed.

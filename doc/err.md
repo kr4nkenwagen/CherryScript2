@@ -1,8 +1,9 @@
 # ERR
+
 ## Overview
-`err` us used to output text to standard error.
+`err` is used to write text to standard error (stderr).
 
 ## Example
 ```
-err "An error occured!\n"
+err "An error occurred!\n"
 ```

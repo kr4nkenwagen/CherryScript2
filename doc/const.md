@@ -1,6 +1,8 @@
 # CONST
+
 ## Overview
-`const` can be used to create immutable variables. Once created, its value cannot be changed.
+`const` creates an immutable variable. Once a `const` is defined, its value cannot be changed.
+
 ## Example
 ```
 const number = 5

@@ -1,6 +1,7 @@
 # CLR
+
 ## Overview
-Used to clear terminal screen.
+`clr` clears the terminal screen.
 
 ## Example
 ```

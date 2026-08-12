@@ -1,9 +1,11 @@
 # ARRAY
+
 ## Overview
-`array` is variable type that is able to hold a list of items. `array`s are zero initialized.
+An `array` is a variable type that holds a list of items. Arrays are zero-initialized and use zero-based indexing.
 
 ## Example
-### Intialization
+
+### Initialization
 ```
 var arr = []
 ```
@@ -12,4 +14,4 @@ var arr = []
 ```
 arr[1]
 ```
-*This accesses the second item in the array `arr`.*
+This accesses the element at index 1 (the second item) of the array `arr`. Arrays are indexed starting at 0.
