@@ -3,6 +3,7 @@ package evaluator
 import "../object"
 import "../types"
 import "core:time"
+import "core:time/datetime"
 
 eval_time :: proc(
 	syntax: ^types.syntax_t,
@@ -22,58 +23,126 @@ eval_time :: proc(
 	switch type {
 	case "year", "years":
 		return object.create_int(int(dt.year))
-
 	case "month", "months":
 		return object.create_int(int(dt.month))
-
+	case "month_name":
+		return object.create_string(calculate_month_name(int(dt.month)))
+	case "month_short_name":
+		return object.create_string(calculate_short_month_name(int(dt.month)))
 	case "day", "days":
 		return object.create_int(int(dt.day))
-
 	case "hour", "hours":
 		return object.create_int(int(dt.hour))
-
 	case "minute", "minutes":
 		return object.create_int(int(dt.minute))
-
 	case "second", "seconds":
 		return object.create_int(int(dt.second))
-
 	case "millisecond", "milliseconds":
 		return object.create_int(int(dt.nano / 1_000_000))
-
 	case "microsecond", "microseconds":
 		return object.create_int(int(dt.nano / 1_000))
-
 	case "nanosecond", "nanoseconds", "nano":
 		return object.create_int(int(dt.nano))
 	case "weekday":
 		weekday := calculate_day_of_week(int(dt.year), int(dt.month), int(dt.day))
 		return object.create_string(weekday)
 	case "day_of_week":
-		weekday := calculate_day_of_week(int(dt.year), int(dt.month), int(dt.day))
-		switch (weekday) {
-		case "monday":
-			return object.create_int(0)
-		case "tuesday":
-			return object.create_int(1)
-		case "wednesday":
-			return object.create_int(2)
-		case "thursday":
-			return object.create_int(3)
-		case "friday":
-			return object.create_int(4)
-		case "saturday":
-			return object.create_int(5)
-		case "sunday":
-			return object.create_int(6)
+		weekday_num := calculate_weekday_number(dt)
+		if weekday_num == -1 {
+			return object.create_null()
 		}
-		return object.create_null()
+		return object.create_int(weekday_num)
 	case "day_of_year", "year_day":
 		doy := calculate_day_of_year(int(dt.year), int(dt.month), int(dt.day))
 		return object.create_int(doy)
+	case "execution_time":
+		elapsed := time.tick_since(g_start_time_execution)
+		seconds := time.duration_seconds(elapsed)
+		return object.create_float(f32(seconds))
 	case:
 		return nil, .ERROR
 	}
+}
+
+calculate_weekday_number :: proc(dt: datetime.DateTime) -> int {
+	weekday := calculate_day_of_week(int(dt.year), int(dt.month), int(dt.day))
+	switch (weekday) {
+	case "monday":
+		return 0
+	case "tuesday":
+		return 1
+	case "wednesday":
+		return 2
+	case "thursday":
+		return 3
+	case "friday":
+		return 4
+	case "saturday":
+		return 5
+	case "sunday":
+		return 6
+	}
+	return -1
+}
+
+calculate_short_month_name :: proc(month: int) -> string {
+	switch month {
+	case 0:
+		return "jan"
+	case 1:
+		return "feb"
+	case 2:
+		return "march"
+	case 3:
+		return "april"
+	case 4:
+		return "may"
+	case 5:
+		return "june"
+	case 6:
+		return "july"
+	case 7:
+		return "aug"
+	case 8:
+		return "sep"
+	case 9:
+		return "oct"
+	case 10:
+		return "nov"
+	case 11:
+		return "dec"
+	}
+	return ""
+}
+
+calculate_month_name :: proc(month: int) -> string {
+	switch month {
+	case 0:
+		return "january"
+	case 1:
+		return "february"
+	case 2:
+		return "march"
+	case 3:
+		return "april"
+	case 4:
+		return "may"
+	case 5:
+		return "june"
+	case 6:
+		return "july"
+	case 7:
+		return "august"
+	case 8:
+		return "september"
+	case 9:
+		return "october"
+	case 10:
+		return "november"
+	case 11:
+		return "december"
+	}
+	return ""
 }
 
 is_leap_year :: proc(year: int) -> bool {

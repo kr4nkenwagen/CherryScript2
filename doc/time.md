@@ -8,6 +8,8 @@ Most property names support both **singular and plural** forms interchangeably (
 | :--- | :--- | :--- | :--- |
 | `year`, `years` | Integer | The full year | `2026` |
 | `month`, `months` | Integer | Month of the year (`1` – `12`) | `8` |
+| `month_name` | String | Lowercase name of the month name| `"march"` |
+| `month_short_name` | String | Lowercase short name of the month name| `"jan"` |
 | `day`, `days` | Integer | Day of the month (`1` – `31`) | `12` |
 | `hour`, `hours` | Integer | Hour of the day (`0` – `23`) | `14` |
 | `minute`, `minutes` | Integer | Minute of the hour (`0` – `59`) | `30` |
@@ -18,6 +20,7 @@ Most property names support both **singular and plural** forms interchangeably (
 | `weekday` | String | Lowercase name of the day of the week | `"wednesday"` |
 | `day_of_week` | Integer | Zero-indexed day of the week (`0` = Monday, `6` = Sunday) | `2` |
 | `day_of_year`, `year_day` | Integer | Day number of the current year (`1` – `366`) | `224` |
+| `execution_time` | Float | Time since execution start in seconds | `1.5` |
 ---
 
 ## Example

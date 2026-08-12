@@ -43,3 +43,30 @@ assert(time.day_of_week >= 1 && time.day_of_week <= 7, "time: day_of_week range 
 # - Day of Year
 assert(time.day_of_year >= 1 && time.day_of_year <= 366, "time: day_of_year range (1-366)")
 assert(time.year_day >= 1 && time.year_day <= 366, "time: year_day alias range (1-366)")
+
+# Test: Full month name and short month name
+var m_name = time.month_name
+assert( m_name == "january" || m_name == "february" || m_name == "march" || m_name == "april" || m_name == "may" || m_name == "june" || m_name == "july" || m_name == "august" || m_name == "september" || m_name == "october" || m_name == "november" || m_name == "december" || m_name == "January" || m_name == "February" || m_name == "March" || m_name == "April" || m_name == "May" || m_name == "June" || m_name == "July" || m_name == "August" || m_name == "September" || m_name == "October" || m_name == "November" || m_name == "December", "time: month_name returns a valid full month name")
+assert(len(m_name) >= 3 && len(m_name) <= 9, "time: month_name string length between 3 and 9")
+remove m_name
+
+var m_short = time.month_short_name
+assert(len(m_short) == 3, "time: month_short_name length == 3")
+remove m_short
+
+
+# Test: execution_time
+var exec_start = time.execution_time
+assert(exec_start > 0.0, "time: execution_time is positive")
+
+# Sleep to check if execution_time advances correctly
+sleep 0.2
+
+var exec_end = time.execution_time
+var delta = exec_end - exec_start
+
+assert(delta >= 0.18, "time: execution_time increased by ~0.2s after sleeping")
+
+remove exec_start
+remove exec_end
+remove delta

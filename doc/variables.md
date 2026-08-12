@@ -10,6 +10,8 @@ Variables can be initialized using [`var`](var.md) or [`const`](const.md). Varia
 | [`file`](file.md) | File handler. |
 | [`vector`](file.md) | Vector containg `.x`, `.y`. `.z.` |
 | [`array`](array.md) | Contains multiple variables that can be accessed by `identifier[index]`. |
+| [`null`](null.md) | Empty variable. |
+
 
 ## Examples
 ### Number
