@@ -50,5 +50,3 @@ This index groups the small topic files in this directory to make it easier to f
 - [sleep](sleep.md)
 
 ---
-
-If you prefer a different grouping or want additional short descriptions for each link, I can expand this index (one-line summaries).
