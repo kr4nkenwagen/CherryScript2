@@ -25,22 +25,26 @@ fn assert(var assertion, var msg) {
   var total_count = passed_tests_count + len(failed_tests)
   clr
   println(TESTRUNNER_HEADER)
-  println("╭─Running tests")
+  println("[#424242]╭─[#]Running tests")
   for(var i = 0; i < 5; i+=1) {
-    println("├──  " .. last_five[i])
+    println("[#424242]├──  " .. last_five[i])
   }
-  println("└─total: " .. total_count .. "─elapsed time: " .. time.execution_time .. "s")
+  println("[#424242]└─[#]total: " .. total_count .. "[#424242]──[#]elapsed time: " .. time.execution_time .. "s")
 }
 
 fn test_results() {
   clr
   println(TESTRUNNER_HEADER)
   var failed_tests_count = len(failed_tests)
-  println("╭─Test results")
-  println("├── [#0F0]PASSED[#]: " .. passed_tests_count)
-  println("├── [#F00]FAILED[#]: " .. failed_tests_count)
-  println("└─total:  " .. (failed_tests_count + passed_tests_count) .. "─elapsed time: " .. time.execution_time .. "s")
-  for(var i = 0; i < failed_tests_count; i+=1) {
-      println("   ".. failed_tests[i])
+  println("[#424242]╭─[#]Test results")
+  println("[#424242]├── [#0F0]PASSED[#]: " .. passed_tests_count)
+  println("[#424242]├── [#F00]FAILED[#]: " .. failed_tests_count)
+  println("[#424242]└─[#]total: " .. (failed_tests_count + passed_tests_count) .. "[#424242]──[#]elapsed time: " .. time.execution_time .. "s")
+  if(failed_tests_count > 0) {
+    println("[#424242]╭─[#]Failed tests")
+    for(var i = 0; i < failed_tests_count; i+=1) {
+        println("[#424242]├── [#F00]FAILED[#]: ".. failed_tests[i])
+    }
+    println("[#424242]└─[#]total: " .. failed_tests_count)
   }
 }
