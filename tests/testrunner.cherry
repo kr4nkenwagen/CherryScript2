@@ -1,0 +1,3 @@
+module "utils/assert.cherry"
+module "e2e"
+test_results()

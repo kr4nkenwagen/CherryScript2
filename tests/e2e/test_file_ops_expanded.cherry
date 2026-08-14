@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # expanded file ops with unique tempfile
 var tf = @"tmp_file_ops_expanded"
 # write multiple lines

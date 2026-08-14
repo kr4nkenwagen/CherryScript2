@@ -1,4 +1,3 @@
-module "utils/assert.cherry"
 # Functions: declaration, arguments, recursion
 fn fact(var n) {
   if (n == 0) {

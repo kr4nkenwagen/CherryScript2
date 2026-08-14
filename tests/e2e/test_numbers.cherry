@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # Numbers: integers and floats forms, leading-dot floats
 var i = 12
 assert(len(i) == 2, "numbers: integer 12 length == 2")

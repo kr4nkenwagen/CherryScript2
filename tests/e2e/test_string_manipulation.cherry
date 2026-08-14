@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # String addition / concatenation
 var a = "Hello ", b = "World"
 var s = a + b

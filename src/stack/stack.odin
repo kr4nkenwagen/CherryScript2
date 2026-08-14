@@ -60,7 +60,17 @@ remove_nulls :: proc(stack: ^types.stack_t) -> types.exit_codes {
 		}
 	}
 	resize(&stack.data, new_count)
+	new_count = 0
 	stack.count = new_count
+	for obj in stack.global_data.data {
+		if obj != nil {
+			stack.global_data.data[new_count] = obj
+			new_count += 1
+		}
+	}
+	resize(&stack.global_data.data, new_count)
+	stack.global_data.count = new_count
+
 	return .OK
 }
 
@@ -92,13 +102,15 @@ remove_object :: proc(stack: ^types.stack_t, name: string) -> types.exit_codes {
 			free(stack.data[i])
 			stack.data[i] = nil
 		}
-		if stack.global_data != nil {
-			for obj in stack.global_data.data {
-				if obj != nil && obj.name == name {
-					return .OK
-				}
+	}
+	if stack.global_data != nil {
+		for i := 0; i < len(stack.global_data.data); i += 1 {
+			if stack.global_data.data[i] != nil && stack.global_data.data[i].name == name {
+				free(stack.global_data.data[i])
+				stack.global_data.data[i] = nil
 			}
-		}}
+		}
+	}
 	remove_nulls(stack)
 	return .OK
 }

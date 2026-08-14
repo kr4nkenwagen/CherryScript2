@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # empty string
 var s = ""
 assert(len(s) == 0, "strings: empty length == 0")

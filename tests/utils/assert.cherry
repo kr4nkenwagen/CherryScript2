@@ -1,7 +1,22 @@
+global var failed_tests = [], passed_tests_count = 0
+
 fn assert(var assertion, var msg) {
     if(assertion) {
       out "[#0F0]PASSED[#]: " .. msg .. "\n"
+      passed_tests_count+= 1
     } else {
       err "[#F00]FAILED[#]: " .. msg .. "\n"
+      var length = len(failed_tests)
+      failed_tests[length] = msg
     }
   }
+
+fn test_results() {
+  var failed_tests_count = len(failed_tests)
+  println("TOTAL:  " .. (failed_tests_count + passed_tests_count))
+  println("PASSED: " .. passed_tests_count)
+  println("FAILED: " .. failed_tests_count)
+  for(var i = 0; i < failed_tests_count; i+=1) {
+      println("   ".. failed_tests[i])
+  }
+}

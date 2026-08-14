@@ -27,13 +27,13 @@ variable_declarations :: proc(
 			return obj_err
 		}
 		if obj != nil {
+			fmt.printf("%s\n", obj.name)
 			return .REDECLARATION_ERROR
 		}
 		obj, obj_err = eval_primary_expression(curr.value, stck, prog)
 		if sys.is_error(obj_err) {
 			return obj_err
 		}
-
 		obj.name = curr.token.literal
 		obj.is_const = is_const
 		curr_stack, curr_stack_err = vm.current_frame(stck)
@@ -55,6 +55,8 @@ variable_declarations :: proc(
 	}
 	return .OK
 }
+
+import "core:fmt"
 
 eval_variable_remove :: proc(
 	synt: ^types.syntax_t,

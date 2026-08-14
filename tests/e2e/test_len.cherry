@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # Test: len() for various types
 # - arrays
 var arr = [1, 2, 3]
@@ -28,3 +26,4 @@ rm file
 file<-3 = "test"
 assert(len(file) == 4, "len: file length (lines) == 4")
 rm file
+remove file

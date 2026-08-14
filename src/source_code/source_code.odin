@@ -4,6 +4,7 @@ import "../sys"
 import "../types"
 import "core:fmt"
 import "core:os"
+import "core:path/filepath"
 import "core:strings"
 
 create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
@@ -23,13 +24,16 @@ create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 from_file :: proc(file: string) -> (^types.source_code_t, types.exit_codes) {
 	data, err := os.read_entire_file(file, context.allocator)
 	if err != nil {
-		return nil, types.exit_codes.FAILED_TO_READ_SOURCE_CODE_FILE
+		return nil, .FAILED_TO_READ_SOURCE_CODE_FILE
 	}
 	src, src_err := create(string(data))
 	if sys.is_error(src_err) {
 		return nil, src_err
 	}
-	src.location = os.dir(file)
+	wd, _ := os.get_working_directory(context.allocator)
+	defer delete(wd, context.allocator)
+	file_dir := filepath.dir(file)
+	src.location, _ = filepath.join([]string{wd, file_dir}, context.allocator)
 	return src, .OK
 }
 
@@ -37,33 +41,66 @@ from_repl :: proc(line: string) -> (^types.source_code_t, types.exit_codes) {
 	return create(line)
 }
 
+get_cherry_files_in_dir :: proc(src_path: string) -> ([dynamic]string, types.exit_codes) {
+	paths: [dynamic]string
+	if os.is_dir(src_path) {
+		f, err := os.open(src_path)
+		if err != os.ERROR_NONE {
+			return nil, .FAILED_TO_READ_SOURCE_CODE_FILE
+		}
+		file_infos, read_err := os.read_dir(f, -1, context.allocator)
+		if read_err != os.ERROR_NONE {
+			return nil, .FAILED_TO_READ_SOURCE_CODE_FILE
+		}
+		for info in file_infos {
+			if strings.has_suffix(info.name, ".cherry") {
+				append(&paths, info.fullpath)
+			}
+		}
+	} else {
+		append(&paths, src_path)
+	}
+	return paths, .OK
+}
+
 import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exit_codes {
 	src_path := src_path
 	if len(src_path) > 0 && src_path[0] != '/' && !os.exists(src_path) {
 		src_path = fmt.tprintf("%s/%s", target.location, src_path)
 	}
-	for i in target.included_sources {
-		if i == src_path {
-			return .OK
-		}
-	}
-	append(&target.included_sources, src_path)
-	file_data, err := os.read_entire_file(src_path, context.allocator)
-	if err != nil {
+	paths, paths_err := get_cherry_files_in_dir(src_path)
+	if sys.is_error(paths_err) {
 		return .FAILED_TO_READ_SOURCE_CODE_FILE
 	}
-	defer delete(file_data)
-	obj_src := string(file_data)
-	b: strings.Builder
-	strings.builder_init(&b)
-	strings.builder_grow(&b, len(target.content) + len(obj_src) + 2)
-	strings.write_string(&b, target.content[:target.pointer])
-	strings.write_byte(&b, '\n')
-	strings.write_string(&b, obj_src)
-	strings.write_byte(&b, '\n')
-	strings.write_string(&b, target.content[target.pointer:])
-	target.content = strings.to_string(b)
-	target.length = len(target.content)
+	for path in paths {
+		path := path
+		if os.is_dir(path) {
+			continue
+		}
+
+		for i in target.included_sources {
+			if i == path {
+				return .OK
+			}
+		}
+		append(&target.included_sources, path)
+		file_data, err := os.read_entire_file(path, context.allocator)
+		if err != nil {
+			return .FAILED_TO_READ_SOURCE_CODE_FILE
+		}
+		defer delete(file_data)
+		obj_src := string(file_data)
+		b: strings.Builder
+		strings.builder_init(&b)
+		strings.builder_grow(&b, len(target.content) + len(obj_src) + 2)
+		strings.write_string(&b, target.content[:target.pointer])
+		strings.write_byte(&b, '\n')
+		strings.write_string(&b, obj_src)
+		strings.write_byte(&b, '\n')
+		strings.write_string(&b, target.content[target.pointer:])
+		target.content = strings.to_string(b)
+		target.length = len(target.content)
+	}
 	return .OK
 }
 

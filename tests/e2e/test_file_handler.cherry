@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # File handler tests using a unique test file path
 var tf = @"tests/tmp_file_handler_test"
 

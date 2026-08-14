@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # Test: time module properties and boundary checks
 
 # - Year (reasonable calendar year)

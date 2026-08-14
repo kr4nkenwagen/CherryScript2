@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # for loop (three-part) + sum
 var sum = 0
 for (var i = 0; i < 3; i = i + 1) {

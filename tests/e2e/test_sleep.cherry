@@ -1,5 +1,3 @@
-module "utils/assert.cherry"
-
 # Test: sleep function accuracy and behavior
 
 # - Test 1: Sleep for 0.2 seconds (200ms)
