@@ -61,21 +61,26 @@ print_out :: proc(str: string, debug_mode: bool) {
 		append(&debug.g_output_log, str)
 		return
 	}
-	for i := 0; i < len(str); i += 1 {
-		if str[i] == '\\' && i + 1 < len(str) {
-			i += 1
-			switch str[i] {
+	escaped := false
+	for r in str {
+		if escaped {
+			switch r {
 			case 'n':
-				fmt.printf("%c", 10)
-				continue
+				fmt.print("\n")
 			case 't':
-				fmt.printf("%c", 9)
-				continue
+				fmt.print("\t")
 			case:
-				i -= 1
+				fmt.printf("\\%c", r)
 			}
+			escaped = false
+		} else if r == '\\' {
+			escaped = true
+		} else {
+			fmt.printf("%c", r)
 		}
-		fmt.printf("%c", str[i])
+	}
+	if escaped {
+		fmt.print("\\")
 	}
 }
 

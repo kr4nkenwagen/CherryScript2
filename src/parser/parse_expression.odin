@@ -74,7 +74,6 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 file_operation :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	left, err := primary_expression(tokens)
 	if sys.is_error(err) {
-
 		return nil, err
 	}
 	curr_token, curr_token_err := token_list.peek(tokens, 0)

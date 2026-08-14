@@ -1,21 +1,45 @@
 global var failed_tests = [], passed_tests_count = 0
+global var last_five = [], last_five_length = 0
+global const TESTRUNNER_HEADER = "Cherry testrunner"
 
 fn assert(var assertion, var msg) {
-    if(assertion) {
-      out "[#0F0]PASSED[#]: " .. msg .. "\n"
-      passed_tests_count+= 1
-    } else {
-      err "[#F00]FAILED[#]: " .. msg .. "\n"
-      var length = len(failed_tests)
-      failed_tests[length] = msg
-    }
+  var prev_item = last_five_length - 1
+  for(var i = 4; i > 0; i-=1) {
+    var prev_display_item = i - 1
+    last_five[i] = last_five[prev_display_item]
   }
+  if(prev_item < 0) {
+    prev_item = 0
+  }
+  if(assertion) {
+    last_five[0] = "[#0F0]PASSED[#]: " .. msg
+    passed_tests_count+= 1
+  } else {
+    last_five[0] = "[#F00]FAILED[#]: " .. msg
+    var failed_tests_length = len(failed_tests)
+    failed_tests[failed_tests_length] = msg
+  }
+  if last_five_length < 5 {
+    last_five_length += 1
+  }
+  var total_count = passed_tests_count + len(failed_tests)
+  clr
+  println(TESTRUNNER_HEADER)
+  println("╭─Running tests")
+  for(var i = 0; i < 5; i+=1) {
+    println("├──  " .. last_five[i])
+  }
+  println("└─total: " .. total_count .. "─elapsed time: " .. time.execution_time .. "s")
+}
 
 fn test_results() {
+  clr
+  println(TESTRUNNER_HEADER)
   var failed_tests_count = len(failed_tests)
-  println("TOTAL:  " .. (failed_tests_count + passed_tests_count))
-  println("PASSED: " .. passed_tests_count)
-  println("FAILED: " .. failed_tests_count)
+  println("╭─Test results")
+  println("├── [#0F0]PASSED[#]: " .. passed_tests_count)
+  println("├── [#F00]FAILED[#]: " .. failed_tests_count)
+  println("└─total:  " .. (failed_tests_count + passed_tests_count) .. "─elapsed time: " .. time.execution_time .. "s")
   for(var i = 0; i < failed_tests_count; i+=1) {
       println("   ".. failed_tests[i])
   }

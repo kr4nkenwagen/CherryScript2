@@ -8,7 +8,7 @@ import "../vm"
 import "core:time"
 
 g_debug: bool
-g_start_time_execution: time.Tick
+g_start_time_execution: ^time.Tick
 
 run :: proc(
 	prog: ^types.program_t,
@@ -25,7 +25,10 @@ run :: proc(
 	prog.pointer = 0
 	prog.exit = false
 	value: ^types.object_t
-	g_start_time_execution = time.tick_now()
+	if g_start_time_execution == nil {
+		g_start_time_execution = new(time.Tick)
+		g_start_time_execution^ = time.tick_now()
+	}
 	for prog.pointer < prog.length && !prog.exit {
 		if prog.exit {
 			break

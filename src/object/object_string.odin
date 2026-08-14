@@ -29,6 +29,11 @@ int_to_number :: proc(num: int) -> (string, types.exit_codes) {
 	return str, .OK
 }
 
+float_to_number :: proc(num: f32) -> (string, types.exit_codes) {
+	str := fmt.tprintf("%g", num)
+	return str, .OK
+}
+
 join_string :: proc(
 	a: ^types.object_t,
 	b: ^types.object_t,
@@ -40,6 +45,8 @@ join_string :: proc(
 	a_str, b_str: string
 	if a.type == .INT {
 		a_str, _ = int_to_number(a.data.(int))
+	} else if a.type == .FLOAT {
+		a_str, _ = float_to_number(a.data.(f32))
 	} else if a.type == .STRING {
 		a_str = a.data.(string)
 	} else {
@@ -47,6 +54,9 @@ join_string :: proc(
 	}
 	if b.type == .INT {
 		b_str, _ = int_to_number(b.data.(int))
+	} else if b.type == .FLOAT {
+		b_str, _ = float_to_number(b.data.(f32))
+
 	} else if b.type == .STRING {
 		b_str = b.data.(string)
 	} else {

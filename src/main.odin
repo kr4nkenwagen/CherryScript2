@@ -15,9 +15,7 @@ import "token_list"
 import "types"
 import "vm"
 
-
 SOURCE_FILE_SUFFIX :: ".cherry"
-
 
 parse_args :: proc() -> ^types.arguments_t {
 	args := new(types.arguments_t)
