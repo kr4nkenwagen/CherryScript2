@@ -8,6 +8,7 @@ if (false) {
   y = 3
 }
 assert(y == 3, "control: if-elif-else (else branch)")
+remove y
 
 var z = 0
 if (false) {
@@ -20,6 +21,7 @@ if (false) {
   z = 4
 }
 assert(z == 2, "control: elif order (first matching elif)")
+remove z
 
 # for loop: break
 var k = 0
@@ -28,6 +30,7 @@ for (var i = 0; i < 5; i = i + 1) {
   k = k + 1
 }
 assert(k == 2, "control: for loop break stops iterations")
+remove k
 
 # for loop: continue
 var c = 0
@@ -36,16 +39,20 @@ for (var i = 0; i < 3; i = i + 1) {
   c = c + 1
 }
 assert(c == 2, "control: for loop continue skips body for that iteration")
+remove c
 
 # nested loops / break affects only inner loop
 var o = 0
-for (var a = 0; a < 3; a = a + 1) {
-  for (var b = 0; b < 3; b = b + 1) {
-    if (b == 1) { break }
-    o = o + 1
+for (var a = 0; a < 3; a+=1) {
+  for (var b = 0; b < 3; b+=1) {
+    if (b == 1) {
+      break
+    }
+    o+=1
   }
 }
 assert(o == 3, "control: nested loops with inner break")
+remove o
 
 # while loop: break
 var w = 0
@@ -54,3 +61,4 @@ while (true) {
   w = w + 1
 }
 assert(w == 2, "control: while loop break")
+remove w

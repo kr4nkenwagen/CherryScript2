@@ -54,6 +54,7 @@ eval_for :: proc(
 			return cond_err
 		}
 	}
+	syntax.branch.exit = false
 	err = vm.pop_frame(stck)
 	if sys.is_error(err) {
 		return err
