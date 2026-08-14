@@ -1,0 +1,24 @@
+for(var i = 0; i < 10; i+=1) {
+  if(i == 5) {
+    break
+  }
+  println("Iteratin: " .. i)
+}
+
+var i = 0
+while(i < 10) {
+  if(i == 5) {
+    continue
+  }
+  println("Iteraation: " .. i)
+  i+=1
+}
+remove i
+
+if(false) {
+  prntln("I will not trigger.")
+} elif(false) {
+  prntln("I will not trigger.")
+} else {
+  println("Hello World!")
+}

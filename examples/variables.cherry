@@ -1,0 +1,8 @@
+var a, b = 1 # Mutable variables. Variables can be declared without value.
+
+const c = 2, d = "abc" # Immutable variables. Need to be assigned a value on declaration.
+
+global var e = 1.23 # Global variables are accessible across all scopes.
+global const f = .23
+
+remove a, b, c, d, e, f # Removes variables from memory. Useful when using many modules.

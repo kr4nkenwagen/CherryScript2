@@ -1,6 +1,6 @@
 global var failed_tests = [], passed_tests_count = 0
 global var last_five = [], last_five_length = 0
-global const TESTRUNNER_HEADER = "Cherry testrunner"
+global const TESTRUNNER_HEADER = "[#424242]╭──────────────────────╮\n[#424242]│[#] 🍒 Cherry TestRunner [#424242]│\n[#424242]╰──────────────────────╯"
 
 fn assert(var assertion, var msg) {
   var prev_item = last_five_length - 1

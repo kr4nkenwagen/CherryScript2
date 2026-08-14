@@ -20,8 +20,22 @@ if (false) {
 } else {
   z = 4
 }
-assert(z == 2, "control: elif order (first matching elif)")
+assert(z == 2, "control: elif order (first elif)")
 remove z
+
+var z = 0
+if (false) {
+  z = 1
+} elif (false) {
+  z = 2
+} elif (true) {
+  z = 3
+} else {
+  z = 4
+}
+assert(z == 3, "control: elif order (second elif)")
+remove z
+
 
 # for loop: break
 var k = 0
