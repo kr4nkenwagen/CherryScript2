@@ -1,10 +1,13 @@
 # REMOVE
 ## Overview
-Removes variables from memory. Frees up variable identifiers. Can remove multiple variables at the same time
+Removes variables and functions from memory. Frees up identifiers. Can remove multiple variables and functions at the same time
 
 ## Example
 ```
 var a = 123, b = 456
-remove a, b
-# a and b are not accessible anymore.
+fn c (){
+  # function body
+}
+remove a, b, c
+# a, b and c are not accessible anymore.
 ```

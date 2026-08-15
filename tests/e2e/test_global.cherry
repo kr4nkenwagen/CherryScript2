@@ -8,4 +8,16 @@ fn test() {
 }
 test()
 assert(a == 2, "global: var is accessible from within a function")
-remove a, b
+remove a, b, test
+
+global var a = 0
+global fn global_test() {
+  out "dasdadsa\n"
+  a = 1
+}
+fn test() {
+  global_test()
+}
+test()
+assert(a == 1, "global: Global functions are accessible from function scopes")
+remove a, b, test, global_test

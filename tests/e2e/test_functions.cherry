@@ -5,5 +5,5 @@ fn fact(var n) {
   }
   return n * fact(n - 1)
 }
-
 assert(fact(5) == 120, "functions: factorial recursion")
+remove fact

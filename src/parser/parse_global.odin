@@ -14,10 +14,17 @@ parse_global :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exi
 	if sys.is_error(declaration_err) {
 		return nil, declaration_err
 	}
-	_, adv_err := token_list.advance(tokens)
+	adv, adv_err := token_list.advance(tokens)
 	if sys.is_error(adv_err) {
 		return nil, adv_err
 	}
-	declaration.value, declaration_err = variable_declaration(tokens)
-	return declaration, declaration_err
+	if adv.type == .CONST || adv.type == .VAR {
+		declaration.value, declaration_err = variable_declaration(tokens)
+		return declaration, declaration_err
+	}
+	if adv.type == .FUNCTION {
+		declaration.value, declaration_err = parse_function(tokens, nil)
+		return declaration, declaration_err
+	}
+	return nil, .UNEXPECTED_BEHAVIOUR
 }
