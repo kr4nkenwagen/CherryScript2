@@ -203,17 +203,9 @@ identifier :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
 		}
-		curr_syntax.value, curr_syntax_err = syntax.create()
+		curr_syntax.value, curr_syntax_err = expression(tokens)
 		if sys.is_error(curr_syntax_err) {
 			return nil, curr_syntax_err
-		}
-		curr_syntax.value.token = curr_token
-		curr_token, curr_syntax_err = token_list.advance(tokens)
-		if sys.is_error(curr_syntax_err) {
-			return nil, curr_syntax_err
-		}
-		if curr_token.type != .RIGHT_BRACKET {
-			return nil, .UNEXPECTED_SYNTAX
 		}
 		curr_token, curr_syntax_err = token_list.advance(tokens)
 		if sys.is_error(curr_syntax_err) {

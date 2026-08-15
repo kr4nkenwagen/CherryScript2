@@ -5,8 +5,7 @@ global const TESTRUNNER_HEADER = "[#424242]╭───────────�
 fn assert(var assertion, var msg) {
   var prev_item = last_five_length - 1
   for(var i = 4; i > 0; i-=1) {
-    var prev_display_item = i - 1
-    last_five[i] = last_five[prev_display_item]
+    last_five[i] = last_five[i - 1]
   }
   if(prev_item < 0) {
     prev_item = 0
