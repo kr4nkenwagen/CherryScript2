@@ -9,6 +9,12 @@ file_set :: proc(filepath: string, new_text: string, target_index: int) -> types
 	if target_index < 0 {
 		return .INDEX_OUT_OF_BOUNDS
 	}
+	if !os.exists(filepath) {
+		_, err := os.create(filepath)
+		if err != os.General_Error.None {
+			return .FAILED_TO_CREATE_FILE
+		}
+	}
 	file_text := ""
 	data, read_ok := os.read_entire_file(filepath, context.allocator)
 	if read_ok == os.General_Error.None {

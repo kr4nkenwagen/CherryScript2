@@ -102,12 +102,6 @@ create_funct :: proc(synt: ^types.syntax_t) -> (^types.object_t, types.exit_code
 }
 
 create_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
-	if !os.exists(file) {
-		_, err := os.create(file)
-		if err != os.General_Error.None {
-			return nil, .FAILED_TO_CREATE_FILE
-		}
-	}
 	obj := new(types.object_t)
 	if obj == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED
