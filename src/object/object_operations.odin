@@ -165,5 +165,8 @@ assign :: proc(target, source: ^types.object_t) -> types.exit_codes {
 	}
 	target.data = source.data
 	target.type = source.type
+	if target.parent != nil {
+		json_write_file(target)
+	}
 	return .OK
 }

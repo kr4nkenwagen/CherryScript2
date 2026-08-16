@@ -32,6 +32,7 @@ object_t :: struct {
 	type:      object_type_t,
 	name:      string,
 	data:      object_data_t,
+	parent:    ^object_t,
 }
 
 object_array_t :: struct {
@@ -51,4 +52,5 @@ object_file_t :: struct {
 
 object_json_t :: struct {
 	value: [dynamic]^object_t,
+	file:  object_file_t,
 }
