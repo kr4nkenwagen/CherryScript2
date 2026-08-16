@@ -96,7 +96,7 @@ print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 		if !sys.is_error(err) {
 			print_out(num, debug_mode)
 		}
-	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
+	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE, .JSON:
 		break
 	}
 	return .OK

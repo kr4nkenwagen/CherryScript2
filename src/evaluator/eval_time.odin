@@ -157,7 +157,7 @@ calculate_day_of_week :: proc(year, month, day: int) -> string {
 	}
 	switch ((y + y / 4 - y / 100 + y / 400 + t[month - 1] + day) % 7) {
 	case 0:
-		return "monday"
+		return "sunday"
 	case 1:
 		return "tuesday"
 	case 2:
@@ -169,7 +169,7 @@ calculate_day_of_week :: proc(year, month, day: int) -> string {
 	case 5:
 		return "saturday"
 	case 6:
-		return "sunday"
+		return "monday"
 	case:
 		return ""
 	}

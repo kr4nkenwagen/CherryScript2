@@ -75,6 +75,7 @@ token_type_t :: enum {
 	SLEEP,
 	CLEAR,
 	GLOBAL,
+	JSON,
 }
 
 token_t :: struct {

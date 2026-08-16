@@ -10,6 +10,7 @@ object_type_t :: enum {
 	BOOL,
 	FUNCTION,
 	FILE,
+	JSON,
 }
 
 object_data_t :: union {
@@ -21,6 +22,7 @@ object_data_t :: union {
 	object_array_t,
 	object_vector_t,
 	object_file_t,
+	object_json_t,
 }
 
 object_t :: struct {
@@ -45,4 +47,8 @@ object_vector_t :: struct {
 
 object_file_t :: struct {
 	name: string,
+}
+
+object_json_t :: struct {
+	value: [dynamic]^object_t,
 }

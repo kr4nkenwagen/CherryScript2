@@ -1,0 +1,46 @@
+# json: top-level primitive types
+var data = json('{ "name": "Odin", "version": 1, "ratio": 3.14, "enabled": true, "disabled": false, "empty": null }')
+assert(data.name == "Odin", "json: string value")
+assert(data.version == 1, "json: integer value")
+assert(data.ratio == 3.14, "json: float value")
+assert(data.enabled == true, "json: boolean true")
+assert(data.disabled == false, "json: boolean false")
+assert(data.empty == null, "json: null value")
+remove data
+
+# json: deep nested objects
+var config = json('{ "app": { "server": { "port": 8080, "host": "localhost" } } }')
+assert(config.app.server.port == 8080, "json: deep nested property access")
+assert(config.app.server.host == "localhost", "json: deep nested string access")
+remove config
+
+
+# json: arrays inside objects
+var payload = json('{ "tags": ["admin", "dev"], "matrix": [[1, 2], [3, 4]] }')
+assert(len(payload.tags) == 2, "json: array property length")
+assert(payload.tags[0] == "admin", "json: array element access")
+assert(payload.matrix[1][0] == 3, "json: nested array indexing")
+remove payload
+
+# json: array of objects
+var users = json('{ "list": [{ "id": 101, "role": "user" }, { "id": 102, "role": "admin" }] }')
+assert(len(users.list) == 2, "json: object array length")
+assert(users.list[1].id == 102, "json: object inside array property")
+assert(users.list[0].role == "user", "json: object inside array string property")
+remove users
+
+var dynamic = json('{ }')
+dynamic.field = "test"
+dynamic.child.field = "test"
+assert(dynamic.field == "test", "json: Dynamically assign new members")
+assert(dynamic.child.field == "test", "json: Dynamically assign new child members")
+remove dynamic
+
+
+# json: empty structures and edge values
+var edge = json('{ "empty_obj": {}, "empty_arr": [], "negative": -42 }')
+assert(len(edge.empty_arr) == 0, "json: empty array length == 0")
+assert(edge.negative == -42, "json: negative numbers")
+remove edge
+
+

@@ -23,7 +23,7 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 	case .LEFT_BRACKET:
 		return array_declaration(tokens)
 	case .IDENTIFIER:
-		return identifier(tokens)
+		return parse_identifier(tokens)
 	case .LENGTH:
 		return parse_len(tokens)
 	case .TIME:
@@ -34,6 +34,8 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return parse_in(tokens)
 	case .KEY:
 		return parse_key(tokens)
+	case .JSON:
+		return parse_json(tokens)
 	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NULL, .AT:
 		synt, err := syntax.create()
 		if sys.is_error(err) {

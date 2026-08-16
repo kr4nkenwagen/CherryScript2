@@ -176,6 +176,32 @@ consume_number :: proc(src: ^types.source_code_t) -> (string, types.exit_codes) 
 	}
 	is_float := false
 	start_position := src.pointer
+
+	first_char, peek_err := source_code.peek(src, 0)
+	if sys.is_error(peek_err) {
+		return "", peek_err
+	}
+
+	if first_char == '-' {
+		second_char, err := source_code.peek(src, 1)
+		if sys.is_error(err) && err != .PEEK_OUT_OF_BOUNDS {
+			return "", err
+		}
+		third_char, err_3 := source_code.peek(src, 2)
+		if sys.is_error(err_3) && err_3 != .PEEK_OUT_OF_BOUNDS {
+			return "", err_3
+		}
+
+		if is_number(second_char) || (second_char == '.' && third_char != '.') {
+			_, adv_err := source_code.advance(src)
+			if sys.is_error(adv_err) {
+				return "", adv_err
+			}
+		} else {
+			return "", .UNEXPECTED_CHARACTER
+		}
+	}
+
 	for !src.is_at_end {
 		character, peek_err := source_code.peek(src, 0)
 		if sys.is_error(peek_err) {
@@ -467,6 +493,16 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		}
 		if match {
 			return token.create(src, .LENGTH, word)
+		}
+	case 'j':
+		fallthrough
+	case 'J':
+		word, match, err := match_and_consume(src, grammar.JSON)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .JSON, word)
 		}
 	case 'p':
 		fallthrough
@@ -770,7 +806,7 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 			}
 		case '-':
 			second_char, second_char_err := source_code.peek(src, 1)
-			if sys.is_error(second_char_err) {
+			if sys.is_error(second_char_err) && second_char_err != .PEEK_OUT_OF_BOUNDS {
 				return nil, second_char_err
 			}
 			if second_char == '=' {
@@ -798,6 +834,45 @@ run :: proc(src: ^types.source_code_t) -> (^types.token_list_t, types.exit_codes
 				_, adv_err := source_code.advance(src)
 				if sys.is_error(adv_err) {
 					return nil, adv_err
+				}
+			} else if is_number(second_char) || second_char == '.' {
+				is_unary := true
+				if tmp != nil {
+					#partial switch tmp.type {
+					case .IDENTIFIER, .NUMBER, .RIGHT_PAREN, .RIGHT_BRACKET, .RIGHT_BRACE:
+						is_unary = false
+					case:
+						is_unary = true
+					}
+				}
+				if is_unary {
+					third_char, third_err := source_code.peek(src, 2)
+					if sys.is_error(third_err) && third_err != .PEEK_OUT_OF_BOUNDS {
+						return nil, third_err
+					}
+					if is_number(second_char) || (second_char == '.' && third_char != '.') {
+						number, number_err := consume_number(src)
+						if sys.is_error(number_err) {
+							return nil, number_err
+						}
+						tok, tok_err := token.create(src, .NUMBER, number)
+						if sys.is_error(tok_err) {
+							return nil, tok_err
+						}
+						add_err := token_list.add(list, tok)
+						if sys.is_error(add_err) {
+							return nil, add_err
+						}
+						break
+					}
+				}
+				tok, tok_err := token.create(src, .MINUS, "-")
+				if sys.is_error(tok_err) {
+					return nil, tok_err
+				}
+				add_err := token_list.add(list, tok)
+				if sys.is_error(add_err) {
+					return nil, add_err
 				}
 			} else {
 				tok, tok_err := token.create(src, .MINUS, "-")

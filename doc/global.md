@@ -1,5 +1,5 @@
 # GLOBAL
-# ## Overview
+## Overview
 `global` is used to declare variables and functions as globally accessible
 
 ## Example

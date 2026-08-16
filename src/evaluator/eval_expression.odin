@@ -89,6 +89,8 @@ eval_primary_expression :: proc(
 		return predefined_functions.in_func()
 	case .KEY:
 		return predefined_functions.key_func()
+	case .JSON:
+		return eval_json(syntax, stck, program)
 	case .NUMBER:
 		return eval_number(syntax)
 	case .NULL:

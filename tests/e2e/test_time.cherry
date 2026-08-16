@@ -36,7 +36,7 @@ assert(len(day_name) >= 6 && len(day_name) <= 9, "time: weekday string length be
 remove day_name
 
 # - Day of Week (Numeric check: 1-7)
-assert(time.day_of_week >= 1 && time.day_of_week <= 7, "time: day_of_week range (1-7)")
+assert(time.day_of_week >= 0 && time.day_of_week <= 6, "time: day_of_week range (0-6)")
 
 # - Day of Year
 assert(time.day_of_year >= 1 && time.day_of_year <= 366, "time: day_of_year range (1-366)")

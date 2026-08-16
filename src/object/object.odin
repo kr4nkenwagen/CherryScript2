@@ -1,7 +1,7 @@
 package object
 
 import "../types"
-import "core:os"
+import "core:encoding/json"
 
 create_int :: proc(value: int) -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
@@ -113,6 +113,15 @@ create_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
 	return obj, .OK
 }
 
+create_json :: proc(json_str: string) -> (^types.object_t, types.exit_codes) {
+	doc, err := json.parse_string(json_str)
+	if err != .None {
+		return nil, .OBJECT_IS_NIL
+	}
+	defer json.destroy_value(doc)
+	return json_value_to_object(doc, "")
+}
+
 create_null :: proc() -> (^types.object_t, types.exit_codes) {
 	obj := new(types.object_t)
 	if obj == nil {
@@ -145,12 +154,11 @@ length :: proc(obj: ^types.object_t) -> (int, types.exit_codes) {
 		return len(obj.data.(string)), .OK
 	case .ARRAY:
 		return obj.data.(types.object_array_t).count, .OK
+	case .JSON:
+		return len(obj.data.(types.object_json_t).value), .OK
 	case .FILE:
 		return file_length(obj.data.(types.object_file_t).name)
-	case .VECTOR:
-	case .NULL:
-	case .BOOL:
-	case .FUNCTION:
+	case .VECTOR, .NULL, .BOOL, .FUNCTION:
 	}
 	return -1, .OBJECT_IS_UNKNOWN_TYPE
 }
@@ -200,6 +208,11 @@ remove :: proc(obj: ^types.object_t) -> types.exit_codes {
 		free(obj.data.(types.object_vector_t).x)
 		free(obj.data.(types.object_vector_t).y)
 		free(obj.data.(types.object_vector_t).z)
+	case .JSON:
+		for item in obj.data.(types.object_json_t).value {
+			remove(item)
+		}
+		delete(obj.data.(types.object_json_t).value)
 	}
 	free(obj)
 	return .OK
