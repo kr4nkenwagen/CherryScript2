@@ -22,6 +22,16 @@ eval_json :: proc(
 		return object.create_json(val.data.(string))
 	case .FILE:
 		file := string(val.data.(types.object_file_t).name)
+		if !os.exists(file) {
+			_, err := os.create(file)
+			if err != os.General_Error.None {
+				return nil, .FAILED_TO_READ_FILE
+			}
+			err = os.write_entire_file(file, "{}")
+			if err != os.General_Error.None {
+				return nil, .FAILED_TO_READ_FILE
+			}
+		}
 		text_data, err := os.read_entire_file(file, context.allocator)
 		if err != os.General_Error.None {
 			return nil, .FAILED_TO_READ_FILE
