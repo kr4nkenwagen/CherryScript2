@@ -15,7 +15,9 @@ write_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) ->
 
 get :: proc(url: string) -> (string, types.exit_codes) {
 	handle := curl.easy_init()
-	if handle == nil do return "", .ERROR
+	if handle == nil {
+		return "", .ERROR
+	}
 	defer curl.easy_cleanup(handle)
 	builder: strings.Builder
 	strings.builder_init(&builder)
