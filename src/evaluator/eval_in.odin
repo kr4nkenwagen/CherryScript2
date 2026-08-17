@@ -1,13 +1,18 @@
 package evaluator
 
-import "../predefined_functions"
+import "../object"
 import "../types"
+import "core:os"
+import "core:strings"
 
-eval_in :: proc(
-	syntax: ^types.syntax_t,
-	stck: ^types.vm_t,
-	program: ^types.program_t,
-) -> types.exit_codes {
-	predefined_functions.in_func()
-	return .OK
+eval_in :: proc() -> (^types.object_t, types.exit_codes) {
+	buf: [256]byte
+	n, err := os.read(os.stdin, buf[:])
+	if err != nil {
+		return nil, .INTERPRETER_ERROR
+	}
+	raw_input := string(buf[:n])
+	input := strings.trim_space(raw_input)
+	heap_input := strings.clone(input)
+	return object.create_string(heap_input)
 }

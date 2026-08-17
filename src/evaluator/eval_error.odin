@@ -1,9 +1,7 @@
 package evaluator
 
-import "../predefined_functions"
 import "../sys"
 import "../types"
-
 
 eval_error :: proc(
 	syntax: ^types.syntax_t,
@@ -12,6 +10,6 @@ eval_error :: proc(
 ) -> types.exit_codes {
 	val, err := eval_primary_expression(syntax.value, stck, program)
 	if sys.is_error(err) do return err
-	predefined_functions.print(val, g_debug)
+	eval_print(val, g_debug)
 	return .OK
 }

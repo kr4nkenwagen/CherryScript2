@@ -1,14 +1,12 @@
-package predefined_functions
+package evaluator
 
 import "../debug"
 import "../object"
 import "../sys"
 import "../types"
 import "core:fmt"
-import "core:os"
 import "core:strconv"
 import "core:strings"
-import "core:sys/posix"
 
 translate_hex_colors :: proc(input: string, allocator := context.allocator) -> string {
 	b := strings.builder_make(allocator)
@@ -84,7 +82,7 @@ print_out :: proc(str: string, debug_mode: bool) {
 	}
 }
 
-print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
+eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 	if obj == nil {
 		return .OBJECT_IS_NIL
 	}
@@ -101,61 +99,3 @@ print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 	}
 	return .OK
 }
-
-println :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
-	if obj == nil {
-		return .OBJECT_IS_NIL
-	}
-	newline, newline_err := object.create_string("\n")
-	if sys.is_error(newline_err) {
-		return newline_err
-	}
-	formated_obj, formated_obj_err := object.add(obj, newline)
-	if sys.is_error(formated_obj_err) {
-		return formated_obj_err
-	}
-	return print(formated_obj, debug_mode)
-}
-
-len_func :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes) {
-	length, length_err := object.length(obj)
-	if sys.is_error(length_err) {
-		return nil, length_err
-	}
-	return object.create_int(length)
-}
-
-
-in_func :: proc() -> (^types.object_t, types.exit_codes) {
-	buf: [256]byte
-	n, err := os.read(os.stdin, buf[:])
-	if err != nil {
-		return nil, .INTERPRETER_ERROR
-	}
-	raw_input := string(buf[:n])
-	input := strings.trim_space(raw_input)
-	heap_input := strings.clone(input)
-	return object.create_string(heap_input)
-}
-
-key_func :: proc() -> (^types.object_t, types.exit_codes) {
-	fd: posix.FD = posix.STDIN_FILENO
-	old_termios: posix.termios
-	if posix.tcgetattr(fd, &old_termios) != .OK {
-		return nil, .INTERPRETER_ERROR
-	}
-	new_termios := old_termios
-	new_termios.c_lflag -= {.ICANON, .ECHO}
-	if posix.tcsetattr(fd, .TCSANOW, &new_termios) != .OK {
-		return nil, .INTERPRETER_ERROR
-	}
-	defer posix.tcsetattr(fd, .TCSANOW, &old_termios)
-	buf: [1]byte
-	n, err := os.read(os.stdin, buf[:])
-	if err != nil {
-		return nil, .INTERPRETER_ERROR
-	}
-	raw_input := string(buf[:n])
-	input := strings.trim_space(raw_input)
-	heap_input := strings.clone(input)
-	return object.create_string(heap_input)}

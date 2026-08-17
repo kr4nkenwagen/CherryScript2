@@ -2,7 +2,6 @@ package evaluator
 
 import "../debug"
 import "../object"
-import "../predefined_functions"
 import "../sys"
 import "../types"
 import "core:strconv"
@@ -43,7 +42,7 @@ eval_primary_expression :: proc(
 		return nil, eval_return(syntax, stck, program)
 	case .PRINT_LINE:
 		val, err := eval_primary_expression(syntax.value, stck, program)
-		predefined_functions.println(val, g_debug)
+		eval_println(val, g_debug)
 		return nil, .OK
 	case .FOR:
 		return nil, eval_for(syntax, stck, program)
@@ -52,7 +51,7 @@ eval_primary_expression :: proc(
 		if sys.is_error(err) {
 			return nil, err
 		}
-		predefined_functions.print(val, g_debug)
+		eval_print(val, g_debug)
 		return nil, .OK
 	case .FUNCTION:
 		return nil, function_declaration(syntax, stck)
@@ -86,9 +85,9 @@ eval_primary_expression :: proc(
 	case .AT:
 		return object.create_file(syntax.token.literal)
 	case .IN:
-		return predefined_functions.in_func()
+		return eval_in()
 	case .KEY:
-		return predefined_functions.key_func()
+		return eval_key()
 	case .JSON:
 		return eval_json(syntax, stck, program)
 	case .GET:
@@ -106,7 +105,7 @@ eval_primary_expression :: proc(
 		if sys.is_error(err) {
 			return nil, err
 		}
-		return predefined_functions.len_func(val)
+		return eval_length(val)
 	case .EXISTS:
 		val, err := eval_primary_expression(syntax.value.branch.statements[0], stck, program)
 		if sys.is_error(err) {
