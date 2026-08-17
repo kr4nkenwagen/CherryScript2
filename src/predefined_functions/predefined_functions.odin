@@ -125,13 +125,6 @@ len_func :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	return object.create_int(length)
 }
 
-exists_func :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes) {
-	res, res_err := object.file_exists(obj.data.(types.object_file_t).name)
-	if sys.is_error(res_err) {
-		return nil, res_err
-	}
-	return object.create_bool(res)
-}
 
 in_func :: proc() -> (^types.object_t, types.exit_codes) {
 	buf: [256]byte

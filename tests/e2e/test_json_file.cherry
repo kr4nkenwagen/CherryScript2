@@ -5,5 +5,6 @@ json_file.member = 1
 assert(file->0 == '{"member": 1}', "json file: new members are saved to file")
 json_file.group.member = 1
 assert(file->0 == '{"member": 1, "group": {"member": 1}}', "json file: new members are saved to file")
-rm file
+rm json_file
+assert(!exists(json_file), "json file: rm removed json file")
 remove file json_file

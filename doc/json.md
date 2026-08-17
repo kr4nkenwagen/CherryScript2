@@ -19,4 +19,5 @@ a.patchnotes = "Bumped version"
 ```
 var a = json(@"file")
 a.member = "new value" # This will update the file as well as the variable object.
+rm a
 ```

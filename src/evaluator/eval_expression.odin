@@ -110,7 +110,7 @@ eval_primary_expression :: proc(
 		if sys.is_error(err) {
 			return nil, err
 		}
-		return predefined_functions.exists_func(val)
+		return eval_exists(val)
 
 	case .RIGHT_ARROW:
 		return eval_file_extraction(syntax, stck, program)

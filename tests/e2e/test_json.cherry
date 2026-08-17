@@ -36,7 +36,6 @@ assert(dynamic.field == "test", "json: Dynamically assign new members")
 assert(dynamic.child.field == "test", "json: Dynamically assign new child members")
 remove dynamic
 
-
 # json: empty structures and edge values
 var edge = json('{ "empty_obj": {}, "empty_arr": [], "negative": -42 }')
 assert(len(edge.empty_arr) == 0, "json: empty array length == 0")

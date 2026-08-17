@@ -225,3 +225,13 @@ json_write_file :: proc(obj: ^types.object_t) -> types.exit_codes {
 	}
 	return .OK
 }
+
+create_json_from_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
+	text_data, err := os.read_entire_file(file, context.allocator)
+	if err != os.General_Error.None {
+		return nil, .FAILED_TO_READ_FILE
+	}
+	defer delete(text_data)
+	text := string(text_data)
+	return create_json(text)
+}

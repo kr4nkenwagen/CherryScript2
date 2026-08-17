@@ -26,7 +26,14 @@ eval_file_remove :: proc(
 			return obj_err
 		}
 		if obj != nil {
-			os.remove(obj.data.(types.object_file_t).name)
+			#partial switch (obj.type) {
+			case .FILE:
+				os.remove(obj.data.(types.object_file_t).name)
+			case .JSON:
+				os.remove(obj.data.(types.object_json_t).file.name)
+			case:
+				return .ERROR
+			}
 		}
 		curr = curr.left
 	}

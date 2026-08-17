@@ -32,13 +32,7 @@ eval_json :: proc(
 				return nil, .FAILED_TO_READ_FILE
 			}
 		}
-		text_data, err := os.read_entire_file(file, context.allocator)
-		if err != os.General_Error.None {
-			return nil, .FAILED_TO_READ_FILE
-		}
-		defer delete(text_data)
-		text := string(text_data)
-		obj, obj_err := object.create_json(text)
+		obj, obj_err := object.create_json_from_file(file)
 		if sys.is_error(obj_err) {
 			return nil, obj_err
 		}

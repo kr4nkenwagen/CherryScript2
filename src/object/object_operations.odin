@@ -155,7 +155,6 @@ modulus :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	return nil, .TYPE_MISMATCH
 }
 
-
 assign :: proc(target, source: ^types.object_t) -> types.exit_codes {
 	if target == nil || source == nil {
 		return .OBJECT_IS_NIL

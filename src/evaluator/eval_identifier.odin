@@ -30,7 +30,6 @@ eval_base_identifier :: proc(
 	return obj, .OK
 }
 
-// Evaluates property access (.member) on a JSON object
 eval_member_access :: proc(
 	obj: ^types.object_t,
 	member_synt: ^types.syntax_t,
@@ -44,7 +43,6 @@ eval_member_access :: proc(
 	return object.json_get(obj, member_synt.token.literal)
 }
 
-// Evaluates array index access ([expr]) on an ARRAY object
 eval_index_access :: proc(
 	obj: ^types.object_t,
 	index_synt: ^types.syntax_t,
@@ -92,7 +90,6 @@ eval_function_call :: proc(
 	return function_identifier(converted_ptr, stck)
 }
 
-// Main evaluation procedure: iteratively resolves chained identifiers, members, and array indices
 eval_identifier :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
