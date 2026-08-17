@@ -26,6 +26,8 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return parse_identifier(tokens)
 	case .LENGTH:
 		return parse_len(tokens)
+	case .GET:
+		return parse_get(tokens)
 	case .TIME:
 		return parse_time(tokens)
 	case .EXISTS:

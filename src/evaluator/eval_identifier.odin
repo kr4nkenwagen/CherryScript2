@@ -55,16 +55,24 @@ eval_index_access :: proc(
 	if obj.type != .ARRAY {
 		return nil, .EXPECTED_ARRAY_INDEX
 	}
+	index_obj: ^types.object_t
+	index_err: types.exit_codes
+	if (index_synt.token.type == .IDENTIFIER) {
+		curr_stack, curr_stack_err := vm.current_frame(stck)
+		if sys.is_error(curr_stack_err) {
+			return nil, curr_stack_err
+		}
+		index_obj, index_err = stack.get(curr_stack, index_synt.token.literal)
+	} else {
 
-	index_obj, index_err := eval_primary_expression(index_synt, stck, prog)
+		index_obj, index_err = eval_primary_expression(index_synt, stck, prog)
+	}
 	if sys.is_error(index_err) {
 		return nil, index_err
 	}
-
 	if index_obj == nil || index_obj.type != .INT {
 		return nil, .EXPECTED_ARRAY_INDEX
 	}
-
 	idx := int(index_obj.data.(int))
 	return object.array_get(obj, idx)
 }
@@ -102,13 +110,10 @@ eval_identifier :: proc(
 	if sys.is_error(base_err) {
 		return nil, base_err
 	}
-
 	curr_synt := synt
-
 	// Walk through nested child nodes (.value) across mixed types
 	for curr_synt.value != nil {
 		curr_synt = curr_synt.value
-
 		#partial switch curr_obj.type {
 		case .JSON:
 			next_obj, member_err := eval_member_access(curr_obj, curr_synt)
@@ -128,6 +133,5 @@ eval_identifier :: proc(
 			return nil, .INTERPRETER_ERROR
 		}
 	}
-
 	return eval_function_call(curr_obj, synt, stck)
 }

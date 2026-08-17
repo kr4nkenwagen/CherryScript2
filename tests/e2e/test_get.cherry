@@ -1,0 +1,3 @@
+var res = get("https://polisen.se/api/events")
+assert(len(res) == 500, "get: fetch successful")
+remove res

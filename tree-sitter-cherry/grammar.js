@@ -38,7 +38,7 @@ module.exports = grammar({
       'fn', 'if', 'null', 'module', 'out', 'println', 'print',
       'return', 'remove', 'true', 'var', 'while', 'len', 'in',
       "rm", "exists", "sleep", "time", "key", "clr", "global",
-      "elif", "json"
+      "elif", "json", "get"
     ),
 
     // Based on your switch statements for operators

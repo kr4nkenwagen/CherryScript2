@@ -606,6 +606,15 @@ consume_reserved_word :: proc(src: ^types.source_code_t) -> (^types.token_t, typ
 		if match {
 			return token.create(src, .GLOBAL, word)
 		}
+		word, match, err = match_and_consume(src, grammar.GET)
+		if sys.is_error(err) {
+			return nil, err
+		}
+		if match {
+			return token.create(src, .GET, word)
+		}
+
+
 	case '&':
 		second_char, second_char_err := source_code.peek(src, 1)
 		if sys.is_error(second_char_err) {
