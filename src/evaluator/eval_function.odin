@@ -2,7 +2,6 @@ package evaluator
 
 import "../object"
 import "../stack"
-import "../sys"
 import "../types"
 import "../vm"
 

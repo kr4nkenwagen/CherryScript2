@@ -1,6 +1,5 @@
 package evaluator
 
-import "../sys"
 import "../types"
 
 eval_return :: proc(

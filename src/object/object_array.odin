@@ -1,7 +1,6 @@
 package object
 
 import "../object"
-import "../sys"
 import "../types"
 
 array_set :: proc(

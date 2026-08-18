@@ -1,7 +1,6 @@
 package evaluator
 
 import "../object"
-import "../sys"
 import "../types"
 
 

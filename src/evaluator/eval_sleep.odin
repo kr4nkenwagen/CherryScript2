@@ -1,6 +1,5 @@
 package evaluator
 
-import "../sys"
 import "../types"
 import "core:time"
 

@@ -1,6 +1,5 @@
 package evaluator
 
-import "../sys"
 import "../types"
 
 eval_while :: proc(
