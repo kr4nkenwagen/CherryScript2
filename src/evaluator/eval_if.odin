@@ -7,7 +7,9 @@ eval_if :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
 	program: ^types.program_t,
-) -> types.exit_codes {
+) -> (
+	code: types.exit_codes,
+) {
 	curr_syntax := syntax
 	for curr_syntax != nil &&
 	    (curr_syntax.token.type == .IF ||
@@ -15,9 +17,7 @@ eval_if :: proc(
 			    curr_syntax.token.type == .ELSE) {
 		condition, cond_err := eval_primary_expression(curr_syntax.value, stck, program)
 		if curr_syntax.token.type != .ELSE && cond_err != .OBJECT_IS_NIL {
-			if sys.is_error(cond_err) {
-				return cond_err
-			}
+			if sys.is_error(cond_err) do return cond_err
 		}
 		if curr_syntax.token.type == .ELSE || condition.data.(bool) == true {
 			_, branch_err := branch(curr_syntax, stck)

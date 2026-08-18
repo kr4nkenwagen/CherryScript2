@@ -1,15 +1,15 @@
 package evaluator
 
-import "../sys"
 import "../types"
 
 eval_out :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
 	program: ^types.program_t,
-) -> types.exit_codes {
-	val, err := eval_primary_expression(syntax.value, stck, program)
-	if sys.is_error(err) do return err
+) -> (
+	code: types.exit_codes,
+) {
+	val := eval_primary_expression(syntax.value, stck, program) or_return
 	eval_print(val, g_debug)
 	return .OK
 }

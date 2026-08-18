@@ -65,29 +65,19 @@ get_cherry_files_in_dir :: proc(src_path: string) -> ([dynamic]string, types.exi
 
 import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exit_codes {
 	src_path := src_path
-	if len(src_path) > 0 && src_path[0] != '/' && !os.exists(src_path) {
-		src_path = fmt.tprintf("%s/%s", target.location, src_path)
-	}
+	if len(src_path) > 0 && src_path[0] != '/' && !os.exists(src_path) do src_path = fmt.tprintf("%s/%s", target.location, src_path)
 	paths, paths_err := get_cherry_files_in_dir(src_path)
-	if sys.is_error(paths_err) {
-		return .FAILED_TO_READ_SOURCE_CODE_FILE
-	}
+	if sys.is_error(paths_err) do return .FAILED_TO_READ_SOURCE_CODE_FILE
 	for path in paths {
 		path := path
-		if os.is_dir(path) {
-			continue
-		}
+		if os.is_dir(path) do continue
 
 		for i in target.included_sources {
-			if i == path {
-				return .OK
-			}
+			if i == path do return .OK
 		}
 		append(&target.included_sources, path)
 		file_data, err := os.read_entire_file(path, context.allocator)
-		if err != nil {
-			return .FAILED_TO_READ_SOURCE_CODE_FILE
-		}
+		if err != nil do return .FAILED_TO_READ_SOURCE_CODE_FILE
 		defer delete(file_data)
 		obj_src := string(file_data)
 		b: strings.Builder
@@ -105,13 +95,9 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 }
 
 advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_codes) {
-	if src == nil {
-		return 0, .OBJECT_IS_NIL
-	}
+	if src == nil do return 0, .OBJECT_IS_NIL
 	for i := 0; i < count; i += 1 {
-		if src.is_at_end {
-			return 0, .EOF_IN_SOURCE_CODE_REACHED
-		}
+		if src.is_at_end do return 0, .EOF_IN_SOURCE_CODE_REACHED
 		src.pointer += 1
 		if src.pointer >= src.length {
 			src.is_at_end = true
@@ -127,19 +113,13 @@ advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_
 }
 
 peek :: proc(src: ^types.source_code_t, distance: int = 0) -> (rune, types.exit_codes) {
-	if src == nil {
-		return 0, .OBJECT_IS_NIL
-	}
-	if src.pointer + distance >= src.length || src.pointer + distance < 0 {
-		return 0, .PEEK_OUT_OF_BOUNDS
-	}
+	if src == nil do return 0, .OBJECT_IS_NIL
+	if src.pointer + distance >= src.length || src.pointer + distance < 0 do return 0, .PEEK_OUT_OF_BOUNDS
 	return rune(src.content[src.pointer + distance]), .OK
 }
 
 remove :: proc(src: ^types.source_code_t) -> types.exit_codes {
-	if src == nil {
-		return .OBJECT_IS_NIL
-	}
+	if src == nil do return .OBJECT_IS_NIL
 	delete(src.content)
 	free(src)
 	return .OK

@@ -12,12 +12,10 @@ eval_primary_expression :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL
 	if g_debug {
 		debug.prompt_user(syntax.token, stck)
 	}
@@ -47,10 +45,7 @@ eval_primary_expression :: proc(
 	case .FOR:
 		return nil, eval_for(syntax, stck, program)
 	case .PRINT:
-		val, err := eval_primary_expression(syntax.value, stck, program)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		val := eval_primary_expression(syntax.value, stck, program) or_return
 		eval_print(val, g_debug)
 		return nil, .OK
 	case .FUNCTION:
@@ -101,16 +96,10 @@ eval_primary_expression :: proc(
 	case .FALSE:
 		return object.create_bool(false)
 	case .LENGTH:
-		val, err := eval_primary_expression(syntax.value.branch.statements[0], stck, program)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		val := eval_primary_expression(syntax.value.branch.statements[0], stck, program) or_return
 		return eval_length(val)
 	case .EXISTS:
-		val, err := eval_primary_expression(syntax.value.branch.statements[0], stck, program)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		val := eval_primary_expression(syntax.value.branch.statements[0], stck, program) or_return
 		return eval_exists(val)
 
 	case .RIGHT_ARROW:
@@ -127,36 +116,25 @@ eval_file_extraction :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	if syntax == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-	file, file_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(file_err) {
-		return nil, file_err
-	}
-	index, index_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(index_err) {
-		return nil, index_err
-	}
+	file := eval_primary_expression(syntax.left, stck, program) or_return
+	index := eval_primary_expression(syntax.right, stck, program) or_return
 	if syntax.right.token.type == .LENGTH {
 		if syntax.left.token.literal == syntax.right.value.branch.statements[0].token.literal {
 			index.data = index.data.(int) - 1
 		}
 	}
-	content, content_err := object.file_get(file.data.(types.object_file_t).name, index.data.(int))
-	if sys.is_error(content_err) {
-		return nil, content_err
-	}
+	content := object.file_get(file.data.(types.object_file_t).name, index.data.(int)) or_return
 	return object.create_string(content)
 }
 
 eval_number :: proc(syntax: ^types.syntax_t) -> (^types.object_t, types.exit_codes) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL
 	if strings.contains(syntax.token.literal, ".") {
 		val := strconv.parse_f64(syntax.token.literal) or_else 0.0
 		return object.create_float(f32(val))
@@ -171,16 +149,14 @@ eval_string_operation_expression :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	if syntax == nil {
 		return nil, .OBJECT_IS_NIL
 	}
-	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(left_err) do return nil, left_err
-	right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(right_err) do return nil, right_err
+	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
+	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
 	case .COLON:
 		if right_hand_side.type == .INT {
@@ -197,17 +173,15 @@ eval_string_operation_expression :: proc(
 		}
 	case .COLON_HAT:
 		if right_hand_side.type == .INT {
-			size, err := object.length(left_hand_side)
-			if sys.is_error(err) do return nil, err
+			size := object.length(left_hand_side) or_return
 			len_val := int(right_hand_side.data.(int))
 			return object.substring(left_hand_side, size - len_val, len_val)
 		}
 		if right_hand_side.type == .STRING {
-			position, err := object.position_of_last_instance(
+			position := object.position_of_last_instance(
 				left_hand_side,
 				right_hand_side.data.(string),
-			)
-			if sys.is_error(err) do return nil, err
+			) or_return
 			if position == -1 do return nil, .OK
 			return object.substring(left_hand_side, position + 1, -1)
 		}
@@ -229,21 +203,12 @@ eval_and_or :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
-	}
-	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(left_err) {
-		return nil, left_err
-	}
-
-	right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(right_err) {
-		return nil, right_err
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL
+	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
+	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	if left_hand_side.type != .BOOL || right_hand_side.type != .BOOL {
 		return nil, .TYPE_MISMATCH
 	}
@@ -262,16 +227,11 @@ eval_unary_expression :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
-	}
-	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(left_err) {
-		return nil, left_err
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL
+	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	if left_hand_side != nil && left_hand_side.type == .BOOL {
 		return object.create_bool(!left_hand_side.data.(bool))
 	}
@@ -283,20 +243,12 @@ eval_comparison_expression :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
-	}
-	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(left_err) {
-		return nil, left_err
-	}
-	right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(right_err) {
-		return nil, right_err
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL
+	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
+	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
 	case .EQUAL_EQUAL:
 		return object.equals(left_hand_side, right_hand_side)
@@ -329,21 +281,13 @@ eval_binary_expression :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL
 
-	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(left_err) {
-		return nil, left_err
-	}
-	right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(right_err) {
-		return nil, right_err
-	}
+	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
+	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
 	case .PLUS:
 		return object.add(left_hand_side, right_hand_side)
@@ -353,9 +297,7 @@ eval_binary_expression :: proc(
 		return object.multiply(left_hand_side, right_hand_side)
 	}
 
-	if divide_by_zero(left_hand_side, right_hand_side) {
-		return nil, .DIVISION_BY_ZERO
-	}
+	if divide_by_zero(left_hand_side, right_hand_side) do return nil, .DIVISION_BY_ZERO
 
 	#partial switch syntax.token.type {
 	case .SLASH:
@@ -370,23 +312,16 @@ eval_assignment_expression :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
 	program: ^types.program_t,
-) -> types.exit_codes {
+) -> (
+	code: types.exit_codes,
+) {
 	if syntax == nil {
 		return .OBJECT_IS_NIL
 	}
 	if syntax.left.token.type == .LEFT_ARROW {
-		right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-		if sys.is_error(right_err) {
-			return right_err
-		}
-		file, file_err := eval_primary_expression(syntax.left.left, stck, program)
-		if sys.is_error(file_err) {
-			return file_err
-		}
-		index, index_err := eval_primary_expression(syntax.left.right, stck, program)
-		if sys.is_error(index_err) {
-			return index_err
-		}
+		right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
+		file := eval_primary_expression(syntax.left.left, stck, program) or_return
+		index := eval_primary_expression(syntax.left.right, stck, program) or_return
 		object.file_set(
 			file.data.(types.object_file_t).name,
 			right_hand_side.data.(string),
@@ -394,14 +329,8 @@ eval_assignment_expression :: proc(
 		)
 		return .OK
 	}
-	left_hand_side, left_err := eval_primary_expression(syntax.left, stck, program)
-	if sys.is_error(left_err) {
-		return left_err
-	}
-	right_hand_side, right_err := eval_primary_expression(syntax.right, stck, program)
-	if sys.is_error(right_err) {
-		return right_err
-	}
+	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
+	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	if left_hand_side.is_const {
 		return .CANNOT_ASSIGN_TO_CONSTANT
 	}
@@ -410,25 +339,19 @@ eval_assignment_expression :: proc(
 	case .EQUAL:
 		return object.assign(left_hand_side, right_hand_side)
 	case .PLUS_EQUAL:
-		res, err := object.add(left_hand_side, right_hand_side)
-		if sys.is_error(err) do return err
+		res := object.add(left_hand_side, right_hand_side) or_return
 		return object.assign(left_hand_side, res)
 	case .MINUS_EQUAL:
-		res, err := object.subtract(left_hand_side, right_hand_side)
-		if sys.is_error(err) do return err
+		res := object.subtract(left_hand_side, right_hand_side) or_return
 		return object.assign(left_hand_side, res)
 	case .STAR_EQUAL:
-		res, err := object.multiply(left_hand_side, right_hand_side)
-		if sys.is_error(err) do return err
+		res := object.multiply(left_hand_side, right_hand_side) or_return
 		return object.assign(left_hand_side, res)
 	case .SLASH_EQUAL:
 		if divide_by_zero(left_hand_side, right_hand_side) {
 			return .DIVISION_BY_ZERO
 		}
-		res, err := object.divide(left_hand_side, right_hand_side)
-		if sys.is_error(err) {
-			return err
-		}
+		res := object.divide(left_hand_side, right_hand_side) or_return
 		return object.assign(left_hand_side, res)
 	}
 	return .OK

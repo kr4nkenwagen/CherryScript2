@@ -1,7 +1,6 @@
 package parser
 
 import "../syntax"
-import "../sys"
 import "../token_list"
 import "../types"
 
@@ -9,58 +8,23 @@ parse_for :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.syntax_t,
-	types.exit_codes,
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
 ) {
-	curr_syntax, curr_syntax_err := syntax.create()
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
-	curr_syntax.token, curr_syntax_err = token_list.peek(tokens, 0)
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
-	adv, adv_err := token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	if adv.type != types.token_type_t.LEFT_PAREN {
-		return nil, types.exit_codes.UNEXPECTED_SYNTAX
-	}
-	_, adv_err = token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	curr_syntax.left, curr_syntax_err = line(tokens, parent)
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
-	curr_syntax.value, curr_syntax_err = line(tokens, parent)
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
-	curr_syntax.right, curr_syntax_err = line(tokens, parent)
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
-	curr_tok, tok_err := token_list.peek(tokens, 0)
-	if sys.is_error(tok_err) {
-		return nil, tok_err
-	}
+	curr_syntax := syntax.create() or_return
+	curr_syntax.token = token_list.peek(tokens, 0) or_return
+	adv := token_list.advance(tokens) or_return
+	if adv.type != types.token_type_t.LEFT_PAREN do return nil, types.exit_codes.UNEXPECTED_SYNTAX
+	token_list.advance(tokens) or_return
+	curr_syntax.left = line(tokens, parent) or_return
+	curr_syntax.value = line(tokens, parent) or_return
+	curr_syntax.right = line(tokens, parent) or_return
+	curr_tok := token_list.peek(tokens, 0) or_return
 	for curr_tok.type != types.token_type_t.LEFT_BRACE {
-		_, adv_err = token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		curr_tok, tok_err = token_list.peek(tokens, 0)
-		if sys.is_error(tok_err) {
-			return nil, tok_err
-		}
+		token_list.advance(tokens) or_return
+		curr_tok = token_list.peek(tokens, 0) or_return
 	}
-	curr_syntax.branch, curr_syntax_err = branch(tokens, parent)
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
+	curr_syntax.branch = branch(tokens, parent) or_return
 	curr_syntax.branch.type = types.program_type_t.LOOP
 	return curr_syntax, types.exit_codes.OK
 }

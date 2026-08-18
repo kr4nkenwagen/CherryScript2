@@ -48,9 +48,7 @@ eval_time :: proc(
 		return object.create_string(weekday)
 	case "day_of_week":
 		weekday_num := calculate_weekday_number(dt)
-		if weekday_num == -1 {
-			return object.create_null()
-		}
+		if weekday_num == -1 do return object.create_null()
 		return object.create_int(weekday_num)
 	case "day_of_year", "year_day":
 		doy := calculate_day_of_year(int(dt.year), int(dt.month), int(dt.day))
@@ -152,9 +150,7 @@ is_leap_year :: proc(year: int) -> bool {
 calculate_day_of_week :: proc(year, month, day: int) -> string {
 	t := [12]int{0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4}
 	y := year
-	if month < 3 {
-		y -= 1
-	}
+	if month < 3 do y -= 1
 	switch ((y + y / 4 - y / 100 + y / 400 + t[month - 1] + day) % 7) {
 	case 0:
 		return "sunday"
@@ -178,8 +174,6 @@ calculate_day_of_week :: proc(year, month, day: int) -> string {
 calculate_day_of_year :: proc(year, month, day: int) -> int {
 	days_before_month := [12]int{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334}
 	doy := days_before_month[month - 1] + day
-	if month > 2 && is_leap_year(year) {
-		doy += 1
-	}
+	if month > 2 && is_leap_year(year) do doy += 1
 	return doy
 }

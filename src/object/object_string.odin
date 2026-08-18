@@ -73,8 +73,8 @@ position_of_first_instance :: proc(
 	obj: ^types.object_t,
 	instance: string,
 ) -> (
-	int,
-	types.exit_codes,
+	ret_int: int,
+	code: types.exit_codes,
 ) {
 	if obj == nil {
 		return -1, .OBJECT_IS_NIL

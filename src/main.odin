@@ -33,9 +33,7 @@ parse_args :: proc() -> ^types.arguments_t {
 					return nil
 				}
 			}
-		} else if os.exists(val) && strings.has_suffix(val, SOURCE_FILE_SUFFIX) {
-			append(&args.source_files, val)
-		}
+		} else if os.exists(val) && strings.has_suffix(val, SOURCE_FILE_SUFFIX) do append(&args.source_files, val)
 		i += 1
 	}
 	return args
@@ -43,9 +41,7 @@ parse_args :: proc() -> ^types.arguments_t {
 
 step_1 :: proc(path: string, args: ^types.arguments_t) -> ^types.token_list_t {
 	src, src_err := source_code.from_file(path)
-	if sys.is_error(src_err) {
-		return nil
-	}
+	if sys.is_error(src_err) do return nil
 	tokens, tokens_err := scan.run(src)
 	if sys.is_error(tokens_err) {
 		sys.print_error(tokens_err, tokens)
@@ -64,9 +60,7 @@ step_1 :: proc(path: string, args: ^types.arguments_t) -> ^types.token_list_t {
 }
 
 step_2 :: proc(tokens: ^types.token_list_t, args: ^types.arguments_t) -> ^types.program_t {
-	if tokens == nil {
-		return nil
-	}
+	if tokens == nil do return nil
 	synt, synt_err := parser.run(tokens, nil)
 	if sys.is_error(synt_err) {
 		sys.print_error(synt_err, tokens)
@@ -80,35 +74,23 @@ step_2 :: proc(tokens: ^types.token_list_t, args: ^types.arguments_t) -> ^types.
 }
 
 step_3 :: proc(program: ^types.program_t, tokens: ^types.token_list_t, args: ^types.arguments_t) {
-	if program == nil || tokens == nil {
-		return
-	}
+	if program == nil || tokens == nil do return
 	curr_vm, curr_vm_err := vm.create()
 	if sys.is_error(curr_vm_err) {
 		sys.print_error(curr_vm_err, tokens)
 	}
 	curr_stack, curr_stack_err := stack.create()
-	if sys.is_error(curr_stack_err) {
-		sys.print_error(curr_stack_err, tokens)
-	}
+	if sys.is_error(curr_stack_err) do sys.print_error(curr_stack_err, tokens)
 	vm_err := vm.push_frame(curr_vm, curr_stack, false)
-	if sys.is_error(vm_err) {
-		sys.print_error(vm_err, tokens)
-	}
+	if sys.is_error(vm_err) do sys.print_error(vm_err, tokens)
 	obj, obj_err := evaluator.run(program, curr_vm, args.debug_level == .EVAL)
-	if sys.is_error(obj_err) {
-		sys.print_error(obj_err, tokens)
-	}
-	if args.debug_level == .EVAL {
-		debug.inspect_snapshots()
-	}
+	if sys.is_error(obj_err) do sys.print_error(obj_err, tokens)
+	if args.debug_level == .EVAL do debug.inspect_snapshots()
 }
 
 main :: proc() {
 	args := parse_args()
-	if args == nil {
-		return
-	}
+	if args == nil do return
 	for file in args.source_files {
 		tokens := step_1(file, args)
 		program := step_2(tokens, args)

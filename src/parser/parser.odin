@@ -9,189 +9,103 @@ branch :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.program_t,
-	types.exit_codes,
+	prgm: ^types.program_t,
+	code: types.exit_codes,
 ) {
-	if tokens == nil {
-		return nil, types.exit_codes.OBJECT_IS_NIL
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	if tokens == nil do return nil, .OBJECT_IS_NIL
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token.type == types.token_type_t.TERMINATOR {
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		token_list.advance(tokens) or_return
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
-	if curr_token.type != types.token_type_t.LEFT_BRACE {
-		return nil, types.exit_codes.BRACKET_NOT_OPENED
-	}
-	_, adv_err := token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	prog, err := program.create(parent)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err = token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	if curr_token.type != types.token_type_t.LEFT_BRACE do return nil, .BRACKET_NOT_OPENED
+	token_list.advance(tokens) or_return
+	prog := program.create(parent) or_return
+	curr_token = token_list.peek(tokens, 0) or_return
 	for curr_token.type != types.token_type_t.RIGHT_BRACE {
-		if curr_token.type == types.token_type_t.END_OF_FILE {
-			return nil, types.exit_codes.UNEXPECTED_EOF
-		}
+		if curr_token.type == types.token_type_t.END_OF_FILE do return nil, .UNEXPECTED_EOF
 		synt: ^types.syntax_t = nil
 		prev_synt: ^types.syntax_t = nil
 		for curr_token.type != types.token_type_t.TERMINATOR &&
 		    curr_token.type != types.token_type_t.RIGHT_BRACE {
 
-			if curr_token.type == types.token_type_t.END_OF_FILE {
-				return nil, types.exit_codes.UNEXPECTED_EOF
-			}
-			stmt, stmt_err := statement(tokens, prog)
-			if sys.is_error(stmt_err) {
-				return nil, stmt_err
-			}
+			if curr_token.type == types.token_type_t.END_OF_FILE do return nil, .UNEXPECTED_EOF
+			stmt := statement(tokens, prog) or_return
 			if stmt != nil {
-				if synt == nil {
-					synt = stmt
-				} else {
-					prev_synt.left = stmt
-				}
+				if synt == nil do synt = stmt
+				else do prev_synt.left = stmt
 				prev_synt = stmt
 			}
-			curr_token, curr_token_err = token_list.peek(tokens, 0)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			curr_token = token_list.peek(tokens, 0) or_return
 		}
 		for curr_token.type == types.token_type_t.TERMINATOR {
-			_, adv_err = token_list.advance(tokens)
-			if sys.is_error(adv_err) {
-				return nil, adv_err
-			}
-			curr_token, curr_token_err = token_list.peek(tokens, 0)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			token_list.advance(tokens) or_return
+			curr_token = token_list.peek(tokens, 0) or_return
 		}
 		if synt != nil {
-			prog_err := program.add(prog, synt)
-			if sys.is_error(prog_err) {
-				return nil, prog_err
-			}
+			program.add(prog, synt) or_return
 		}
 	}
-	_, adv_err = token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	return prog, types.exit_codes.OK
+	token_list.advance(tokens) or_return
+	return prog, .OK
 }
 
 line :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.syntax_t,
-	types.exit_codes,
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
 ) {
 	curr_syntax: ^types.syntax_t
 	prev_syntax: ^types.syntax_t
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token.type != types.token_type_t.TERMINATOR &&
 	    curr_token.type != types.token_type_t.RIGHT_PAREN {
 
 		if curr_syntax == nil {
-			curr_syntax_err: types.exit_codes
-			curr_syntax, curr_syntax_err = statement(tokens, parent)
-			if sys.is_error(curr_syntax_err) {
-				return nil, curr_syntax_err
-			}
+			curr_syntax = statement(tokens, parent) or_return
 			prev_syntax = curr_syntax
-			curr_token, curr_token_err = token_list.peek(tokens, 0)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			curr_token = token_list.peek(tokens, 0) or_return
 			continue
 		}
 		curr_syntax_err: types.exit_codes
-		curr_syntax, curr_syntax_err = statement(tokens, parent)
-		if sys.is_error(curr_syntax_err) {
-			return nil, curr_syntax_err
-		}
+		curr_syntax = statement(tokens, parent) or_return
 		if curr_syntax == nil {
-			curr_token, curr_token_err = token_list.peek(tokens, 0)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			curr_token = token_list.peek(tokens, 0) or_return
 			continue
 		}
 		curr_syntax.left = prev_syntax
 		prev_syntax = curr_syntax
 	}
 	for curr_token.type == types.token_type_t.TERMINATOR {
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		token_list.advance(tokens) or_return
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
-	return curr_syntax, types.exit_codes.OK
+	return curr_syntax, .OK
 }
 
 run :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.program_t,
-	types.exit_codes,
+	prgm: ^types.program_t,
+	code: types.exit_codes,
 ) {
-	if tokens == nil {
-		return nil, types.exit_codes.OBJECT_IS_NIL
-	}
-	prog, err := program.create(parent)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	if tokens == nil do return nil, .OBJECT_IS_NIL
+	prog := program.create(parent) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil && curr_token.type != types.token_type_t.END_OF_FILE {
 		for curr_token != nil &&
 		    curr_token.type != .TERMINATOR &&
 		    curr_token.type != .RIGHT_BRACE &&
 		    curr_token.type != .LEFT_BRACE &&
 		    curr_token.type != .RIGHT_PAREN {
-			synt, synt_err := statement(tokens, parent)
-			if sys.is_error(synt_err) {
-				return nil, synt_err
-			}
+			synt := statement(tokens, parent) or_return
 			if synt != nil {
-				prog_err := program.add(prog, synt)
-				if sys.is_error(prog_err) {
-					return nil, prog_err
-				}
+				program.add(prog, synt) or_return
 			}
-			curr_token, curr_token_err = token_list.peek(tokens, 0)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			curr_token = token_list.peek(tokens, 0) or_return
 		}
 		if curr_token != nil &&
 		   (curr_token.type == .TERMINATOR ||
@@ -199,17 +113,10 @@ run :: proc(
 				   curr_token.type == .LEFT_BRACE ||
 				   curr_token.type == .RIGHT_PAREN) {
 			_, adv_err := token_list.advance(tokens)
-			if adv_err == types.exit_codes.RAN_OUT_OF_TOKENS {
-				break
-			}
-			if sys.is_error(adv_err) {
-				return nil, adv_err
-			}
+			if adv_err == .RAN_OUT_OF_TOKENS do break
+			if sys.is_error(adv_err) do return nil, adv_err
 		}
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
-	return prog, types.exit_codes.OK
+	return prog, .OK
 }

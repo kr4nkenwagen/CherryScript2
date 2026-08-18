@@ -2,7 +2,6 @@ package evaluator
 
 import "../object"
 import "../stack"
-import "../sys"
 import "../types"
 import "../vm"
 import "core:time"
@@ -15,12 +14,10 @@ run :: proc(
 	stck: ^types.vm_t,
 	debug_mode: bool,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if prog == nil {
-		return nil, types.exit_codes.OBJECT_IS_NIL
-	}
+	if prog == nil do return nil, types.exit_codes.OBJECT_IS_NIL
 	g_debug = debug_mode
 	prog.pointer = 0
 	prog.exit = false
@@ -30,28 +27,27 @@ run :: proc(
 		g_start_time_execution^ = time.tick_now()
 	}
 	for prog.pointer < prog.length && !prog.exit {
-		if prog.exit {
-			break
-		}
+		if prog.exit do break
 		if prog.continueing {
 			prog.pointer = prog.length
 			prog.continueing = false
 			continue
 		}
 		value_err: types.exit_codes
-		value, value_err = eval_primary_expression(prog.statements[prog.pointer], stck, prog)
-		if sys.is_error(value_err) {
-			return nil, value_err
-		}
+		value = eval_primary_expression(prog.statements[prog.pointer], stck, prog) or_return
 		prog.pointer += 1
 	}
-	if prog.exit {
-		return prog.ret_value, .OK
-	}
+	if prog.exit do return prog.ret_value, .OK
 	return value, .OK
 }
 
-branch :: proc(synt: ^types.syntax_t, stck: ^types.vm_t) -> (^types.object_t, types.exit_codes) {
+branch :: proc(
+	synt: ^types.syntax_t,
+	stck: ^types.vm_t,
+) -> (
+	obj: ^types.object_t,
+	code: types.exit_codes,
+) {
 	if synt == nil {
 		return nil, .OBJECT_IS_NIL
 	}
@@ -59,99 +55,42 @@ branch :: proc(synt: ^types.syntax_t, stck: ^types.vm_t) -> (^types.object_t, ty
 	// Path 1: synt.args == nil
 	// -------------------------------------------------------------
 	if synt.args == nil {
-		new_stack, new_stack_err := stack.create()
-		if sys.is_error(new_stack_err) {
-			return nil, new_stack_err
-		}
-		vm_err := vm.push_frame(stck, new_stack, true)
-		if sys.is_error(vm_err) {
-			return nil, vm_err
-		}
-		defer vm_err = vm.pop_frame(stck)
-		if sys.is_error(vm_err) {
-			return nil, vm_err
-		}
-		value_data, value_data_err := run(synt.branch, stck, g_debug)
-		if sys.is_error(value_data_err) {
-			return nil, value_data_err
-		}
-		if value_data == nil {
-			return nil, .OK
-		}
-		value, value_err := object.copy(value_data)
-		if sys.is_error(value_err) && value_err != .OBJECT_IS_NIL {
-			return nil, value_err
-		}
+		new_stack := stack.create() or_return
+		vm.push_frame(stck, new_stack, true) or_return
+		defer vm.pop_frame(stck)
+		value_data := run(synt.branch, stck, g_debug) or_return
+		if value_data == nil do return nil, .OK
+		value := object.copy(value_data) or_return
 		return value, .OK
 	}
 	// -------------------------------------------------------------
 	// Path 2: synt.args != nil
 	// -------------------------------------------------------------
-	new_stack, new_stack_err := stack.create()
-	if sys.is_error(new_stack_err) {
-		return nil, new_stack_err
-	}
-	vm_prev, vm_prev_err := vm.current_frame(stck)
-	if sys.is_error(vm_prev_err) {
-		return nil, vm_prev_err
-	}
+	new_stack := stack.create() or_return
+	vm_prev := vm.current_frame(stck) or_return
 	arg_vals: [dynamic]^types.object_t
 	defer delete(arg_vals)
 	for &i in synt.value.branch.statements {
-		arg_val, arg_vals_err := eval_primary_expression(i, stck, nil)
-		if sys.is_error(arg_vals_err) {
-			return nil, arg_vals_err
-		}
+		arg_val := eval_primary_expression(i, stck, nil) or_return
 		append(&arg_vals, arg_val)
 	}
-	fn_obj, fn_obj_err := stack.get(vm_prev, synt.token.literal)
-	if sys.is_error(fn_obj_err) {
-		return nil, fn_obj_err
-	}
-	vm_err := vm.push_frame(stck, new_stack, false)
-	if sys.is_error(vm_err) {
-		return nil, vm_err
-	}
-	defer vm_err = vm.pop_frame(stck)
-	if sys.is_error(vm_err) {
-		return nil, vm_err
-	}
-	_, eval_err := run(synt.args, stck, g_debug)
-	if sys.is_error(eval_err) {
-		return nil, eval_err
-	}
-	curr_stack, curr_stack_err := vm.current_frame(stck)
-	if sys.is_error(curr_stack_err) {
-		return nil, curr_stack_err
-	}
-	if curr_stack.count - curr_stack.parent_references != synt.value.branch.length {
-		return nil, .INCORRECT_NUMBER_OF_REFERENCES
-	}
+	fn_obj := stack.get(vm_prev, synt.token.literal) or_return
+	vm.push_frame(stck, new_stack, false) or_return
+	defer vm.pop_frame(stck)
+	run(synt.args, stck, g_debug) or_return
+	curr_stack := vm.current_frame(stck) or_return
+	if curr_stack.count - curr_stack.parent_references != synt.value.branch.length do return nil, .INCORRECT_NUMBER_OF_REFERENCES
 	for i := curr_stack.parent_references; i < curr_stack.count; i += 1 {
 		idx := i - curr_stack.parent_references
 		curr_stack.data[i].data = arg_vals[idx].data
 		curr_stack.data[i].type = arg_vals[idx].type
 	}
 	if fn_obj != nil && fn_obj.type == .FUNCTION {
-		fn_copy, fn_copy_err := object.copy(fn_obj)
-		if sys.is_error(fn_copy_err) && fn_copy_err != .OBJECT_IS_NIL {
-			return nil, fn_copy_err
-		}
-		push_err := stack.push(curr_stack, fn_copy)
-		if sys.is_error(push_err) {
-			return nil, push_err
-		}
+		fn_copy := object.copy(fn_obj) or_return
+		stack.push(curr_stack, fn_copy)
 	}
-	value_data, value_data_err := run(synt.branch, stck, g_debug)
-	if sys.is_error(value_data_err) {
-		return nil, value_data_err
-	}
-	if value_data == nil {
-		return nil, .OK
-	}
-	value, value_err := object.copy(value_data)
-	if sys.is_error(value_err) && value_err != .OBJECT_IS_NIL {
-		return nil, value_err
-	}
+	value_data := run(synt.branch, stck, g_debug) or_return
+	if value_data == nil do return nil, .OK
+	value := object.copy(value_data) or_return
 	return value, .OK
 }

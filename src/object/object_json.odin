@@ -86,23 +86,22 @@ from_json_string :: proc(json_str: string) -> (^types.object_t, types.exit_codes
 	return json_value_to_object(doc, "")
 }
 
-json_get :: proc(obj: ^types.object_t, name: string) -> (^types.object_t, types.exit_codes) {
-	if obj == nil {
-		return nil, .OBJECT_IS_NIL
-	}
-	if obj.type != .JSON {
-		return nil, .UNEXPECTED_BEHAVIOUR
-	}
+json_get :: proc(
+	obj: ^types.object_t,
+	name: string,
+) -> (
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
+) {
+	if obj == nil do return nil, .OBJECT_IS_NIL
+	if obj.type != .JSON do return nil, .UNEXPECTED_BEHAVIOUR
 	target := obj.data.(types.object_json_t)
 	for i := 0; i < len(target.value); i += 1 {
 		if target.value[i].name == name {
 			return target.value[i], .OK
 		}
 	}
-	null_obj, null_obj_err := create_json("{}")
-	if sys.is_error(null_obj_err) {
-		return nil, null_obj_err
-	}
+	null_obj := create_json("{}") or_return
 	null_obj.name = strings.clone_from(name)
 	null_obj.parent = obj
 	if json_obj := &obj.data.(types.object_json_t); json_obj != nil {
@@ -115,12 +114,10 @@ to_json_string :: proc(
 	obj: ^types.object_t,
 	allocator := context.allocator,
 ) -> (
-	string,
-	types.exit_codes,
+	ret_str: string,
+	code: types.exit_codes,
 ) {
-	if obj == nil {
-		return "", .OBJECT_IS_NIL
-	}
+	if obj == nil do return "", .OBJECT_IS_NIL
 	sb := strings.builder_make(allocator)
 	err := serialize_value(&sb, obj)
 	if sys.is_error(err) {
@@ -205,23 +202,14 @@ write_escaped_string :: proc(sb: ^strings.Builder, str: string) {
 	}
 }
 
-json_write_file :: proc(obj: ^types.object_t) -> types.exit_codes {
+json_write_file :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 	obj := obj
-	if obj == nil {
-		return .OBJECT_IS_NIL
-	}
-	for obj.parent != nil {
-		obj = obj.parent
-	}
+	if obj == nil do return .OBJECT_IS_NIL
+	for obj.parent != nil do obj = obj.parent
 	if obj.data.(types.object_json_t).file != {} {
-		text, text_err := to_json_string(obj)
-		if sys.is_error(text_err) {
-			return text_err
-		}
+		text := to_json_string(obj) or_return
 		write_err := os.write_entire_file(obj.data.(types.object_json_t).file.name, text)
-		if write_err != os.General_Error.None {
-			return .ERROR
-		}
+		if write_err != os.General_Error.None do return .ERROR
 	}
 	return .OK
 }

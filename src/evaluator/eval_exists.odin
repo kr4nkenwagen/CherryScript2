@@ -1,10 +1,9 @@
 package evaluator
 
 import "../object"
-import "../sys"
 import "../types"
 
-eval_exists :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+eval_exists :: proc(obj: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if obj == nil {
 		return nil, .OBJECT_IS_NIL
 	}
@@ -17,9 +16,6 @@ eval_exists :: proc(obj: ^types.object_t) -> (^types.object_t, types.exit_codes)
 	case:
 		return nil, .ERROR
 	}
-	res, res_err := object.file_exists(file)
-	if sys.is_error(res_err) {
-		return nil, res_err
-	}
+	res := object.file_exists(file) or_return
 	return object.create_bool(res)
 }

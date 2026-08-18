@@ -2,7 +2,6 @@ package evaluator
 
 import "../http"
 import "../object"
-import "../sys"
 import "../types"
 
 eval_get :: proc(
@@ -10,19 +9,11 @@ eval_get :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	val, err := eval_primary_expression(syntax.value, stck, program)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	if val.type != .STRING {
-		return nil, .ERROR
-	}
-	res, res_err := http.get(val.data.(string))
-	if sys.is_error(res_err) {
-		return nil, res_err
-	}
+	val := eval_primary_expression(syntax.value, stck, program) or_return
+	if val.type != .STRING do return nil, .ERROR
+	res := http.get(val.data.(string)) or_return
 	return object.create_json(res)
 }

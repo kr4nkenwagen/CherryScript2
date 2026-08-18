@@ -83,17 +83,13 @@ print_out :: proc(str: string, debug_mode: bool) {
 }
 
 eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
-	if obj == nil {
-		return .OBJECT_IS_NIL
-	}
+	if obj == nil do return .OBJECT_IS_NIL
 	switch obj.type {
 	case .STRING:
 		print_out(obj.data.(string), debug_mode)
 	case .INT:
 		num, err := object.int_to_number(int(obj.data.(int)))
-		if !sys.is_error(err) {
-			print_out(num, debug_mode)
-		}
+		if !sys.is_error(err) do print_out(num, debug_mode)
 	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE, .JSON:
 		break
 	}

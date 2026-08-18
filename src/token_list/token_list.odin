@@ -1,49 +1,37 @@
 package token_list
+
 import "../token"
 import "../types"
 
-
 create :: proc() -> (^types.token_list_t, types.exit_codes) {
 	list := new(types.token_list_t)
-	if list == nil {
-		return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED
-	}
+	if list == nil do return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED
 	list.length = 0
 	list.pointer = 0
 	return list, types.exit_codes.OK
 }
 
 add :: proc(list: ^types.token_list_t, token: ^types.token_t) -> types.exit_codes {
-	if list == nil {
-		return types.exit_codes.OBJECT_IS_NIL
-	}
+	if list == nil do return types.exit_codes.OBJECT_IS_NIL
 	append(&list.list, token)
 	list.length += 1
 	return types.exit_codes.OK
 }
 
 advance :: proc(list: ^types.token_list_t) -> (^types.token_t, types.exit_codes) {
-	if list == nil {
-		return token.generate_unknown_token()
-	}
+	if list == nil do return token.generate_unknown_token()
 	list.pointer += 1
-	if list.pointer >= list.length {
-		return nil, types.exit_codes.RAN_OUT_OF_TOKENS
-	}
+	if list.pointer >= list.length do return nil, types.exit_codes.RAN_OUT_OF_TOKENS
 	return list.list[list.pointer], types.exit_codes.OK
 }
 
 peek :: proc(list: ^types.token_list_t, distance: int) -> (^types.token_t, types.exit_codes) {
-	if list == nil || list.pointer + distance >= list.length {
-		return token.generate_unknown_token()
-	}
+	if list == nil || list.pointer + distance >= list.length do return token.generate_unknown_token()
 	return list.list[list.pointer + distance], types.exit_codes.OK
 }
 
 remove :: proc(list: ^types.token_list_t) -> types.exit_codes {
-	if list == nil {
-		return .OK
-	}
+	if list == nil do return .OK
 	delete(list.list)
 	free(list)
 	return types.exit_codes.OK

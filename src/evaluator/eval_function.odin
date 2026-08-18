@@ -19,26 +19,17 @@ function_identifier :: proc(
 	return branch(synt, stck)
 }
 
-import "core:fmt"
-
 function_declaration :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
 	global: bool = false,
-) -> types.exit_codes {
-	if synt == nil {
-		return .OBJECT_IS_NIL
-	}
-	funct, funct_err := object.create_funct(synt.right)
-	if sys.is_error(funct_err) {
-		fmt.printf("%s\n", synt.token.literal)
-		return funct_err
-	}
+) -> (
+	code: types.exit_codes,
+) {
+	if synt == nil do return .OBJECT_IS_NIL
+	funct := object.create_funct(synt.right) or_return
 	funct.name = synt.right.token.literal
-	curr_stack, curr_stack_err := vm.current_frame(stck)
-	if sys.is_error(curr_stack_err) {
-		return curr_stack_err
-	}
+	curr_stack := vm.current_frame(stck) or_return
 	if global {
 		return stack.push(curr_stack.global_data, funct)
 	}

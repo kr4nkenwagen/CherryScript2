@@ -2,7 +2,6 @@ package parser
 
 import "../program"
 import "../syntax"
-import "../sys"
 import "../token"
 import "../token_list"
 import "../types"
@@ -11,104 +10,57 @@ function_args :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.program_t,
-	types.exit_codes,
+	prgm: ^types.program_t,
+	code: types.exit_codes,
 ) {
-	args, _ := program.create(parent)
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	args := program.create(parent) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	if curr_token.type != types.token_type_t.LEFT_PAREN {
 		return nil, types.exit_codes.UNEXPECTED_SYNTAX
 	}
-	curr_token, curr_token_err = token_list.advance(tokens)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	curr_token = token_list.advance(tokens) or_return
 	for {
 		if curr_token.type == types.token_type_t.COMMA {
-			curr_token, curr_token_err = token_list.advance(tokens)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			curr_token = token_list.advance(tokens) or_return
 		}
 		if curr_token.type != types.token_type_t.VAR &&
 		   curr_token.type != types.token_type_t.CONST {
 			break
 		}
-		declaration, declaration_err := syntax.create()
-		if sys.is_error(declaration_err) {
-			return nil, declaration_err
-		}
+		declaration := syntax.create() or_return
 		declaration.token = curr_token
-		curr_token, curr_token_err = token_list.advance(tokens)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		curr_token = token_list.advance(tokens) or_return
 		if curr_token.type != types.token_type_t.IDENTIFIER {
 			return nil, types.exit_codes.UNEXPECTED_SYNTAX
 		}
-		curr_syntax, curr_syntax_err := syntax.create()
-		if sys.is_error(curr_syntax_err) {
-			return nil, curr_syntax_err
-		}
+		curr_syntax := syntax.create() or_return
 		curr_syntax.token = curr_token
 		declaration.left = curr_syntax
-		eq_token, eq_token_err := token_list.advance(tokens)
-		if sys.is_error(eq_token_err) {
-			return nil, eq_token_err
-		}
+		eq_token := token_list.advance(tokens) or_return
 
 		if eq_token.type == types.token_type_t.EQUAL {
-			_, adv_err := token_list.advance(tokens)
-			if sys.is_error(adv_err) {
-				return nil, adv_err
-			}
+			token_list.advance(tokens) or_return
 			curr_syntax.value, _ = expression(tokens)
 		} else {
 
-			curr_syntax.value, curr_syntax_err = syntax.create()
-			if sys.is_error(curr_syntax_err) {
-				return nil, curr_syntax_err
-			}
+			curr_syntax.value = syntax.create() or_return
 			if curr_syntax.value.token == nil {
 			}
-			curr_syntax.value.token, curr_token_err = token.create(
-				nil,
-				types.token_type_t.NULL,
-				"null",
-			)
-			if sys.is_error(curr_token_err) {
-				return nil, curr_token_err
-			}
+			curr_syntax.value.token = token.create(nil, types.token_type_t.NULL, "null") or_return
 		}
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
-		curr_syntax.left, _ = syntax.create()
-		curr_syntax.left.token, curr_token_err = token.create(
-			nil,
-			types.token_type_t.TERMINATOR,
-			";",
-		)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
-		program.add(args, declaration)
+		curr_token = token_list.peek(tokens, 0) or_return
+		curr_syntax.left = syntax.create() or_return
+		curr_syntax.left.token = token.create(nil, types.token_type_t.TERMINATOR, ";") or_return
+		program.add(args, declaration) or_return
 		if curr_token.type != types.token_type_t.COMMA {
 			break
 		}
 	}
-	curr_token, curr_token_err = token_list.peek(tokens, 0)
+	curr_token = token_list.peek(tokens, 0) or_return
 	if curr_token.type != types.token_type_t.RIGHT_PAREN {
 		return nil, types.exit_codes.UNEXPECTED_SYNTAX
 	}
-	_, adv_err := token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
+	token_list.advance(tokens) or_return
 	return args, types.exit_codes.OK
 }
 
@@ -116,117 +68,63 @@ parse_function :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.syntax_t,
-	types.exit_codes,
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
 ) {
-	declaration, declaration_err := syntax.create()
-	if sys.is_error(declaration_err) {
-		return nil, declaration_err
-	}
-	declaration.token, declaration_err = token_list.peek(tokens, 0)
-	if sys.is_error(declaration_err) {
-		return nil, declaration_err
-	}
-	_, adv_err := token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	curr_syntax, curr_syntax_err := syntax.create()
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
+	declaration := syntax.create() or_return
+	declaration.token = token_list.peek(tokens, 0) or_return
+	token_list.advance(tokens) or_return
+	curr_syntax := syntax.create() or_return
 	declaration.right = curr_syntax
-	curr_syntax.token, curr_syntax_err = token_list.peek(tokens, 0)
-	if sys.is_error(curr_syntax_err) {
-		return nil, curr_syntax_err
-	}
+	curr_syntax.token = token_list.peek(tokens, 0) or_return
 	if curr_syntax.token.type != types.token_type_t.IDENTIFIER {
 		return nil, types.exit_codes.UNEXPECTED_SYNTAX
 	}
-	_, adv_err = token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
+	token_list.advance(tokens) or_return
 	curr_syntax.args, _ = function_args(tokens, parent)
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	curr_token := token_list.peek(tokens, 0) or_return
 	if curr_token.type == types.token_type_t.TERMINATOR {
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
+		token_list.advance(tokens) or_return
 	}
-	curr_token, curr_token_err = token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+	curr_token = token_list.peek(tokens, 0) or_return
 	if curr_token.type == types.token_type_t.LEFT_BRACE {
-		branch_err: types.exit_codes
-		curr_syntax.branch, branch_err = branch(tokens, parent)
-		if sys.is_error(branch_err) {
-			return nil, branch_err
-		}
+		curr_syntax.branch = branch(tokens, parent) or_return
 		curr_syntax.branch.type = types.program_type_t.FUNCTION
 	} else {
-		prog, prog_err := program.create(parent)
-		if sys.is_error(prog_err) {
-			return nil, prog_err
-		}
+		prog := program.create(parent) or_return
 		prog.type = types.program_type_t.FUNCTION
 		curr_syntax.branch = prog
-		prog_content, prog_content_err := line(tokens, parent)
-		if sys.is_error(prog_content_err) {
-			return nil, prog_content_err
-		}
-		program.add(prog, prog_content)
+		prog_content := line(tokens, parent) or_return
+		program.add(prog, prog_content) or_return
 	}
 	return declaration, types.exit_codes.OK
 }
 
-passed_function_args :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	declaration, declaration_err := syntax.create()
-	if sys.is_error(declaration_err) {
-		return nil, declaration_err
-	}
-	declaration.token, declaration_err = token_list.peek(tokens, 0)
-	if sys.is_error(declaration_err) {
-		return nil, declaration_err
-	}
-	curr_token, adv_err := token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
-	branch_err: types.exit_codes
-	declaration.branch, branch_err = program.create(nil)
+passed_function_args :: proc(
+	tokens: ^types.token_list_t,
+) -> (
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
+) {
+	declaration := syntax.create() or_return
+	declaration.token = token_list.peek(tokens, 0) or_return
+	curr_token := token_list.advance(tokens) or_return
+	declaration.branch = program.create(nil) or_return
 	for curr_token.type != .RIGHT_PAREN && curr_token.type != .END_OF_FILE {
 		if curr_token.type == .COMMA {
-			curr_token, adv_err = token_list.advance(tokens)
-			if sys.is_error(adv_err) {
-				return nil, adv_err
-			}
+			curr_token = token_list.advance(tokens) or_return
 		}
-		curr_syntax, curr_syntax_err := expression(tokens)
-		if sys.is_error(curr_syntax_err) {
-			return nil, curr_syntax_err
-		}
-		program.add(declaration.branch, curr_syntax)
-		curr_token, curr_syntax_err = token_list.peek(tokens, 0)
+		curr_syntax := expression(tokens) or_return
+		program.add(declaration.branch, curr_syntax) or_return
+		curr_token = token_list.peek(tokens, 0) or_return
 		if curr_token.type == .RIGHT_PAREN {
 			continue
 		}
-		curr_token, adv_err = token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
+		curr_token = token_list.advance(tokens) or_return
 	}
 	if curr_token.type != .RIGHT_PAREN {
 		return nil, .UNCLOSED_PARENTHESIS
 	}
-	_, adv_err = token_list.advance(tokens)
-	if sys.is_error(adv_err) {
-		return nil, adv_err
-	}
+	token_list.advance(tokens) or_return
 	return declaration, .OK
 }

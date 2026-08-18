@@ -10,13 +10,10 @@ eval_json :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	val, err := eval_primary_expression(syntax.value, stck, program)
-	if sys.is_error(err) {
-		return nil, err
-	}
+	val := eval_primary_expression(syntax.value, stck, program) or_return
 	#partial switch (val.type) {
 	case .STRING:
 		return object.create_json(val.data.(string))
@@ -24,21 +21,12 @@ eval_json :: proc(
 		file := string(val.data.(types.object_file_t).name)
 		if !os.exists(file) {
 			_, err := os.create(file)
-			if err != os.General_Error.None {
-				return nil, .FAILED_TO_READ_FILE
-			}
+			if err != os.General_Error.None do return nil, .FAILED_TO_READ_FILE
 			err = os.write_entire_file(file, "{}")
-			if err != os.General_Error.None {
-				return nil, .FAILED_TO_READ_FILE
-			}
+			if err != os.General_Error.None do return nil, .FAILED_TO_READ_FILE
 		}
-		obj, obj_err := object.create_json_from_file(file)
-		if sys.is_error(obj_err) {
-			return nil, obj_err
-		}
-		if json_obj := &obj.data.(types.object_json_t); json_obj != nil {
-			json_obj.file = val.data.(types.object_file_t)
-		}
+		obj := object.create_json_from_file(file) or_return
+		if json_obj := &obj.data.(types.object_json_t); json_obj != nil do json_obj.file = val.data.(types.object_file_t)
 		return obj, .OK
 	case:
 		return nil, .OBJECT_IS_UNKNOWN_TYPE

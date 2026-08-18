@@ -199,49 +199,30 @@ multiplicitive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.e
 	return left, .OK
 }
 
-additive :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	left, err := multiplicitive(tokens)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+additive :: proc(tokens: ^types.token_list_t) -> (sntx: ^types.syntax_t, code: types.exit_codes) {
+	left := multiplicitive(tokens) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil &&
 	    (curr_token.type == .PLUS || curr_token.type == .MINUS || curr_token.type == .DOT_DOT) {
-		op, alloc_err := syntax.create()
-		if sys.is_error(alloc_err) {
-			return nil, alloc_err
-		}
+		op := syntax.create() or_return
 		op.token = curr_token
 		op.left = left
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		op.right, err = multiplicitive(tokens)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		token_list.advance(tokens) or_return
+		op.right = multiplicitive(tokens) or_return
 		left = op
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
 	return left, .OK
 }
 
-comparision :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	left, err := additive(tokens)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+comparision :: proc(
+	tokens: ^types.token_list_t,
+) -> (
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
+) {
+	left := additive(tokens) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil &&
 	    (curr_token.type == .GREATER_EQUAL ||
 			    curr_token.type == .LESS_EQUAL ||
@@ -257,120 +238,73 @@ comparision :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit
 		if sys.is_error(adv_err) {
 			return nil, adv_err
 		}
-		op.right, err = additive(tokens)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		op.right = additive(tokens) or_return
 		left = op
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
 	return left, .OK
 }
 
-equality :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	left, err := comparision(tokens)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+equality :: proc(tokens: ^types.token_list_t) -> (sntx: ^types.syntax_t, code: types.exit_codes) {
+	left := comparision(tokens) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil && (curr_token.type == .EQUAL_EQUAL || curr_token.type == .BANG_EQUAL) {
-		op, alloc_err := syntax.create()
-		if sys.is_error(alloc_err) {
-			return nil, alloc_err
-		}
+		op := syntax.create() or_return
 		op.token = curr_token
 		op.left = left
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		op.right, err = comparision(tokens)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		token_list.advance(tokens) or_return
+		op.right = comparision(tokens) or_return
 		left = op
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
 	return left, .OK
 }
 
-and_or :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	left, err := equality(tokens)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+and_or :: proc(tokens: ^types.token_list_t) -> (sntx: ^types.syntax_t, code: types.exit_codes) {
+	left := equality(tokens) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil && (curr_token.type == .AND || curr_token.type == .OR) {
-		op, alloc_err := syntax.create()
-		if sys.is_error(alloc_err) {
-			return nil, alloc_err
-		}
+		op := syntax.create() or_return
 		op.token = curr_token
 		op.left = left
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		op.right, err = equality(tokens)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		token_list.advance(tokens) or_return
+		op.right = equality(tokens) or_return
 		left = op
-		curr_token, curr_token_err = token_list.peek(tokens, 0)
-		if sys.is_error(curr_token_err) {
-			return nil, curr_token_err
-		}
+		curr_token = token_list.peek(tokens, 0) or_return
 	}
 	return left, .OK
 }
 
-assignment :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
-	left, err := and_or(tokens)
-	if sys.is_error(err) {
-		return nil, err
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
+assignment :: proc(
+	tokens: ^types.token_list_t,
+) -> (
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
+) {
+	left := and_or(tokens) or_return
+	curr_token := token_list.peek(tokens, 0) or_return
 	if curr_token != nil &&
 	   (curr_token.type == .EQUAL ||
 			   curr_token.type == .PLUS_EQUAL ||
 			   curr_token.type == .MINUS_EQUAL ||
 			   curr_token.type == .STAR_EQUAL ||
 			   curr_token.type == .SLASH_EQUAL) {
-		op, alloc_err := syntax.create()
-		if sys.is_error(alloc_err) {
-			return nil, alloc_err
-		}
+		op := syntax.create() or_return
 		op.token = curr_token
 		op.left = left
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
-		op.right, err = assignment(tokens)
-		if sys.is_error(err) {
-			return nil, err
-		}
+		token_list.advance(tokens) or_return
+		op.right = assignment(tokens) or_return
 		return op, .OK
 	}
 	return left, .OK
 }
 
-expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
+expression :: proc(
+	tokens: ^types.token_list_t,
+) -> (
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
+) {
 	return assignment(tokens)
 }
 
@@ -378,19 +312,12 @@ statement :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	^types.syntax_t,
-	types.exit_codes,
+	sntx: ^types.syntax_t,
+	code: types.exit_codes,
 ) {
-	if tokens == nil {
-		return nil, types.exit_codes.OBJECT_IS_NIL
-	}
-	curr_token, curr_token_err := token_list.peek(tokens, 0)
-	if sys.is_error(curr_token_err) {
-		return nil, curr_token_err
-	}
-	if curr_token == nil {
-		return nil, .OK
-	}
+	if tokens == nil do return nil, types.exit_codes.OBJECT_IS_NIL
+	curr_token := token_list.peek(tokens, 0) or_return
+	if curr_token == nil do return nil, .OK
 	#partial switch (curr_token.type) {
 	case .FUNCTION:
 		return parse_function(tokens, parent)

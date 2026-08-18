@@ -2,18 +2,16 @@ package evaluator
 
 import "../sys"
 import "../types"
-import "core:fmt"
 import "core:time"
 
 eval_sleep :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
 	program: ^types.program_t,
-) -> types.exit_codes {
-	val, err := eval_primary_expression(syntax.value, stck, program)
-	if sys.is_error(err) {
-		return err
-	}
+) -> (
+	code: types.exit_codes,
+) {
+	val := eval_primary_expression(syntax.value, stck, program) or_return
 	seconds: f64 = 0
 	if val.type == .INT {
 		seconds = f64(val.data.(int))
@@ -24,6 +22,5 @@ eval_sleep :: proc(
 	}
 	seconds = seconds * f64(time.Second)
 	time.sleep(time.Duration(seconds))
-	fmt.printf("%f\n", seconds)
 	return .OK
 }

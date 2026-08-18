@@ -1,10 +1,9 @@
 package object
 
 import "../object"
-import "../sys"
 import "../types"
 
-add :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+add :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if a == nil || b == nil {
 		return nil, .OBJECT_IS_NIL
 	}
@@ -34,10 +33,7 @@ add :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	}
 	if a.type == .ARRAY {
 		if b.type == .ARRAY {
-			c, c_err := copy(a)
-			if sys.is_error(c_err) {
-				return nil, c_err
-			}
+			c := copy(a) or_return
 			for i in 0 ..< b.data.(types.object_array_t).count {
 				array_set(
 					c,
@@ -154,6 +150,7 @@ modulus :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	}
 	return nil, .TYPE_MISMATCH
 }
+
 
 assign :: proc(target, source: ^types.object_t) -> types.exit_codes {
 	if target == nil || source == nil {

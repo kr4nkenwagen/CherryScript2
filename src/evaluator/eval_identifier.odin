@@ -6,26 +6,16 @@ import "../sys"
 import "../types"
 import "../vm"
 
-// Fetches the base variable/identifier object from the current stack frame
 eval_base_identifier :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	curr_stack, curr_stack_err := vm.current_frame(stck)
-	if sys.is_error(curr_stack_err) {
-		return nil, curr_stack_err
-	}
-
-	obj, obj_err := stack.get(curr_stack, synt.token.literal)
-	if sys.is_error(obj_err) {
-		return nil, obj_err
-	}
-	if obj == nil {
-		return nil, .IDENTIFIER_DOES_NOT_EXIST
-	}
+	curr_stack := vm.current_frame(stck) or_return
+	obj := stack.get(curr_stack, synt.token.literal) or_return
+	if obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST
 
 	return obj, .OK
 }
@@ -37,9 +27,7 @@ eval_member_access :: proc(
 	^types.object_t,
 	types.exit_codes,
 ) {
-	if obj.type != .JSON {
-		return nil, .INTERPRETER_ERROR
-	}
+	if obj.type != .JSON do return nil, .INTERPRETER_ERROR
 	return object.json_get(obj, member_synt.token.literal)
 }
 
@@ -49,30 +37,17 @@ eval_index_access :: proc(
 	stck: ^types.vm_t,
 	prog: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	if obj.type != .ARRAY {
-		return nil, .EXPECTED_ARRAY_INDEX
-	}
+	if obj.type != .ARRAY do return nil, .EXPECTED_ARRAY_INDEX
 	index_obj: ^types.object_t
 	index_err: types.exit_codes
 	if (index_synt.token.type == .IDENTIFIER) {
-		curr_stack, curr_stack_err := vm.current_frame(stck)
-		if sys.is_error(curr_stack_err) {
-			return nil, curr_stack_err
-		}
-		index_obj, index_err = stack.get(curr_stack, index_synt.token.literal)
-	} else {
-
-		index_obj, index_err = eval_primary_expression(index_synt, stck, prog)
-	}
-	if sys.is_error(index_err) {
-		return nil, index_err
-	}
-	if index_obj == nil || index_obj.type != .INT {
-		return nil, .EXPECTED_ARRAY_INDEX
-	}
+		curr_stack := vm.current_frame(stck) or_return
+		index_obj = stack.get(curr_stack, index_synt.token.literal) or_return
+	} else do index_obj = eval_primary_expression(index_synt, stck, prog) or_return
+	if index_obj == nil || index_obj.type != .INT do return nil, .EXPECTED_ARRAY_INDEX
 	idx := int(index_obj.data.(int))
 	return object.array_get(obj, idx)
 }
@@ -85,13 +60,9 @@ eval_function_call :: proc(
 	^types.object_t,
 	types.exit_codes,
 ) {
-	if synt.left == nil {
-		return obj, .OK
-	}
+	if synt.left == nil do return obj, .OK
 
-	if obj.type != .FUNCTION {
-		return nil, .INTERPRETER_ERROR
-	}
+	if obj.type != .FUNCTION do return nil, .INTERPRETER_ERROR
 
 	converted_ptr := transmute(^types.syntax_t)obj.data.(rawptr)
 	converted_ptr.value = synt.left
@@ -103,30 +74,20 @@ eval_identifier :: proc(
 	stck: ^types.vm_t,
 	prog: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	curr_obj, base_err := eval_base_identifier(synt, stck)
-	if sys.is_error(base_err) {
-		return nil, base_err
-	}
+	curr_obj := eval_base_identifier(synt, stck) or_return
 	curr_synt := synt
-	// Walk through nested child nodes (.value) across mixed types
 	for curr_synt.value != nil {
 		curr_synt = curr_synt.value
 		#partial switch curr_obj.type {
 		case .JSON:
-			next_obj, member_err := eval_member_access(curr_obj, curr_synt)
-			if sys.is_error(member_err) {
-				return nil, member_err
-			}
+			next_obj := eval_member_access(curr_obj, curr_synt) or_return
 			curr_obj = next_obj
 
 		case .ARRAY:
-			next_obj, index_err := eval_index_access(curr_obj, curr_synt, stck, prog)
-			if sys.is_error(index_err) {
-				return nil, index_err
-			}
+			next_obj := eval_index_access(curr_obj, curr_synt, stck, prog) or_return
 			curr_obj = next_obj
 
 		case:
