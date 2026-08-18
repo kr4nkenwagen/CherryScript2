@@ -7,7 +7,7 @@ import "core:strings"
 import "debug"
 import "evaluator"
 import "parser"
-import "scan"
+import "scanner"
 import "source_code"
 import "stack"
 import "sys"
@@ -42,7 +42,7 @@ parse_args :: proc() -> ^types.arguments_t {
 step_1 :: proc(path: string, args: ^types.arguments_t) -> ^types.token_list_t {
 	src, src_err := source_code.from_file(path)
 	if sys.is_error(src_err) do return nil
-	tokens, tokens_err := scan.run(src)
+	tokens, tokens_err := scanner.run(src)
 	if sys.is_error(tokens_err) {
 		sys.print_error(tokens_err, tokens)
 		return nil
