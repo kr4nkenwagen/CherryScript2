@@ -6,7 +6,7 @@ import "../token"
 import "../types"
 import "core:unicode"
 
-consume_reserved_word :: proc(
+consume_keyword :: proc(
 	src: ^types.source_code_t,
 ) -> (
 	tkn: ^types.token_t,

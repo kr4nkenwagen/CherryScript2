@@ -257,7 +257,7 @@ run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: 
 		case:
 			if src.is_at_end do break
 			if src.content[src.pointer] == 0 do break
-			res_word, err := consume_reserved_word(src)
+			res_word, err := consume_keyword(src)
 			if sys.is_error(err) && err != .PEEK_OUT_OF_BOUNDS do return nil, err
 
 			if res_word == nil {

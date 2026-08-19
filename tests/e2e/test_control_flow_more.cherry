@@ -70,7 +70,7 @@ remove o
 
 # while loop: break
 var w = 0
-while (true) {
+for (true) {
   if (w == 2) { break }
   w = w + 1
 }
