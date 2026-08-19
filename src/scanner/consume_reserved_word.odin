@@ -161,12 +161,6 @@ consume_reserved_word :: proc(
 		word, match := match_and_consume(src, grammar.VAR) or_return
 		if match do return token.create(src, .VAR, word)
 
-	case 'w':
-		fallthrough
-	case 'W':
-		word, match := match_and_consume(src, grammar.WHILE) or_return
-		if match do return token.create(src, .WHILE, word)
-
 	case 'g':
 		fallthrough
 	case 'G':

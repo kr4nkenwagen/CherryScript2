@@ -44,7 +44,6 @@ token_type_t :: enum {
 	THIS,
 	TRUE,
 	VAR,
-	WHILE,
 	END_OF_FILE,
 	IDENTIFIER,
 	CONST,

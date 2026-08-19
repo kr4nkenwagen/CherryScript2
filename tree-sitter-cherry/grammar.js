@@ -36,7 +36,7 @@ module.exports = grammar({
     keyword: $ => choice(
       'break', 'const', 'continue', 'else', 'err', 'for', 'false',
       'fn', 'if', 'null', 'module', 'out', 'println', 'print',
-      'return', 'remove', 'true', 'var', 'while', 'len', 'in',
+      'return', 'remove', 'true', 'var', 'len', 'in',
       "rm", "exists", "sleep", "time", "key", "clr", "global",
       "elif", "json", "get"
     ),

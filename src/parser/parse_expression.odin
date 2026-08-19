@@ -333,8 +333,6 @@ statement :: proc(
 		return variable_declaration(tokens)
 	case .GLOBAL:
 		return parse_global(tokens)
-	case .WHILE:
-		return parse_while(tokens, parent)
 	case .PRINT_LINE:
 		return parse_println(tokens)
 	case .CONTINUE:

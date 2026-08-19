@@ -54,8 +54,6 @@ eval_primary_expression :: proc(
 		return nil, eval_if(syntax, stck, program)
 	case .LEFT_BRACKET:
 		return eval_array_declaration(syntax, stck, program)
-	case .WHILE:
-		return nil, eval_while(syntax, stck, program)
 	case .COLON, .COLON_HAT, .DOT_DOT:
 		return eval_string_operation_expression(syntax, stck, program)
 	case .BANG:

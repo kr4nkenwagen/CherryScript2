@@ -23,7 +23,6 @@ This index groups the small topic files in this directory to make it easier to f
 ## Control Flow
 - [if](if.md)
 - [for](for.md)
-- [while](while.md)
 - [break](break.md)
 - [continue](continue.md)
 - [return](return.md)
