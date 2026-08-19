@@ -8,3 +8,7 @@ var a = "a"
 var r = a * 3
 assert(r == "aaa", "strings: repeat produces 'aaa'")
 remove a, r
+
+var c = "\""
+assert(c == '"', "string: is escaped")
+remove c

@@ -25,8 +25,8 @@ module.exports = grammar({
 
     // Based on consume_string: supports both " and '
     string: $ => choice(
-      seq('"', /[^"]*/, '"'),
-      seq("'", /[^']*/, "'")
+      seq('"', /([^"\\]|\\.)*/, '"'),
+      seq("'", /([^'\\]|\\.)*/, "'")
     ),
 
     // Based on consume_number: supports integers and floats
