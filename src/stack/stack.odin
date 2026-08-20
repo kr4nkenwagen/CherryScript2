@@ -5,7 +5,7 @@ import "base:builtin"
 
 create :: proc() -> (^types.stack_t, types.exit_codes) {
 	stack := new(types.stack_t)
-	if stack == nil do return nil, .OBJECT_IS_NIL
+	if stack == nil do return nil, .OBJECT_IS_NIL_IN_STACK_CREATE
 	reserve(&stack.data, 8)
 	stack.capacity = 8
 	stack.count = 0
@@ -14,7 +14,7 @@ create :: proc() -> (^types.stack_t, types.exit_codes) {
 }
 
 push :: proc(stack: ^types.stack_t, object: ^types.object_t) -> types.exit_codes {
-	if stack == nil || object == nil do return .OBJECT_IS_NIL
+	if stack == nil || object == nil do return .OBJECT_IS_NIL_IN_STACK_PUSH
 	append(&stack.data, object)
 	stack.count = len(stack.data)
 	stack.capacity = cap(stack.data)
@@ -22,14 +22,14 @@ push :: proc(stack: ^types.stack_t, object: ^types.object_t) -> types.exit_codes
 }
 
 pop :: proc(stack: ^types.stack_t) -> (^types.object_t, types.exit_codes) {
-	if stack == nil || len(stack.data) == 0 do return nil, .OBJECT_IS_NIL
+	if stack == nil || len(stack.data) == 0 do return nil, .OBJECT_IS_NIL_IN_STACK_POP
 	obj := builtin.pop(&stack.data)
 	stack.count = len(stack.data)
 	return obj, .OK
 }
 
 remove :: proc(stack: ^types.stack_t) -> types.exit_codes {
-	if stack == nil do return .OBJECT_IS_NIL
+	if stack == nil do return .OBJECT_IS_NIL_IN_STACK_REMOVE
 	for obj in stack.data {
 		if obj != nil do free(obj)
 	}
@@ -39,7 +39,7 @@ remove :: proc(stack: ^types.stack_t) -> types.exit_codes {
 }
 
 remove_nulls :: proc(stack: ^types.stack_t) -> types.exit_codes {
-	if stack == nil do return .OBJECT_IS_NIL
+	if stack == nil do return .OBJECT_IS_NIL_IN_STACK_REMOVE_NULLS
 	new_count := 0
 	for obj in stack.data {
 		if obj != nil {
@@ -63,7 +63,7 @@ remove_nulls :: proc(stack: ^types.stack_t) -> types.exit_codes {
 }
 
 get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit_codes) {
-	if stack == nil do return nil, .OBJECT_IS_NIL
+	if stack == nil do return nil, .OBJECT_IS_NIL_STACK_GET
 	for obj in stack.data {
 		if obj != nil && obj.name == name do return obj, .OK
 	}
@@ -76,7 +76,7 @@ get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit
 }
 
 remove_object :: proc(stack: ^types.stack_t, name: string) -> types.exit_codes {
-	if stack == nil do return .OBJECT_IS_NIL
+	if stack == nil do return .OBJECT_IS_NIL_IN_STACK_REMOVE_OBJECT
 	for i := 0; i < len(stack.data); i += 1 {
 		if stack.data[i] != nil && stack.data[i].name == name {
 			free(stack.data[i])

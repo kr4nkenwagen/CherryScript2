@@ -16,13 +16,13 @@ parse_if :: proc(
 	token_list.advance(tokens) or_return
 	syntax_parent.value = expression(tokens) or_return
 	curr_token := token_list.peek(tokens, 0) or_return
-	for curr_token.type == types.token_type_t.TERMINATOR {
+	for curr_token.type == .TERMINATOR {
 		token_list.advance(tokens) or_return
 		curr_token = token_list.peek(tokens, 0) or_return
 	}
-	if curr_token.type != types.token_type_t.LEFT_BRACE do return nil, .UNEXPECTED_SYNTAX
+	if curr_token.type != .LEFT_BRACE do return nil, .EXPECTED_LEFT_BRACE_IN_PARSE_IF
 	syntax_parent.branch = branch(tokens, parent) or_return
-	syntax_parent.branch.type = types.program_type_t.IF
+	syntax_parent.branch.type = .IF
 	curr_syntax := syntax_parent
 	lookahead_idx := 0
 	next_tok := token_list.peek(tokens, lookahead_idx) or_return
@@ -44,12 +44,12 @@ parse_if :: proc(
 		curr_syntax = curr_syntax.right
 		lookahead_idx = 0
 		next_tok = token_list.peek(tokens, lookahead_idx) or_return
-		for next_tok.type == types.token_type_t.TERMINATOR {
+		for next_tok.type == .TERMINATOR {
 			lookahead_idx += 1
 			next_tok = token_list.peek(tokens, lookahead_idx) or_return
 		}
 	}
-	if next_tok.type == types.token_type_t.ELSE {
+	if next_tok.type == .ELSE {
 		for i := 0; i < lookahead_idx; i += 1 {
 			token_list.advance(tokens) or_return
 		}

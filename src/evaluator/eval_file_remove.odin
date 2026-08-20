@@ -1,4 +1,3 @@
-
 package evaluator
 
 import "../stack"
@@ -13,7 +12,7 @@ eval_file_remove :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	if synt == nil do return .OBJECT_IS_NIL
+	if synt == nil do return .OBJECT_IS_NIL_IN_EVAL_FILE_REMOVE
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {
 		curr_stack := vm.current_frame(stck) or_return
@@ -25,7 +24,7 @@ eval_file_remove :: proc(
 			case .JSON:
 				os.remove(obj.data.(types.object_json_t).file.name)
 			case:
-				return .ERROR
+				return .UNEXPECTED_OBJECT_TYPE_IN_EVAL_FILE_REMOVAL
 			}
 		}
 		curr = curr.left

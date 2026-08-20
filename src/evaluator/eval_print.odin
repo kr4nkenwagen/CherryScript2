@@ -83,7 +83,7 @@ print_out :: proc(str: string, debug_mode: bool) {
 }
 
 eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
-	if obj == nil do return .OBJECT_IS_NIL
+	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINT
 	switch obj.type {
 	case .STRING:
 		print_out(obj.data.(string), debug_mode)

@@ -12,7 +12,7 @@ variable_declaration :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	if tokens == nil do return nil, .OBJECT_IS_NIL
+	if tokens == nil do return nil, .OBJECT_IS_NIL_IN_PARSE_VARIABLE_DECLARATION
 	declaration := syntax.create() or_return
 	declaration.token = token_list.peek(tokens, 0) or_return
 	curr_token := token_list.advance(tokens) or_return
@@ -21,7 +21,7 @@ variable_declaration :: proc(
 		if curr_token.type == .COMMA {
 			curr_token = token_list.advance(tokens) or_return
 		}
-		if curr_token.type != .IDENTIFIER do return nil, .UNEXPECTED_SYNTAX
+		if curr_token.type != .IDENTIFIER do return nil, .EXPECTED_IDENTIFIER_IN_VARIABLE_DECLARATION
 		curr_syntax := syntax.create() or_return
 		curr_syntax.token = curr_token
 		eq_token := token_list.advance(tokens) or_return
@@ -29,7 +29,7 @@ variable_declaration :: proc(
 			token_list.advance(tokens) or_return
 			curr_syntax.value = expression(tokens) or_return
 		} else {
-			if declaration.token.type == .CONST do return nil, .UNASSIGNED_CONST
+			if declaration.token.type == .CONST do return nil, .UNASSIGNED_CONST_IN_VARIABLE_DECLARATION
 			curr_syntax.value = syntax.create() or_return
 			curr_syntax.value.token = token.create(nil, .NULL, "null") or_return
 		}
@@ -56,7 +56,7 @@ variable_remove :: proc(
 		if curr_token.type == .COMMA {
 			curr_token = token_list.advance(tokens) or_return
 		}
-		if curr_token.type != .IDENTIFIER do return nil, .UNEXPECTED_SYNTAX
+		if curr_token.type != .IDENTIFIER do return nil, .EXPECTED_IDENTIFIER_IN_VARIABLE_REMOVE
 		curr_syntax := syntax.create() or_return
 		curr_syntax.token = curr_token
 		prev_syntax.left = curr_syntax
@@ -89,7 +89,7 @@ array_declaration :: proc(
 		curr_token = token_list.peek(tokens, 0) or_return
 		if curr_token.type != .COMMA && curr_token.type != .TERMINATOR do break
 	}
-	if curr_token.type != .RIGHT_BRACKET do return nil, .BRACKET_NOT_CLOSED
+	if curr_token.type != .RIGHT_BRACKET do return nil, .BRACKET_NOT_CLOSED_NOT_CLOSED_IN_ARRAY_DECLARATION
 	token_list.advance(tokens) or_return
 	return declaration, .OK
 }

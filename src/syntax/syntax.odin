@@ -4,6 +4,6 @@ import "../types"
 
 create :: proc() -> (^types.syntax_t, types.exit_codes) {
 	syntax := new(types.syntax_t)
-	if syntax == nil do return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED
+	if syntax == nil do return nil, types.exit_codes.MEMORY_ALLOCATION_FAILED_IN_SYNTAAX_CREATE
 	return syntax, types.exit_codes.OK
 }

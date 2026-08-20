@@ -13,11 +13,11 @@ consume_keyword :: proc(
 	code: types.exit_codes,
 ) {
 	if src == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_SCANNER_KEYWORD
 	}
 	if src.pointer > 0 {
 		prev_char := source_code.peek(src, -1) or_return
-		if unicode.is_alpha(prev_char) do return nil, .UNEXPECTED_CHARACTER
+		if unicode.is_alpha(prev_char) do return nil, .UNEXPECTED_CHARACTER_IN_SCANNER_KEYWORD
 	}
 	character := source_code.peek(src, 0) or_return
 	switch (character) {

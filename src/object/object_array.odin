@@ -11,10 +11,10 @@ array_set :: proc(
 	codes: types.exit_codes,
 ) {
 	if arr == nil {
-		return .OBJECT_IS_NIL
+		return .OBJECT_IS_NIL_IN_ARRAY_SET
 	}
 	if arr.type != .ARRAY {
-		return .ARRAY_OPERATION_ON_NON_ARRAY_OBJECT
+		return .ARRAY_OPERATION_ON_NON_ARRAY_OBJECT_IN_ARRAY_SET
 	}
 	data := arr.data.(types.object_array_t)
 	if index > data.count {
@@ -42,8 +42,8 @@ array_get :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if arr == nil do return nil, .OBJECT_IS_NIL
-	if arr.type != .ARRAY do return nil, .ARRAY_OPERATION_ON_NON_ARRAY_OBJECT
+	if arr == nil do return nil, .OBJECT_IS_NIL_IN_ARRAY_GET
+	if arr.type != .ARRAY do return nil, .ARRAY_OPERATION_ON_NON_ARRAY_OBJECT_IN_ARRAY_GET
 	if index >= arr.data.(types.object_array_t).count {
 		null_obj := object.create_null() or_return
 		array_set(arr, index, null_obj)

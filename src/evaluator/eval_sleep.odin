@@ -17,7 +17,7 @@ eval_sleep :: proc(
 	} else if val.type == .FLOAT {
 		seconds = f64(val.data.(f32))
 	} else {
-		return .OBJECT_IS_UNKNOWN_TYPE
+		return .VALUE_IS_NOT_NUMERICAL_VALUE_IN_EVAL_SLEEP
 	}
 	seconds = seconds * f64(time.Second)
 	time.sleep(time.Duration(seconds))

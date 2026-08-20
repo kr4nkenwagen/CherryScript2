@@ -13,7 +13,7 @@ eval_get :: proc(
 	code: types.exit_codes,
 ) {
 	val := eval_primary_expression(syntax.value, stck, program) or_return
-	if val.type != .STRING do return nil, .ERROR
+	if val.type != .STRING do return nil, .OBJECT_IS_NOT_STRING_IN_EVAL_GET
 	res := http.get(val.data.(string)) or_return
 	return object.create_json(res)
 }

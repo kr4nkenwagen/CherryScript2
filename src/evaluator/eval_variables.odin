@@ -13,13 +13,13 @@ variable_declarations :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	if synt == nil do return .OBJECT_IS_NIL
+	if synt == nil do return .OBJECT_IS_NIL_IN_VARIABLE_DECLARATION
 	is_const := synt.token.type == .CONST
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {
 		curr_stack := vm.current_frame(stck) or_return
 		obj := stack.get(curr_stack, curr.token.literal) or_return
-		if obj != nil do return .REDECLARATION_ERROR
+		if obj != nil do return .REDECLARATION_ERROR_IN_VARIABLE_DECLARATION
 		obj = eval_primary_expression(curr.value, stck, prog) or_return
 		obj.name = curr.token.literal
 		obj.is_const = is_const
@@ -42,7 +42,7 @@ eval_variable_remove :: proc(
 	code: types.exit_codes,
 ) {
 	if synt == nil {
-		return .OBJECT_IS_NIL
+		return .OBJECT_IS_NIL_IN_EVAL_VARIABLE_REMOVE
 	}
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {
@@ -62,7 +62,7 @@ eval_array_declaration :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if synt == nil do return nil, .OBJECT_IS_NIL
+	if synt == nil do return nil, .OBJECT_IS_NIL_EVAL_ARRAY_DECLARATION
 	arr := object.create_array() or_return
 	curr := synt.left
 	for curr != nil {

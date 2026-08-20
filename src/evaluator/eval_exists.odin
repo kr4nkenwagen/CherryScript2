@@ -5,7 +5,7 @@ import "../types"
 
 eval_exists :: proc(obj: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if obj == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_EVAL_EXISTS
 	}
 	file: string
 	#partial switch (obj.type) {
@@ -14,7 +14,7 @@ eval_exists :: proc(obj: ^types.object_t) -> (ret_obj: ^types.object_t, code: ty
 	case .JSON:
 		file = obj.data.(types.object_json_t).file.name
 	case:
-		return nil, .ERROR
+		return nil, .UNEXPECTED_OBJECT_TYPE_IN_EVAL_EXISTS
 	}
 	res := object.file_exists(file) or_return
 	return object.create_bool(res)

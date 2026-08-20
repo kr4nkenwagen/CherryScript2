@@ -14,7 +14,7 @@ eval_base_identifier :: proc(
 ) {
 	curr_stack := vm.current_frame(stck) or_return
 	obj := stack.get(curr_stack, synt.token.literal) or_return
-	if obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST
+	if obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST_IN_EVAL_BASE_IDENTIFIER
 
 	return obj, .OK
 }
@@ -26,7 +26,7 @@ eval_member_access :: proc(
 	^types.object_t,
 	types.exit_codes,
 ) {
-	if obj.type != .JSON do return nil, .INTERPRETER_ERROR
+	if obj.type != .JSON do return nil, .OBJECT_IS_NOT_JSON_OBJECT_IN_EVAL_MEMBER_ACCESS
 	return object.json_get(obj, member_synt.token.literal)
 }
 
@@ -39,14 +39,14 @@ eval_index_access :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if obj.type != .ARRAY do return nil, .EXPECTED_ARRAY_INDEX
+	if obj.type != .ARRAY do return nil, .EXPECTED_ARRAY_IN_EVAL_INDEX_ACCESS
 	index_obj: ^types.object_t
 	index_err: types.exit_codes
 	if (index_synt.token.type == .IDENTIFIER) {
 		curr_stack := vm.current_frame(stck) or_return
 		index_obj = stack.get(curr_stack, index_synt.token.literal) or_return
 	} else do index_obj = eval_primary_expression(index_synt, stck, prog) or_return
-	if index_obj == nil || index_obj.type != .INT do return nil, .EXPECTED_ARRAY_INDEX
+	if index_obj == nil || index_obj.type != .INT do return nil, .EXPECTED_ARRAY_INDEX_IN_EVAL_INDEX_ACCESS
 	idx := int(index_obj.data.(int))
 	return object.array_get(obj, idx)
 }
@@ -61,7 +61,7 @@ eval_function_call :: proc(
 ) {
 	if synt.left == nil do return obj, .OK
 
-	if obj.type != .FUNCTION do return nil, .INTERPRETER_ERROR
+	if obj.type != .FUNCTION do return nil, .OBJECT_IS_NOT_FUNCTION_EVAL_FUNCTION_CALL
 
 	converted_ptr := transmute(^types.syntax_t)obj.data.(rawptr)
 	converted_ptr.value = synt.left
@@ -90,7 +90,7 @@ eval_identifier :: proc(
 			curr_obj = next_obj
 
 		case:
-			return nil, .INTERPRETER_ERROR
+			return nil, .INTERPRETER_ERROR_IN_EVAL_IDENTIFIER
 		}
 	}
 	return eval_function_call(curr_obj, synt, stck)

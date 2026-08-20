@@ -10,7 +10,7 @@ import "core:strings"
 create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 	src := new(types.source_code_t)
 	if src == nil {
-		return nil, .MEMORY_ALLOCATION_FAILED
+		return nil, .MEMORY_ALLOCATION_FAILED_IN_CREATE_SOURCE_CODE
 	}
 	src.content = content
 	src.length = len(src.content)
@@ -24,7 +24,7 @@ create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 from_file :: proc(file: string) -> (^types.source_code_t, types.exit_codes) {
 	data, err := os.read_entire_file(file, context.allocator)
 	if err != nil {
-		return nil, .FAILED_TO_READ_SOURCE_CODE_FILE
+		return nil, .FAILED_TO_READ_SOURCE_CODE_FILE_IN_SOURCE_CODE_FROM_FILE
 	}
 	src, src_err := create(string(data))
 	if sys.is_error(src_err) {
@@ -46,11 +46,11 @@ get_cherry_files_in_dir :: proc(src_path: string) -> ([dynamic]string, types.exi
 	if os.is_dir(src_path) {
 		f, err := os.open(src_path)
 		if err != os.ERROR_NONE {
-			return nil, .FAILED_TO_READ_SOURCE_CODE_FILE
+			return nil, .FAILED_TO_OPEN_DIR_FILE_IN_SOURCE_CODE_GET_CHERRY_FILES_IN_DIR
 		}
 		file_infos, read_err := os.read_dir(f, -1, context.allocator)
 		if read_err != os.ERROR_NONE {
-			return nil, .FAILED_TO_READ_SOURCE_CODE_FILE
+			return nil, .FAILED_TO_READ_SOURCE_CODE_FILE_IN_SOURCE_CODE_GET_CHERRY_FILES_IN_DIR
 		}
 		for info in file_infos {
 			if strings.has_suffix(info.name, ".cherry") {
@@ -63,11 +63,10 @@ get_cherry_files_in_dir :: proc(src_path: string) -> ([dynamic]string, types.exi
 	return paths, .OK
 }
 
-import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exit_codes {
+import_file :: proc(target: ^types.source_code_t, src_path: string) -> (code: types.exit_codes) {
 	src_path := src_path
 	if len(src_path) > 0 && src_path[0] != '/' && !os.exists(src_path) do src_path = fmt.tprintf("%s/%s", target.location, src_path)
-	paths, paths_err := get_cherry_files_in_dir(src_path)
-	if sys.is_error(paths_err) do return .FAILED_TO_READ_SOURCE_CODE_FILE
+	paths := get_cherry_files_in_dir(src_path) or_return
 	for path in paths {
 		path := path
 		if os.is_dir(path) do continue
@@ -77,7 +76,7 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 		}
 		append(&target.included_sources, path)
 		file_data, err := os.read_entire_file(path, context.allocator)
-		if err != nil do return .FAILED_TO_READ_SOURCE_CODE_FILE
+		if err != nil do return .FAILED_TO_READ_SOURCE_CODE_FILE_IN_SOURCE_CODE_IMPORT_FILE
 		defer delete(file_data)
 		obj_src := string(file_data)
 		b: strings.Builder
@@ -95,13 +94,13 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> types.exi
 }
 
 advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_codes) {
-	if src == nil do return 0, .OBJECT_IS_NIL
+	if src == nil do return 0, .OBJECT_IS_NIL_IN_SOURCE_CODE_ADVANCE
 	for i := 0; i < count; i += 1 {
-		if src.is_at_end do return 0, .EOF_IN_SOURCE_CODE_REACHED
+		if src.is_at_end do return 0, .EOF_ALREADY_TRIGGERED_REACHED_IN_SOURCE_CODE_ADVANCE
 		src.pointer += 1
 		if src.pointer >= src.length {
 			src.is_at_end = true
-			return 0, .EOF_IN_SOURCE_CODE_REACHED
+			return 0, .EOF_IN_SOURCE_CODE_REACHED_IN_SOURCE_CODE_ADVANCE
 		}
 		src.column += 1
 		if src.content[src.pointer] == '\n' {
@@ -113,13 +112,13 @@ advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_
 }
 
 peek :: proc(src: ^types.source_code_t, distance: int = 0) -> (rune, types.exit_codes) {
-	if src == nil do return 0, .OBJECT_IS_NIL
-	if src.pointer + distance >= src.length || src.pointer + distance < 0 do return 0, .PEEK_OUT_OF_BOUNDS
+	if src == nil do return 0, .OBJECT_IS_NIL_IN_SOURCE_CODE_PEEK
+	if src.pointer + distance >= src.length || src.pointer + distance < 0 do return 0, .OUT_OF_BOUNDS_IN_SOURCE_CODE_PEEK
 	return rune(src.content[src.pointer + distance]), .OK
 }
 
 remove :: proc(src: ^types.source_code_t) -> types.exit_codes {
-	if src == nil do return .OBJECT_IS_NIL
+	if src == nil do return .OBJECT_IS_NIL_IN_SOURCE_CODE_REMOVE
 	delete(src.content)
 	free(src)
 	return .OK

@@ -58,7 +58,7 @@ eval_time :: proc(
 		seconds := time.duration_seconds(elapsed)
 		return object.create_float(f32(seconds))
 	case:
-		return nil, .ERROR
+		return nil, .UNEXPECTED_MEMBER_IN_EVAL_TIME
 	}
 }
 

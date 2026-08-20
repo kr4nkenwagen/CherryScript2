@@ -17,7 +17,7 @@ run :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if prog == nil do return nil, types.exit_codes.OBJECT_IS_NIL
+	if prog == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_RUN
 	g_debug = debug_mode
 	prog.pointer = 0
 	prog.exit = false
@@ -49,7 +49,7 @@ branch :: proc(
 	code: types.exit_codes,
 ) {
 	if synt == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_EVAL_BRANCH
 	}
 	// -------------------------------------------------------------
 	// Path 1: synt.args == nil
@@ -79,7 +79,7 @@ branch :: proc(
 	defer vm.pop_frame(stck)
 	run(synt.args, stck, g_debug) or_return
 	curr_stack := vm.current_frame(stck) or_return
-	if curr_stack.count - curr_stack.parent_references != synt.value.branch.length do return nil, .INCORRECT_NUMBER_OF_REFERENCES
+	if curr_stack.count - curr_stack.parent_references != synt.value.branch.length do return nil, .INCORRECT_NUMBER_OF_REFERENCES_IN_EVAL_BRANCH
 	for i := curr_stack.parent_references; i < curr_stack.count; i += 1 {
 		idx := i - curr_stack.parent_references
 		curr_stack.data[i].data = arg_vals[idx].data

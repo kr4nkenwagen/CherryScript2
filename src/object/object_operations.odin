@@ -5,7 +5,7 @@ import "../types"
 
 add :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIl_in_OBJECT_ADD
 	}
 	if a.type == .INT {
 		if b.type == .FLOAT {
@@ -44,12 +44,12 @@ add :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exi
 			return c, .OK
 		}
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_ADD
 }
 
 subtract :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_SUBTRACT
 	}
 	if a.type == .INT {
 		if b.type == .FLOAT {
@@ -72,12 +72,12 @@ subtract :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return shorten_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_SUBTRACT
 }
 
 multiply :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_MULTIPLY
 	}
 	if a.type == .INT {
 		if b.type == .FLOAT {
@@ -98,30 +98,30 @@ multiply :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return multiply_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_MULTUPLY
 }
 
 divide :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_DIVIDE
 	}
 	if a.type == .INT {
-		if a.data.(int) == 0 do return nil, .DIVISION_BY_ZERO
+		if a.data.(int) == 0 do return nil, .DIVISION_BY_ZERO_A_INT_IN_OBJECT_DIVIDE
 		if b.type == .FLOAT {
-			if b.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO
+			if b.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO_A_INT_B_FLOAT_IN_OBJECT_DIVIDE
 			return object.create_int(int(f64(a.data.(int)) / f64(b.data.(f32))))
 		} else if b.type == .INT {
-			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO
+			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO_A_INT_B_INT_IN_OBJECT_DIVIDE
 			return object.create_int(a.data.(int) / b.data.(int))
 		}
 	}
 	if a.type == .FLOAT {
-		if a.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO
+		if a.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO_A_FLOAT_IN_OBJECT_DIVIDE
 		if b.type == .INT {
-			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO
+			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO_A_FLOAT_B_INT_IN_OBJECT_DIVIDE
 			return object.create_float(f32(f64(a.data.(f32)) / f64(b.data.(int))))
 		} else if b.type == .FLOAT {
-			if b.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO
+			if b.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO_A_FLOAT_B_FLOAT_IN_OBJECT_DIVIDE
 			return object.create_float(a.data.(f32) / b.data.(f32))
 		}
 	}
@@ -130,16 +130,16 @@ divide :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return divide_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_DIVIDE
 }
 
 modulus :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_MODULUS
 	}
 	if a.type == .INT {
 		if b.type == .INT {
-			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO
+			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO_A_INT_B_INT_IN_OBJECT_MODULUS
 			return object.create_int(a.data.(int) % b.data.(int))
 		}
 	}
@@ -148,16 +148,16 @@ modulus :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return modulus_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_MODULUS
 }
 
 
 assign :: proc(target, source: ^types.object_t) -> types.exit_codes {
 	if target == nil || source == nil {
-		return .OBJECT_IS_NIL
+		return .OBJECT_IS_NIL_IN_OBJECT_ASSIGN
 	}
 	if target.is_const {
-		return .CANNOT_ASSIGN_TO_CONSTANT
+		return .CANNOT_ASSIGN_TO_CONSTANT_IN_OBJECT_ASSIGN
 	}
 	target.data = source.data
 	target.type = source.type

@@ -10,7 +10,7 @@ consume_number :: proc(
 	consumed_number: string,
 	code: types.exit_codes,
 ) {
-	if src == nil do return "", .OBJECT_IS_NIL
+	if src == nil do return "", .OBJECT_IS_NIL_IN_SCANNER_NUMBER
 	is_float := false
 	start_position := src.pointer
 
@@ -22,7 +22,7 @@ consume_number :: proc(
 
 		if is_number(second_char) || (second_char == '.' && third_char != '.') {
 			source_code.advance(src) or_return
-		} else do return "", .UNEXPECTED_CHARACTER
+		} else do return "", .UNEXPECTED_CHARACTER_IN_SCANNER_NUMBER
 	}
 
 	for !src.is_at_end {
@@ -30,7 +30,7 @@ consume_number :: proc(
 		second_char := source_code.peek(src, 1) or_return
 		if character == '.' {
 			if second_char == '.' do break
-			if is_float do return "", .UNEXPECTED_CHARACTER
+			if is_float do return "", .UNEXPECTED_CHARACTER_IN_LOOP_IN_SCANNER_NUMBER
 			is_float = true
 		}
 		if is_number(second_char) || second_char == '.' {

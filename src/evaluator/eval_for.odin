@@ -11,7 +11,7 @@ eval_for :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	if syntax == nil do return .OBJECT_IS_NIL
+	if syntax == nil do return .OBJECT_IS_NIL_IN_EVAL_FOR
 	if syntax.left == nil && syntax.right == nil {
 		return eval_while(syntax, stck, program)
 	}
@@ -20,7 +20,7 @@ eval_for :: proc(
 	eval_primary_expression(syntax.left, stck, program) or_return
 	condition := eval_primary_expression(syntax.value, stck, program) or_return
 	if condition.type != .BOOL {
-		return .TYPE_MISMATCH
+		return .CONDITION_IS_NOT_BOOL_IN_EVAL_FOR
 	}
 
 	for !syntax.branch.exit && condition.data.(bool) == true {

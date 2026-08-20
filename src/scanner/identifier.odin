@@ -11,9 +11,9 @@ consume_identifier :: proc(
 	tkn: ^types.token_t,
 	code: types.exit_codes,
 ) {
-	if src == nil do return nil, .OBJECT_IS_NIL
+	if src == nil do return nil, .OBJECT_IS_NIL_IN_SCANNER_IDENTIFIER
 	prev_char := source_code.peek(src, -1) or_return
-	if unicode.is_alpha(prev_char) || is_number(prev_char) do return nil, .UNEXPECTED_CHARACTER
+	if unicode.is_alpha(prev_char) || is_number(prev_char) do return nil, .UNEXPECTED_CHARACTER_IN_SCANNER_IDENTIFIER
 	word := consume_word(src) or_return
 	return token.create(src, .IDENTIFIER, word)
 }

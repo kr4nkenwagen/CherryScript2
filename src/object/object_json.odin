@@ -16,7 +16,6 @@ json_value_to_object :: proc(
 ) {
 	obj: ^types.object_t
 	code: types.exit_codes
-
 	switch v in val {
 	case json.Null:
 		obj, code = create_null()
@@ -50,7 +49,7 @@ json_value_to_object :: proc(
 		}
 	case json.Object:
 		obj = new(types.object_t)
-		if obj == nil do return nil, .OBJECT_IS_NIL
+		if obj == nil do return nil, .OBJECT_IS_NIL_IN_JSON_VALUE_TO_OBJECT
 		obj.is_marked = false
 		obj.type = .JSON
 		obj.ref_count = 1
@@ -79,10 +78,9 @@ json_value_to_object :: proc(
 from_json_string :: proc(json_str: string) -> (^types.object_t, types.exit_codes) {
 	doc, err := json.parse_string(json_str)
 	if err != .None {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_FROM_JSON_STRING
 	}
 	defer json.destroy_value(doc)
-
 	return json_value_to_object(doc, "")
 }
 
@@ -93,8 +91,8 @@ json_get :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if obj == nil do return nil, .OBJECT_IS_NIL
-	if obj.type != .JSON do return nil, .UNEXPECTED_BEHAVIOUR
+	if obj == nil do return nil, .OBJECT_IS_NIL_IN_JSON_GET
+	if obj.type != .JSON do return nil, .OBJECT_IS_NOT_JSON_OBJECT_IN_JSON_GET
 	target := obj.data.(types.object_json_t)
 	for i := 0; i < len(target.value); i += 1 {
 		if target.value[i].name == name {
@@ -117,7 +115,7 @@ to_json_string :: proc(
 	ret_str: string,
 	code: types.exit_codes,
 ) {
-	if obj == nil do return "", .OBJECT_IS_NIL
+	if obj == nil do return "", .OBJECT_IS_NIL_IN_TO_JSON_STRING
 	sb := strings.builder_make(allocator)
 	err := serialize_value(&sb, obj)
 	if sys.is_error(err) {
@@ -204,12 +202,12 @@ write_escaped_string :: proc(sb: ^strings.Builder, str: string) {
 
 json_write_file :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 	obj := obj
-	if obj == nil do return .OBJECT_IS_NIL
+	if obj == nil do return .OBJECT_IS_NIL_IN_JSON_WRITE_FILE
 	for obj.parent != nil do obj = obj.parent
 	if obj.data.(types.object_json_t).file != {} {
 		text := to_json_string(obj) or_return
 		write_err := os.write_entire_file(obj.data.(types.object_json_t).file.name, text)
-		if write_err != os.General_Error.None do return .ERROR
+		if write_err != os.General_Error.None do return .ERROR_WRITING_FILE_IN_JSON_WRITE_FILE
 	}
 	return .OK
 }
@@ -217,7 +215,7 @@ json_write_file :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 create_json_from_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
 	text_data, err := os.read_entire_file(file, context.allocator)
 	if err != os.General_Error.None {
-		return nil, .FAILED_TO_READ_FILE
+		return nil, .FAILED_TO_READ_FILE_IN_CREATE_JSON_FROM_FILE
 	}
 	defer delete(text_data)
 	text := string(text_data)

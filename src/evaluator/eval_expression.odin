@@ -15,7 +15,7 @@ eval_primary_expression :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil do return nil, .OBJECT_IS_NIL
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_PRIMARY_EXPRESSION
 	if g_debug {
 		debug.prompt_user(syntax.token, stck)
 	}
@@ -105,7 +105,7 @@ eval_primary_expression :: proc(
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:
 		return eval_binary_expression(syntax, stck, program)
 	case:
-		return nil, .INTERPRETER_ERROR
+		return nil, .INTERPRETER_ERROR_IN_EVAL_PRIMARY_EXPRESSION
 	}
 }
 
@@ -118,7 +118,7 @@ eval_file_extraction :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_EVAL_FILE_EXTRACTION
 	}
 	file := eval_primary_expression(syntax.left, stck, program) or_return
 	index := eval_primary_expression(syntax.right, stck, program) or_return
@@ -132,7 +132,7 @@ eval_file_extraction :: proc(
 }
 
 eval_number :: proc(syntax: ^types.syntax_t) -> (^types.object_t, types.exit_codes) {
-	if syntax == nil do return nil, .OBJECT_IS_NIL
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_NUMBER
 	if strings.contains(syntax.token.literal, ".") {
 		val := strconv.parse_f64(syntax.token.literal) or_else 0.0
 		return object.create_float(f32(val))
@@ -151,7 +151,7 @@ eval_string_operation_expression :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_EVAL_STRING_OPERATION_EXPRESSION
 	}
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
@@ -191,7 +191,7 @@ eval_string_operation_expression :: proc(
 
 			return object.join_string(left_hand_side, right_hand_side)
 		}
-		return nil, .ILLEGAL_OPERATION
+		return nil, .ILLEGAL_OPERATION_IN_EVAL_STRING_OPERATIONS
 	}
 	return nil, .OK
 }
@@ -204,11 +204,11 @@ eval_and_or :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil do return nil, .OBJECT_IS_NIL
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_AND_OR
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	if left_hand_side.type != .BOOL || right_hand_side.type != .BOOL {
-		return nil, .TYPE_MISMATCH
+		return nil, .TYPE_MISMATCH_IN_EVAL_AND_OR
 	}
 
 	#partial switch syntax.token.type {
@@ -228,12 +228,12 @@ eval_unary_expression :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil do return nil, .OBJECT_IS_NIL
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_UNARY_EXPRESSION
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	if left_hand_side != nil && left_hand_side.type == .BOOL {
 		return object.create_bool(!left_hand_side.data.(bool))
 	}
-	return nil, .ILLEGAL_OPERATION
+	return nil, .ILLEGAL_OPERATION_IN_EVAL_UNARY_EXPRESSION
 }
 
 eval_comparison_expression :: proc(
@@ -244,7 +244,7 @@ eval_comparison_expression :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil do return nil, .OBJECT_IS_NIL
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_COMPARISON_EXPESSION
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
@@ -282,7 +282,7 @@ eval_binary_expression :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil do return nil, .OBJECT_IS_NIL
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_BINARY_EXPRESSION
 
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
@@ -295,7 +295,7 @@ eval_binary_expression :: proc(
 		return object.multiply(left_hand_side, right_hand_side)
 	}
 
-	if divide_by_zero(left_hand_side, right_hand_side) do return nil, .DIVISION_BY_ZERO
+	if divide_by_zero(left_hand_side, right_hand_side) do return nil, .DIVISION_BY_ZERO_IN_EVAL_BINARY_EXPRESSION
 
 	#partial switch syntax.token.type {
 	case .SLASH:
@@ -314,7 +314,7 @@ eval_assignment_expression :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil {
-		return .OBJECT_IS_NIL
+		return .OBJECT_IS_NIL_IN_EVAL_ASSIGNMENT_EXPRESSION
 	}
 	if syntax.left.token.type == .LEFT_ARROW {
 		right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
@@ -330,7 +330,7 @@ eval_assignment_expression :: proc(
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	if left_hand_side.is_const {
-		return .CANNOT_ASSIGN_TO_CONSTANT
+		return .CANNOT_ASSIGN_TO_CONSTANT_IN_EVAL_ASSIGNMENT_EXPRESSION
 	}
 
 	#partial switch syntax.token.type {
@@ -347,7 +347,7 @@ eval_assignment_expression :: proc(
 		return object.assign(left_hand_side, res)
 	case .SLASH_EQUAL:
 		if divide_by_zero(left_hand_side, right_hand_side) {
-			return .DIVISION_BY_ZERO
+			return .DIVISION_BY_ZERO_IN_EVAL_ASSIGNMENT_EXPRESSION
 		}
 		res := object.divide(left_hand_side, right_hand_side) or_return
 		return object.assign(left_hand_side, res)

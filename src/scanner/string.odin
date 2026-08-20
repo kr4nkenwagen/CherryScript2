@@ -11,9 +11,9 @@ consume_string :: proc(
 	consumed_string: string,
 	code: types.exit_codes,
 ) {
-	if src == nil do return "", .OBJECT_IS_NIL
+	if src == nil do return "", .OBJECT_IS_NIL_IN_SCANNER_STRING
 	start_char := source_code.peek(src, 0) or_return
-	if start_char != grammar.CHAR_WRAPPER && start_char != grammar.STRING_WRAPPER do return "", .UNEXPECTED_CHARACTER
+	if start_char != grammar.CHAR_WRAPPER && start_char != grammar.STRING_WRAPPER do return "", .UNEXPECTED_CHARACTER_IN_SCANNER_STRING
 	exit_char :=
 		start_char == grammar.STRING_WRAPPER ? grammar.STRING_WRAPPER : grammar.CHAR_WRAPPER
 	size := int(1)
@@ -56,7 +56,7 @@ consume_string :: proc(
 	}
 	if !is_closed {
 		strings.builder_destroy(&b)
-		return "", .EOF_IN_STRING
+		return "", .EOF_IN_STRING_IN_SCANNER_STRING
 	}
 	for i := 0; i < size; i += 1 {
 		source_code.advance(src) or_return

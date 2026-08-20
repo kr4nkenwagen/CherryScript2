@@ -7,7 +7,7 @@ import "../types"
 
 primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, types.exit_codes) {
 	if tokens == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_PARSER_PRIMARY_EXPRESSION
 	}
 	curr_token, curr_token_err := token_list.peek(tokens, 0)
 	if sys.is_error(curr_token_err) {
@@ -63,7 +63,7 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 			return nil, next_token_err
 		}
 		if next_token == nil || next_token.type != .RIGHT_PAREN {
-			return nil, .UNCLOSED_PARENTHESIS
+			return nil, .UNCLOSED_PARENTHESIS_IN_PARSE_PRIMARY_EXPRESSION
 		}
 		_, adv_err = token_list.advance(tokens)
 		if sys.is_error(adv_err) {
@@ -315,7 +315,7 @@ statement :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	if tokens == nil do return nil, types.exit_codes.OBJECT_IS_NIL
+	if tokens == nil do return nil, .OBJECT_IS_NIL_IN_PARSE_STATEMENT
 	curr_token := token_list.peek(tokens, 0) or_return
 	if curr_token == nil do return nil, .OK
 	#partial switch (curr_token.type) {

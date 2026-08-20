@@ -7,12 +7,12 @@ import "core:strings"
 
 file_set :: proc(filepath: string, new_text: string, target_index: int) -> types.exit_codes {
 	if target_index < 0 {
-		return .INDEX_OUT_OF_BOUNDS
+		return .INDEX_OUT_OF_BOUNDS_IN_FILE_SET
 	}
 	if !os.exists(filepath) {
 		_, err := os.create(filepath)
 		if err != os.General_Error.None {
-			return .FAILED_TO_CREATE_FILE
+			return .FAILED_TO_CREATE_FILE_IN_FILE_SET
 		}
 	}
 	file_text := ""
@@ -36,29 +36,29 @@ file_set :: proc(filepath: string, new_text: string, target_index: int) -> types
 	lines[target_index] = new_text
 	new_file_text, join_err := strings.join(lines[:], "\n")
 	if join_err != .None {
-		return .FAILED_FILE_MANIPULATION
+		return .ERROR_PARSE_FILE_AND_JOIN_CONTENT_IN_FILE_SET
 	}
 	defer delete(new_file_text)
 	write_ok := os.write_entire_file(filepath, transmute([]u8)new_file_text)
 	if write_ok != os.General_Error.None {
-		return .FAILED_FILE_MANIPULATION
+		return .ERROR_FAILED_TO_WRITE_FILE_IN_FILE_SET
 	}
 	return .OK
 }
 
 file_get :: proc(filename: string, index: int) -> (string, types.exit_codes) {
 	if index < 0 {
-		return "", .INDEX_OUT_OF_BOUNDS
+		return "", .INDEX_OUT_OF_BOUNDS_IN_FILE_GET
 	}
 	data, read_ok := os.read_entire_file(filename, context.allocator)
 	if read_ok != os.General_Error.None {
-		return "", .FAILED_FILE_MANIPULATION
+		return "", .ERROR_READING_FILE_IN_FILE_GET
 	}
 	defer delete(data)
 	lines := strings.split_lines(string(data))
 	defer delete(lines)
 	if index >= len(lines) {
-		return "", .FAILED_FILE_MANIPULATION
+		return "", .INDEX_IS_GREATER_THAN_FILE_LENGTH
 	}
 	result := strings.clone(lines[index])
 	return result, .OK
@@ -71,7 +71,7 @@ file_exists :: proc(filename: string) -> (bool, types.exit_codes) {
 file_length :: proc(filepath: string) -> (int, types.exit_codes) {
 	data, read_ok := os.read_entire_file(filepath, context.allocator)
 	if read_ok != os.General_Error.None {
-		return 0, .FAILED_FILE_MANIPULATION
+		return 0, .ERROR_READING_FILE_TO_GET_FILE_LENGTH
 	}
 	defer delete(data)
 	text := strings.trim_right_space(string(data))

@@ -12,7 +12,7 @@ parse_base_identifier :: proc(
 	code: types.exit_codes,
 ) {
 	curr_token := token_list.peek(tokens, 0) or_return
-	if curr_token.type != .IDENTIFIER do return nil, nil, .EXPECTED_IDENTIFIER
+	if curr_token.type != .IDENTIFIER do return nil, nil, .EXPECTED_IDENTIFIER_IN_PARSE_BASE_IDENTIFIER
 	node := syntax.create() or_return
 	node.token = curr_token
 	next_token := token_list.advance(tokens) or_return
@@ -28,7 +28,7 @@ parse_member_access :: proc(
 	code: types.exit_codes,
 ) {
 	next_token := token_list.peek(tokens, 1) or_return
-	if next_token.type != .IDENTIFIER do return nil, {}, .UNEXPECTED_IDENTIFIER_OR_LITERAL
+	if next_token.type != .IDENTIFIER do return nil, {}, .EXPECTED_IDENTIFIER_IN_PARSE_MEMBER_ACCESS
 	member_token := token_list.advance(tokens) or_return
 	member_node := syntax.create() or_return
 	member_node.token = member_token
@@ -66,12 +66,10 @@ parse_identifier :: proc(
 			next_node, next_tok := parse_member_access(tokens, curr_syntax) or_return
 			curr_syntax = next_node
 			curr_token = next_tok
-
 		case .LEFT_BRACKET:
 			next_node, next_tok := parse_index_access(tokens, curr_syntax) or_return
 			curr_syntax = next_node
 			curr_token = next_tok
-
 		case:
 			break postfix_loop
 		}

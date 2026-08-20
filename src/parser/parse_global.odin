@@ -22,5 +22,5 @@ parse_global :: proc(
 		declaration.value, declaration_err = parse_function(tokens, nil)
 		return declaration, declaration_err
 	}
-	return nil, .UNEXPECTED_BEHAVIOUR
+	return nil, .UNEXPECTED_BEHAVIOUR_IN_PARSE_GLOBAL
 }

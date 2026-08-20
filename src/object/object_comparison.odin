@@ -19,7 +19,7 @@ get_numeric_value :: proc(obj: ^types.object_t) -> (f64, bool) {
 
 equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_ON_OBJECT_EQUAL
 	}
 	val_a, ok_a := get_numeric_value(a)
 	val_b, ok_b := get_numeric_value(b)
@@ -34,14 +34,14 @@ equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	}
 
 	fmt.printf("%s - %s\n", a.data, b.data)
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_EQUAL
 }
 
 import "core:fmt"
 
 not_equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_NOT_EQUAL
 	}
 	val_a, ok_a := get_numeric_value(a)
 	val_b, ok_b := get_numeric_value(b)
@@ -54,12 +54,12 @@ not_equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes)
 	if a.type == .NULL && b.type == .NULL {
 		return object.create_bool(false)
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_NOT_EQUAL
 }
 
 greater_equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_GREATER_EQUAL
 	}
 	val_a, ok_a := get_numeric_value(a)
 	val_b, ok_b := get_numeric_value(b)
@@ -69,41 +69,41 @@ greater_equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_co
 	if a.type == .NULL && b.type == .NULL {
 		return object.create_bool(true)
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_GREATER_EQUAL
 }
 
 greater :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_GREATER
 	}
 	val_a, ok_a := get_numeric_value(a)
 	val_b, ok_b := get_numeric_value(b)
 	if ok_a && ok_b {
 		return object.create_bool(val_a > val_b)
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_GREATER
 }
 
 less :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_LESS
 	}
 	val_a, ok_a := get_numeric_value(a)
 	val_b, ok_b := get_numeric_value(b)
 	if ok_a && ok_b {
 		return object.create_bool(val_a < val_b)
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_LESS
 }
 
 less_equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {
-		return nil, .OBJECT_IS_NIL
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_LESS_EQUAL
 	}
 	val_a, ok_a := get_numeric_value(a)
 	val_b, ok_b := get_numeric_value(b)
 	if ok_a && ok_b {
 		return object.create_bool(val_a <= val_b)
 	}
-	return nil, .TYPE_MISMATCH
+	return nil, .TYPE_MISMATCH_IN_OBJECT_LESS_EQUAL
 }

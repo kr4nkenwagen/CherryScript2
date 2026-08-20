@@ -7,12 +7,12 @@ import "../token_list"
 import "../types"
 
 run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: types.exit_codes) {
-	if src == nil do return nil, .OBJECT_IS_NIL
+	if src == nil do return nil, .OBJECT_IS_NIL_IN_SCANNER
 	list := token_list.create() or_return
 	for !src.is_at_end {
 		tmp := (list.length > 0) ? list.list[list.length - 1] : nil
 		character, character_err := source_code.advance(src)
-		if character_err != .EOF_IN_SOURCE_CODE_REACHED {
+		if character_err != .EOF_IN_SOURCE_CODE_REACHED_IN_SOURCE_CODE_ADVANCE {
 			if sys.is_error(character_err) do return nil, character_err
 		}
 		switch (character) {
@@ -258,11 +258,11 @@ run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: 
 			if src.is_at_end do break
 			if src.content[src.pointer] == 0 do break
 			res_word, err := consume_keyword(src)
-			if sys.is_error(err) && err != .PEEK_OUT_OF_BOUNDS do return nil, err
+			if sys.is_error(err) && err != .OUT_OF_BOUNDS_IN_SOURCE_CODE_PEEK do return nil, err
 
 			if res_word == nil {
 				word, word_err := consume_identifier(src)
-				if sys.is_error(word_err) && word_err != .PEEK_OUT_OF_BOUNDS do return nil, word_err
+				if sys.is_error(word_err) && word_err != .OUT_OF_BOUNDS_IN_SOURCE_CODE_PEEK do return nil, word_err
 				if len(word.literal) > 0 do token_list.add(list, word) or_return
 			} else {
 				token_list.add(list, res_word) or_return

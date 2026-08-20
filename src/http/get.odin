@@ -15,7 +15,7 @@ write_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) ->
 
 get :: proc(url: string) -> (string, types.exit_codes) {
 	handle := curl.easy_init()
-	if handle == nil do return "", .ERROR
+	if handle == nil do return "", .HANDLE_IS_NIL_IN_HTTP_GET
 	defer curl.easy_cleanup(handle)
 	builder: strings.Builder
 	strings.builder_init(&builder)
@@ -27,7 +27,7 @@ get :: proc(url: string) -> (string, types.exit_codes) {
 	res := curl.easy_perform(handle)
 	if res != .E_OK {
 		strings.builder_destroy(&builder)
-		return "", .ERROR
+		return "", .FAILED_TO_BUILD_RETURN_VALUE_AS_STRING_IN_HTTP_GET
 	}
 	return strings.to_string(builder), .OK
 }

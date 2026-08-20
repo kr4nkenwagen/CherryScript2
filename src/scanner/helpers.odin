@@ -100,7 +100,7 @@ consume_word :: proc(
 	consumed_word: string,
 	code: types.exit_codes,
 ) {
-	if src == nil do return "", .OBJECT_IS_NIL
+	if src == nil do return "", .OBJECT_IS_NIL_IN_SCANNER_CONSUME_WORD
 	start_position := src.pointer
 	for !src.is_at_end {
 		next_char := source_code.peek(src, 1) or_return
@@ -108,7 +108,7 @@ consume_word :: proc(
 		source_code.advance(src) or_return
 	}
 	total_length := int(src.pointer - start_position) + 1
-	if total_length <= 0 do return "", .WORD_NOT_FOUND
+	if total_length <= 0 do return "", .WORD_NOT_FOUND_IN_SCANNER_CONSUME_WORD
 	word := string(src.content[start_position:start_position + total_length])
 	return word, .OK
 }
@@ -120,7 +120,7 @@ is_next_word_match :: proc(
 	next_word_match: bool,
 	code: types.exit_codes,
 ) {
-	if src == nil do return false, .OBJECT_IS_NIL
+	if src == nil do return false, .OBJECT_IS_NIL_IN_SCANNER_IS_NEXT_WORD_MATCH
 	end_idx := src.pointer + len(word)
 	if end_idx > src.length do return false, .OK
 	sliced := src.content[src.pointer:end_idx]
