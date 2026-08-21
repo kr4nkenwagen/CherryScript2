@@ -4,6 +4,7 @@ import "../debug"
 import "../object"
 import "../sys"
 import "../types"
+import "core:encoding/json"
 import "core:fmt"
 import "core:strconv"
 import "core:strings"
@@ -90,8 +91,37 @@ eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 	case .INT:
 		num, err := object.int_to_number(int(obj.data.(int)))
 		if !sys.is_error(err) do print_out(num, debug_mode)
-	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE, .JSON:
+	case .JSON:
+		if debug_mode do break
+		text := object.to_json_string(obj) or_return
+		pretty_print_json(text)
+	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
 		break
 	}
+	return .OK
+}
+pretty_print_json :: proc(json_str: string) -> (code: types.exit_codes) {
+	doc, parse_err := json.parse_string(
+		json_str,
+		parse_integers = true,
+		allocator = context.allocator,
+	)
+	if parse_err != .None {
+		fmt.eprintfln("Failed to parse JSON string: %v", parse_err)
+		return .CANT_PARSE_JSON_IN_JSON_PRINT
+	}
+	defer json.destroy_value(doc, context.allocator)
+	opt := json.Marshal_Options {
+		pretty     = true,
+		use_spaces = true,
+		spaces     = 2,
+	}
+	bytes, err := json.marshal(doc, opt, context.allocator)
+	if err != json.Marshal_Data_Error.None {
+		fmt.eprintfln("Failed to marshal JSON: %v", err)
+		return .ERROR_ALLOCATING_MEMORY_IN_JSON_PRINT
+	}
+	defer delete(bytes, context.allocator)
+	fmt.println(string(bytes))
 	return .OK
 }

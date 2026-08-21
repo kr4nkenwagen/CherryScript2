@@ -13,6 +13,7 @@ import "stack"
 import "sys"
 import "token_list"
 import "types"
+import "vendor:curl"
 import "vm"
 
 SOURCE_FILE_SUFFIX :: ".cherry"
@@ -79,6 +80,7 @@ step_3 :: proc(program: ^types.program_t, tokens: ^types.token_list_t, args: ^ty
 	if sys.is_error(curr_vm_err) {
 		sys.print_error(curr_vm_err, tokens)
 	}
+	curl.global_init(curl.GLOBAL_DEFAULT)
 	curr_stack, curr_stack_err := stack.create()
 	if sys.is_error(curr_stack_err) do sys.print_error(curr_stack_err, tokens)
 	vm_err := vm.push_frame(curr_vm, curr_stack, false)

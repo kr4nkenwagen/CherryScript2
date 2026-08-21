@@ -33,11 +33,8 @@ equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 		return object.create_bool(true)
 	}
 
-	fmt.printf("%s - %s\n", a.data, b.data)
 	return nil, .TYPE_MISMATCH_IN_OBJECT_EQUAL
 }
-
-import "core:fmt"
 
 not_equals :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 	if a == nil || b == nil {

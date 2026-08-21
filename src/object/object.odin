@@ -114,6 +114,7 @@ create_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
 }
 
 create_json :: proc(json_str: string) -> (^types.object_t, types.exit_codes) {
+	json_str := len(json_str) == 0 ? "{}" : json_str
 	doc, err := json.parse_string(json_str)
 	if err != .None {
 		return nil, .FAILED_TO_PARSE_JSON_IN_CREATE_JSON

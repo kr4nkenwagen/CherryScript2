@@ -85,6 +85,8 @@ eval_primary_expression :: proc(
 		return eval_json(syntax, stck, program)
 	case .GET:
 		return eval_get(syntax, stck, program)
+	case .POST:
+		return eval_post(syntax, stck, program)
 	case .NUMBER:
 		return eval_number(syntax)
 	case .NULL:
@@ -99,7 +101,6 @@ eval_primary_expression :: proc(
 	case .EXISTS:
 		val := eval_primary_expression(syntax.value.branch.statements[0], stck, program) or_return
 		return eval_exists(val)
-
 	case .RIGHT_ARROW:
 		return eval_file_extraction(syntax, stck, program)
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:
