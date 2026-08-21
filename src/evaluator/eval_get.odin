@@ -4,8 +4,6 @@ import "../http"
 import "../object"
 import "../types"
 
-import "core:fmt"
-
 eval_get :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,

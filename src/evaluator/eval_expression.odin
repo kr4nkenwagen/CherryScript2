@@ -87,6 +87,8 @@ eval_primary_expression :: proc(
 		return eval_get(syntax, stck, program)
 	case .POST:
 		return eval_post(syntax, stck, program)
+	case .PUT:
+		return eval_put(syntax, stck, program)
 	case .NUMBER:
 		return eval_number(syntax)
 	case .NULL:

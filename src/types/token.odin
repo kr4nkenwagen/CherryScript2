@@ -77,6 +77,7 @@ token_type_t :: enum {
 	JSON,
 	GET,
 	POST,
+	PUT,
 }
 
 token_t :: struct {

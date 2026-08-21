@@ -30,6 +30,8 @@ primary_expression :: proc(tokens: ^types.token_list_t) -> (^types.syntax_t, typ
 		return parse_get(tokens)
 	case .POST:
 		return parse_post(tokens)
+	case .PUT:
+		return parse_put(tokens)
 	case .TIME:
 		return parse_time(tokens)
 	case .EXISTS:

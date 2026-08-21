@@ -129,6 +129,10 @@ consume_keyword :: proc(
 		word, match = match_and_consume(src, grammar.PRINT) or_return
 		if match do return token.create(src, .PRINT, word)
 
+		word, match = match_and_consume(src, grammar.PUT) or_return
+		if match do return token.create(src, .PUT, word)
+
+
 	case 's':
 		fallthrough
 	case 'S':
