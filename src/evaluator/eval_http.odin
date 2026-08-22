@@ -24,7 +24,7 @@ eval_http :: proc(
 		return eval_delete(syntax.value, stck, program)
 	case "patch":
 		return eval_patch(syntax.value, stck, program)
-	case "heaad":
+	case "head":
 		return eval_head(syntax.value, stck, program)
 	case "options":
 		return eval_options(syntax.value, stck, program)

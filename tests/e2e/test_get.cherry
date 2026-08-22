@@ -1,5 +1,82 @@
-var res = http.get("https://polisen.se/api/events")
-assert(len(res.body) == 500, "get: fetch successful")
-println(res.head.code)
-assert(res.head.code == 200, "get: response code is 200")
-remove res, data
+# ==============================================================================
+# HTTP GET
+# ==============================================================================
+var res_get = http.get("https://httpbin.org/get")
+assert(res_get.head.code == 200, "get: response code is 200")
+assert(res_get.body.url == "https://httpbin.org/get", "get: returned correct URL")
+remove res_get
+
+# ==============================================================================
+# HTTP POST
+# ==============================================================================
+const req_post = json("{}")
+req_post.url = "https://httpbin.org/post"
+req_post.body = json("{}")
+req_post.body.test = "post_payload"
+req_post.head = json("{}")
+req_post.head.Content_Type = "application/json"
+
+var res_post = http.post(req_post)
+assert(res_post.head.code == 200, "post: response code is 200")
+assert(res_post.body.json.test == "post_payload", "post: echoed JSON body payload")
+remove res_post, req_post
+
+# ==============================================================================
+# HTTP PUT
+# ==============================================================================
+const req_put = json("{}")
+req_put.url = "https://httpbin.org/put"
+req_put.body = "update_data"
+req_put.head = json("{}")
+req_put.head.Content_Type = "text/plain"
+
+var res_put = http.put(req_put)
+assert(res_put.head.code == 200, "put: response code is 200")
+remove res_put, req_put
+
+# ==============================================================================
+# HTTP PATCH
+# ==============================================================================
+const req_patch = json("{}")
+req_patch.url = "https://httpbin.org/patch"
+req_patch.body = json("{}")
+req_patch.body.status = "patched"
+req_patch.head = json("{}")
+req_patch.head.Content_Type = "application/json"
+
+var res_patch = http.patch(req_patch)
+assert(res_patch.head.code == 200, "patch: response code is 200")
+assert(res_patch.body.json.status == "patched", "patch: echoed JSON field update")
+remove res_patch, req_patch
+
+# ==============================================================================
+# HTTP DELETE
+# ==============================================================================
+const req_delete = json("{}")
+req_delete.url = "https://httpbin.org/delete"
+req_delete.head = json("{}")
+req_delete.head.Authorization = "Bearer token123"
+
+var res_delete = http.delete(req_delete)
+assert(res_delete.head.code == 200, "delete: response code is 200")
+assert(res_delete.body.headers.Authorization == "Bearer token123", "delete: echoed auth header")
+remove res_delete, req_delete
+
+# Simple string delete call
+var res_delete_simple = http.delete("https://httpbin.org/delete")
+assert(res_delete_simple.head.code == 200, "delete_simple: response code is 200")
+remove res_delete_simple
+
+# ==============================================================================
+# HTTP HEAD
+# ==============================================================================
+var res_head = http.head("https://httpbin.org/get")
+assert(res_head.head.code == 200, "head: response code is 200")
+remove res_head
+
+# ==============================================================================
+# HTTP OPTIONS
+# ==============================================================================
+var res_options = http.options("https://httpbin.org/get")
+assert(res_options.head.code == 200, "options: response code is 200")
+remove res_options

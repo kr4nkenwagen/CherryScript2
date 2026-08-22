@@ -18,6 +18,7 @@ consume_keyword :: proc(
 	if src.pointer > 0 {
 		prev_char := source_code.peek(src, -1) or_return
 		if unicode.is_alpha(prev_char) do return nil, .UNEXPECTED_CHARACTER_IN_SCANNER_KEYWORD
+		if prev_char == '.' do return nil, .OK
 	}
 	character := source_code.peek(src, 0) or_return
 	switch (character) {
