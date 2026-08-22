@@ -25,5 +25,5 @@ eval_if :: proc(
 		}
 		curr_syntax = curr_syntax.right
 	}
-	return .OK
+	return
 }

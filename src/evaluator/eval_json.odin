@@ -28,6 +28,7 @@ eval_json :: proc(
 		if json_obj := &obj.data.(types.object_json_t); json_obj != nil do json_obj.file = val.data.(types.object_file_t)
 		return obj, .OK
 	case:
-		return nil, .OBJECT_IS_NOT_SUPPORTED_IN_EVAL_JSON
+		code = .OBJECT_IS_NOT_SUPPORTED_IN_EVAL_JSON
 	}
+	return
 }

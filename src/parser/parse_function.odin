@@ -10,10 +10,10 @@ function_args :: proc(
 	tokens: ^types.token_list_t,
 	parent: ^types.program_t,
 ) -> (
-	prgm: ^types.program_t,
+	args: ^types.program_t,
 	code: types.exit_codes,
 ) {
-	args := program.create(parent) or_return
+	args = program.create(parent) or_return
 	curr_token := token_list.peek(tokens, 0) or_return
 	if curr_token.type != .LEFT_PAREN {
 		return nil, .EXPECTED_LEFT_PAREN_IN_FUNCTION_ARGS
@@ -47,7 +47,7 @@ function_args :: proc(
 	curr_token = token_list.peek(tokens, 0) or_return
 	if curr_token.type != .RIGHT_PAREN do return nil, .EXPECTED_RIGHT_PAREN_IN_FUNCTION_ARGS
 	token_list.advance(tokens) or_return
-	return args, .OK
+	return
 }
 
 parse_function :: proc(
@@ -57,11 +57,11 @@ parse_function :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	declaration := syntax.create() or_return
-	declaration.token = token_list.peek(tokens, 0) or_return
+	sntx = syntax.create() or_return
+	sntx.token = token_list.peek(tokens, 0) or_return
 	token_list.advance(tokens) or_return
 	curr_syntax := syntax.create() or_return
-	declaration.right = curr_syntax
+	sntx.right = curr_syntax
 	curr_syntax.token = token_list.peek(tokens, 0) or_return
 	if curr_syntax.token.type != .IDENTIFIER do return nil, .EXPECTED_IDENTIFIER_IN_PARSE_FUNCTION
 	token_list.advance(tokens) or_return
@@ -79,7 +79,7 @@ parse_function :: proc(
 		prog_content := line(tokens, parent) or_return
 		program.add(prog, prog_content) or_return
 	}
-	return declaration, .OK
+	return
 }
 
 passed_function_args :: proc(
@@ -88,19 +88,19 @@ passed_function_args :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	declaration := syntax.create() or_return
-	declaration.token = token_list.peek(tokens, 0) or_return
+	sntx = syntax.create() or_return
+	sntx.token = token_list.peek(tokens, 0) or_return
 	curr_token := token_list.advance(tokens) or_return
-	declaration.branch = program.create(nil) or_return
+	sntx.branch = program.create(nil) or_return
 	for curr_token.type != .RIGHT_PAREN && curr_token.type != .END_OF_FILE {
 		if curr_token.type == .COMMA do curr_token = token_list.advance(tokens) or_return
 		curr_syntax := expression(tokens) or_return
-		program.add(declaration.branch, curr_syntax) or_return
+		program.add(sntx.branch, curr_syntax) or_return
 		curr_token = token_list.peek(tokens, 0) or_return
 		if curr_token.type == .RIGHT_PAREN do continue
 		curr_token = token_list.advance(tokens) or_return
 	}
 	if curr_token.type != .RIGHT_PAREN do return nil, .UNCLOSED_PARENTHESIS_IN_PASSED_FUNCTION_ARGS
 	token_list.advance(tokens) or_return
-	return declaration, .OK
+	return
 }

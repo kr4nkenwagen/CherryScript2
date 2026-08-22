@@ -7,11 +7,11 @@ create :: proc(
 	type: types.token_type_t,
 	literal: string,
 ) -> (
-	^types.token_t,
-	types.exit_codes,
+	token: ^types.token_t,
+	code: types.exit_codes,
 ) {
 	if type == nil do return nil, .OBJECT_IS_NIL_IN_TOKEN_CREATE
-	token := new(types.token_t)
+	token = new(types.token_t)
 	if token == nil do return nil, .MEMORY_ALLOCATION_FAILED_IN_TOKEN_CREATE
 	token.literal = literal
 	if src != nil {
@@ -19,12 +19,12 @@ create :: proc(
 		token.line = src.line
 	}
 	token.type = type
-	return token, .OK
+	return
 }
 
-generate_unknown_token :: proc() -> (^types.token_t, types.exit_codes) {
-	token := new(types.token_t)
+generate_unknown_token :: proc() -> (token: ^types.token_t, code: types.exit_codes) {
+	token = new(types.token_t)
 	if token == nil do return nil, .MEMORY_ALLOCATION_FAILED_IN_TOKEN_GENERATE_UNKNOWN_TOKEN
 	token.type = .UNKNOWN_TOKEN
-	return token, .OK
+	return
 }

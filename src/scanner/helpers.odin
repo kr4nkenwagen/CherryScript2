@@ -75,7 +75,7 @@ is_end_of_word :: proc(character: rune) -> (at_end_of_word: bool) {
 	case ',':
 		return true
 	}
-	return false
+	return
 }
 
 match_and_consume :: proc(
@@ -86,12 +86,11 @@ match_and_consume :: proc(
 	is_matched: bool,
 	code: types.exit_codes,
 ) {
-	match := is_next_word_match(src, match_word) or_return
-	if match {
-		word := consume_word(src) or_return
-		return word, true, .OK
+	is_matched = is_next_word_match(src, match_word) or_return
+	if is_matched {
+		matched_word = consume_word(src) or_return
 	}
-	return "", false, .OK
+	return
 }
 
 consume_word :: proc(
@@ -109,8 +108,8 @@ consume_word :: proc(
 	}
 	total_length := int(src.pointer - start_position) + 1
 	if total_length <= 0 do return "", .WORD_NOT_FOUND_IN_SCANNER_CONSUME_WORD
-	word := string(src.content[start_position:start_position + total_length])
-	return word, .OK
+	consumed_word = string(src.content[start_position:start_position + total_length])
+	return
 }
 
 is_next_word_match :: proc(
@@ -132,7 +131,8 @@ is_next_word_match :: proc(
 			(next_char >= 'A' && next_char <= 'Z') ||
 			(next_char >= '0' && next_char <= '9') ||
 			next_char == '_'
-		if is_alphanum do return false, .OK
+		if is_alphanum do return
 	}
-	return true, .OK
+	next_word_match = true
+	return
 }

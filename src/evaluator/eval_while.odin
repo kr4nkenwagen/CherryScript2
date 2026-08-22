@@ -16,5 +16,5 @@ eval_while :: proc(
 		if condition.data.(bool) != true do break
 		branch(syntax, stck) or_return
 	}
-	return .OK
+	return
 }

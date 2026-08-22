@@ -13,21 +13,22 @@ eval_base_identifier :: proc(
 	code: types.exit_codes,
 ) {
 	curr_stack := vm.current_frame(stck) or_return
-	obj := stack.get(curr_stack, synt.token.literal) or_return
-	if obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST_IN_EVAL_BASE_IDENTIFIER
+	ret_obj = stack.get(curr_stack, synt.token.literal) or_return
+	if ret_obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST_IN_EVAL_BASE_IDENTIFIER
 
-	return obj, .OK
+	return
 }
 
 eval_member_access :: proc(
 	obj: ^types.object_t,
 	member_synt: ^types.syntax_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	if obj.type != .JSON do return nil, .OBJECT_IS_NOT_JSON_OBJECT_IN_EVAL_MEMBER_ACCESS
-	return object.json_get(obj, member_synt.token.literal)
+	ret_obj = object.json_get(obj, member_synt.token.literal) or_return
+	return
 }
 
 eval_index_access :: proc(
@@ -48,7 +49,8 @@ eval_index_access :: proc(
 	} else do index_obj = eval_primary_expression(index_synt, stck, prog) or_return
 	if index_obj == nil || index_obj.type != .INT do return nil, .EXPECTED_ARRAY_INDEX_IN_EVAL_INDEX_ACCESS
 	idx := int(index_obj.data.(int))
-	return object.array_get(obj, idx)
+	ret_obj = object.array_get(obj, idx) or_return
+	return
 }
 
 eval_function_call :: proc(
@@ -56,8 +58,8 @@ eval_function_call :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	if synt.left == nil do return obj, .OK
 
@@ -65,7 +67,8 @@ eval_function_call :: proc(
 
 	converted_ptr := transmute(^types.syntax_t)obj.data.(rawptr)
 	converted_ptr.value = synt.left
-	return function_identifier(converted_ptr, stck)
+	ret_obj = function_identifier(converted_ptr, stck) or_return
+	return
 }
 
 eval_identifier :: proc(
@@ -93,5 +96,6 @@ eval_identifier :: proc(
 			return nil, .INTERPRETER_ERROR_IN_EVAL_IDENTIFIER
 		}
 	}
-	return eval_function_call(curr_obj, synt, stck)
+	ret_obj = eval_function_call(curr_obj, synt, stck) or_return
+	return
 }

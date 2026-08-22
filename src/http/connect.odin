@@ -7,9 +7,10 @@ connect :: proc(
 	json_headers: string = "",
 	body: string = "",
 ) -> (
-	string,
-	string,
-	types.exit_codes,
+	_head: string,
+	_body: string,
+	code: types.exit_codes,
 ) {
-	return do_request("CONNECT", url, json_headers, body)
+	_body, _head = do_request("CONNECT", url, json_headers, body) or_return
+	return
 }

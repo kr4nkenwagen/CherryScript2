@@ -3,66 +3,66 @@ package object
 import "../types"
 import "core:encoding/json"
 
-create_int :: proc(value: int) -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_int :: proc(value: int) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_INT
 	}
-	obj.is_marked = false
-	obj.type = types.object_type_t.INT
-	obj.data = value
-	obj.ref_count = 1
-	return obj, .OK
+	ret_obj.is_marked = false
+	ret_obj.type = types.object_type_t.INT
+	ret_obj.data = value
+	ret_obj.ref_count = 1
+	return
 }
 
-create_bool :: proc(value: bool) -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_bool :: proc(value: bool) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_BOOL
 	}
-	obj.is_marked = false
-	obj.type = types.object_type_t.BOOL
-	obj.data = value
-	obj.ref_count = 1
-	return obj, .OK
+	ret_obj.is_marked = false
+	ret_obj.type = types.object_type_t.BOOL
+	ret_obj.data = value
+	ret_obj.ref_count = 1
+	return
 }
 
-create_float :: proc(value: f32) -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_float :: proc(value: f32) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .OBJECT_IS_NIL_CREATE_FLOAT
 	}
-	obj.is_marked = false
-	obj.type = types.object_type_t.FLOAT
-	obj.data = value
-	obj.ref_count = 1
-	return obj, .OK
+	ret_obj.is_marked = false
+	ret_obj.type = types.object_type_t.FLOAT
+	ret_obj.data = value
+	ret_obj.ref_count = 1
+	return
 }
 
-create_string :: proc(value: string) -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_string :: proc(value: string) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_STRING
 	}
-	obj.is_marked = false
-	obj.type = types.object_type_t.STRING
-	obj.data = value
-	obj.ref_count = 1
-	return obj, .OK
+	ret_obj.is_marked = false
+	ret_obj.type = types.object_type_t.STRING
+	ret_obj.data = value
+	ret_obj.ref_count = 1
+	return
 }
 
-create_array :: proc() -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_array :: proc() -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_ARRAY
 	}
-	obj.is_marked = false
-	obj.type = types.object_type_t.ARRAY
-	obj.ref_count = 1
-	obj.data = types.object_array_t {
+	ret_obj.is_marked = false
+	ret_obj.type = types.object_type_t.ARRAY
+	ret_obj.ref_count = 1
+	ret_obj.data = types.object_array_t {
 		count = 0,
 	}
-	return obj, .OK
+	return
 }
 
 create_vector :: proc(
@@ -70,50 +70,50 @@ create_vector :: proc(
 	y: ^types.object_t,
 	z: ^types.object_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
-	obj := new(types.object_t)
-	if obj == nil {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_VECTOR
 	}
-	obj.is_marked = false
-	obj.type = .VECTOR
-	obj.data = types.object_vector_t {
+	ret_obj.is_marked = false
+	ret_obj.type = .VECTOR
+	ret_obj.data = types.object_vector_t {
 		x = x,
 		y = y,
 		z = z,
 	}
-	obj.ref_count = 1
-	return obj, .OK
+	ret_obj.ref_count = 1
+	return
 }
 
-create_funct :: proc(synt: ^types.syntax_t) -> (^types.object_t, types.exit_codes) {
+create_funct :: proc(synt: ^types.syntax_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if synt == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_FUNCT
 	}
-	obj := new(types.object_t)
-	if obj == nil {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_CREATE_FUNCT
 	}
-	obj.type = .FUNCTION
-	obj.data = synt
-	return obj, .OK
+	ret_obj.type = .FUNCTION
+	ret_obj.data = synt
+	return
 }
 
-create_file :: proc(file: string) -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_file :: proc(file: string) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_CREATE_FILE
 	}
-	obj.type = .FILE
-	obj.data = types.object_file_t {
+	ret_obj.type = .FILE
+	ret_obj.data = types.object_file_t {
 		name = file,
 	}
-	return obj, .OK
+	return
 }
 
-create_json :: proc(json_str: string) -> (^types.object_t, types.exit_codes) {
+create_json :: proc(json_str: string) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	json_str := len(json_str) == 0 ? "{}" : json_str
 	doc, err := json.parse_string(json_str)
 	if err != .None {
@@ -123,26 +123,26 @@ create_json :: proc(json_str: string) -> (^types.object_t, types.exit_codes) {
 	return json_value_to_object(doc, "")
 }
 
-create_null :: proc() -> (^types.object_t, types.exit_codes) {
-	obj := new(types.object_t)
-	if obj == nil {
+create_null :: proc() -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_CREATE_NIL
 	}
-	obj.is_marked = false
-	obj.type = types.object_type_t.NULL
-	obj.ref_count = 1
-	return obj, .OK
+	ret_obj.is_marked = false
+	ret_obj.type = types.object_type_t.NULL
+	ret_obj.ref_count = 1
+	return
 }
 
-set_null :: proc(obj: ^types.object_t) -> types.exit_codes {
+set_null :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 	if obj == nil {
 		return .OBJECT_IS_NIL_IN_SET_NULL
 	}
 	obj.type = types.object_type_t.NULL
-	return .OK
+	return
 }
 
-length :: proc(obj: ^types.object_t) -> (int, types.exit_codes) {
+length :: proc(obj: ^types.object_t) -> (ret_int: int, code: types.exit_codes) {
 	if obj == nil {
 		return -1, .OBJECT_IS_NIL_IN_LENGTH
 	}
@@ -164,7 +164,7 @@ length :: proc(obj: ^types.object_t) -> (int, types.exit_codes) {
 	return -1, .OBJECT_IS_UNKNOWN_TYPE_IN_LENGTH
 }
 
-remove :: proc(obj: ^types.object_t) -> types.exit_codes {
+remove :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 	if obj == nil {
 		return .OBJECT_IS_NIL_IN_OBJECT_REMOVE
 	}
@@ -197,17 +197,17 @@ remove :: proc(obj: ^types.object_t) -> types.exit_codes {
 		delete(obj.data.(types.object_json_t).value)
 	}
 	free(obj)
-	return .OK
+	return
 }
 
-copy :: proc(src: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+copy :: proc(src: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if src == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_COPY
 	}
-	obj, err := new(types.object_t)
-	if err != .None {
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_OBJECT_COPY
 	}
-	obj^ = src^
-	return obj, .OK
+	ret_obj^ = src^
+	return
 }

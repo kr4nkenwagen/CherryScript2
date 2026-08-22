@@ -1,14 +1,13 @@
 package source_code
 
-import "../sys"
 import "../types"
 import "core:fmt"
 import "core:os"
 import "core:path/filepath"
 import "core:strings"
 
-create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
-	src := new(types.source_code_t)
+create :: proc(content: string) -> (src: ^types.source_code_t, code: types.exit_codes) {
+	src = new(types.source_code_t)
 	if src == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_CREATE_SOURCE_CODE
 	}
@@ -18,31 +17,33 @@ create :: proc(content: string) -> (^types.source_code_t, types.exit_codes) {
 	src.line = 1
 	src.column = 0
 	src.is_at_end = false
-	return src, .OK
+	return
 }
 
-from_file :: proc(file: string) -> (^types.source_code_t, types.exit_codes) {
+from_file :: proc(file: string) -> (src: ^types.source_code_t, code: types.exit_codes) {
 	data, err := os.read_entire_file(file, context.allocator)
 	if err != nil {
 		return nil, .FAILED_TO_READ_SOURCE_CODE_FILE_IN_SOURCE_CODE_FROM_FILE
 	}
-	src, src_err := create(string(data))
-	if sys.is_error(src_err) {
-		return nil, src_err
-	}
+	src = create(string(data)) or_return
 	wd, _ := os.get_working_directory(context.allocator)
 	defer delete(wd, context.allocator)
 	file_dir := filepath.dir(file)
 	src.location, _ = filepath.join([]string{wd, file_dir}, context.allocator)
-	return src, .OK
+	return
 }
 
-from_repl :: proc(line: string) -> (^types.source_code_t, types.exit_codes) {
-	return create(line)
+from_repl :: proc(line: string) -> (src: ^types.source_code_t, code: types.exit_codes) {
+	src = create(line) or_return
+	return
 }
 
-get_cherry_files_in_dir :: proc(src_path: string) -> ([dynamic]string, types.exit_codes) {
-	paths: [dynamic]string
+get_cherry_files_in_dir :: proc(
+	src_path: string,
+) -> (
+	paths: [dynamic]string,
+	code: types.exit_codes,
+) {
 	if os.is_dir(src_path) {
 		f, err := os.open(src_path)
 		if err != os.ERROR_NONE {
@@ -60,7 +61,7 @@ get_cherry_files_in_dir :: proc(src_path: string) -> ([dynamic]string, types.exi
 	} else {
 		append(&paths, src_path)
 	}
-	return paths, .OK
+	return
 }
 
 import_file :: proc(target: ^types.source_code_t, src_path: string) -> (code: types.exit_codes) {
@@ -72,7 +73,7 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> (code: ty
 		if os.is_dir(path) do continue
 
 		for i in target.included_sources {
-			if i == path do return .OK
+			if i == path do return
 		}
 		append(&target.included_sources, path)
 		file_data, err := os.read_entire_file(path, context.allocator)
@@ -90,10 +91,16 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> (code: ty
 		target.content = strings.to_string(b)
 		target.length = len(target.content)
 	}
-	return .OK
+	return
 }
 
-advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_codes) {
+advance :: proc(
+	src: ^types.source_code_t,
+	count: int = 1,
+) -> (
+	char: rune,
+	code: types.exit_codes,
+) {
 	if src == nil do return 0, .OBJECT_IS_NIL_IN_SOURCE_CODE_ADVANCE
 	for i := 0; i < count; i += 1 {
 		if src.is_at_end do return 0, .EOF_ALREADY_TRIGGERED_REACHED_IN_SOURCE_CODE_ADVANCE
@@ -108,18 +115,26 @@ advance :: proc(src: ^types.source_code_t, count: int = 1) -> (rune, types.exit_
 			src.column = 0
 		}
 	}
-	return rune(src.content[src.pointer]), .OK
+	char = rune(src.content[src.pointer])
+	return
 }
 
-peek :: proc(src: ^types.source_code_t, distance: int = 0) -> (rune, types.exit_codes) {
+peek :: proc(
+	src: ^types.source_code_t,
+	distance: int = 0,
+) -> (
+	char: rune,
+	code: types.exit_codes,
+) {
 	if src == nil do return 0, .OBJECT_IS_NIL_IN_SOURCE_CODE_PEEK
 	if src.pointer + distance >= src.length || src.pointer + distance < 0 do return 0, .OUT_OF_BOUNDS_IN_SOURCE_CODE_PEEK
-	return rune(src.content[src.pointer + distance]), .OK
+	char = rune(src.content[src.pointer + distance])
+	return
 }
 
-remove :: proc(src: ^types.source_code_t) -> types.exit_codes {
+remove :: proc(src: ^types.source_code_t) -> (code: types.exit_codes) {
 	if src == nil do return .OBJECT_IS_NIL_IN_SOURCE_CODE_REMOVE
 	delete(src.content)
 	free(src)
-	return .OK
+	return
 }

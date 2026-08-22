@@ -194,5 +194,5 @@ consume_keyword :: proc(
 		return token.create(src, .AT, file)
 	}
 
-	return nil, .OK
+	return
 }

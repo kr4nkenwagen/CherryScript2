@@ -20,7 +20,7 @@ branch :: proc(
 	}
 	if curr_token.type != .LEFT_BRACE do return nil, .BRACKET_NOT_OPENED_IN_PARSE_BRANCH
 	token_list.advance(tokens) or_return
-	prog := program.create(parent) or_return
+	prgm = program.create(parent) or_return
 	curr_token = token_list.peek(tokens, 0) or_return
 	for curr_token.type != .RIGHT_BRACE {
 		if curr_token.type == .END_OF_FILE do return nil, .UNEXPECTED_EOF_IN_PARSE_BRANCH
@@ -28,7 +28,7 @@ branch :: proc(
 		prev_synt: ^types.syntax_t = nil
 		for curr_token.type != .TERMINATOR && curr_token.type != .RIGHT_BRACE {
 			if curr_token.type == .END_OF_FILE do return nil, .UNEXPECTED_EOF_IN_BRANCH_IN_PARSE_BRANCH
-			stmt := statement(tokens, prog) or_return
+			stmt := statement(tokens, prgm) or_return
 			if stmt != nil {
 				if synt == nil do synt = stmt
 				else do prev_synt.left = stmt
@@ -41,11 +41,11 @@ branch :: proc(
 			curr_token = token_list.peek(tokens, 0) or_return
 		}
 		if synt != nil {
-			program.add(prog, synt) or_return
+			program.add(prgm, synt) or_return
 		}
 	}
 	token_list.advance(tokens) or_return
-	return prog, .OK
+	return
 }
 
 line :: proc(
@@ -55,29 +55,28 @@ line :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	curr_syntax: ^types.syntax_t
 	prev_syntax: ^types.syntax_t
 	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token.type != .TERMINATOR && curr_token.type != .RIGHT_PAREN {
-		if curr_syntax == nil {
-			curr_syntax = statement(tokens, parent) or_return
-			prev_syntax = curr_syntax
+		if sntx == nil {
+			sntx = statement(tokens, parent) or_return
+			prev_syntax = sntx
 			curr_token = token_list.peek(tokens, 0) or_return
 			continue
 		}
-		curr_syntax = statement(tokens, parent) or_return
-		if curr_syntax == nil {
+		sntx = statement(tokens, parent) or_return
+		if sntx == nil {
 			curr_token = token_list.peek(tokens, 0) or_return
 			continue
 		}
-		curr_syntax.left = prev_syntax
-		prev_syntax = curr_syntax
+		sntx.left = prev_syntax
+		prev_syntax = sntx
 	}
 	for curr_token.type == .TERMINATOR {
 		token_list.advance(tokens) or_return
 		curr_token = token_list.peek(tokens, 0) or_return
 	}
-	return curr_syntax, .OK
+	return
 }
 
 run :: proc(
@@ -88,7 +87,7 @@ run :: proc(
 	code: types.exit_codes,
 ) {
 	if tokens == nil do return nil, .OBJECT_IS_NIL_IN_PARSE_RUN
-	prog := program.create(parent) or_return
+	prgm = program.create(parent) or_return
 	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil && curr_token.type != .END_OF_FILE {
 		for curr_token != nil &&
@@ -98,7 +97,7 @@ run :: proc(
 		    curr_token.type != .RIGHT_PAREN {
 			synt := statement(tokens, parent) or_return
 			if synt != nil {
-				program.add(prog, synt) or_return
+				program.add(prgm, synt) or_return
 			}
 			curr_token = token_list.peek(tokens, 0) or_return
 		}
@@ -113,5 +112,5 @@ run :: proc(
 		}
 		curr_token = token_list.peek(tokens, 0) or_return
 	}
-	return prog, .OK
+	return
 }

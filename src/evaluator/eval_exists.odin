@@ -17,5 +17,6 @@ eval_exists :: proc(obj: ^types.object_t) -> (ret_obj: ^types.object_t, code: ty
 		return nil, .UNEXPECTED_OBJECT_TYPE_IN_EVAL_EXISTS
 	}
 	res := object.file_exists(file) or_return
-	return object.create_bool(res)
+	ret_obj, code = object.create_bool(res)
+	return
 }

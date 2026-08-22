@@ -11,5 +11,5 @@ eval_out :: proc(
 ) {
 	val := eval_primary_expression(syntax.value, stck, program) or_return
 	eval_print(val, g_debug)
-	return .OK
+	return
 }

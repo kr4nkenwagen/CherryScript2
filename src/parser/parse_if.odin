@@ -11,19 +11,19 @@ parse_if :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	syntax_parent := syntax.create() or_return
-	syntax_parent.token = token_list.peek(tokens, 0) or_return
+	sntx = syntax.create() or_return
+	sntx.token = token_list.peek(tokens, 0) or_return
 	token_list.advance(tokens) or_return
-	syntax_parent.value = expression(tokens) or_return
+	sntx.value = expression(tokens) or_return
 	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token.type == .TERMINATOR {
 		token_list.advance(tokens) or_return
 		curr_token = token_list.peek(tokens, 0) or_return
 	}
 	if curr_token.type != .LEFT_BRACE do return nil, .EXPECTED_LEFT_BRACE_IN_PARSE_IF
-	syntax_parent.branch = branch(tokens, parent) or_return
-	syntax_parent.branch.type = .IF
-	curr_syntax := syntax_parent
+	sntx.branch = branch(tokens, parent) or_return
+	sntx.branch.type = .IF
+	curr_syntax := sntx
 	lookahead_idx := 0
 	next_tok := token_list.peek(tokens, lookahead_idx) or_return
 	for next_tok.type == .TERMINATOR {
@@ -59,5 +59,5 @@ parse_if :: proc(
 		curr_syntax.right.branch = branch(tokens, parent) or_return
 		curr_syntax.right.branch.type = .IF
 	}
-	return syntax_parent, .OK
+	return
 }

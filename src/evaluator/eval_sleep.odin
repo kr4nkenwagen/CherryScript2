@@ -21,5 +21,5 @@ eval_sleep :: proc(
 	}
 	seconds = seconds * f64(time.Second)
 	time.sleep(time.Duration(seconds))
-	return .OK
+	return
 }

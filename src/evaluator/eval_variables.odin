@@ -31,7 +31,7 @@ variable_declarations :: proc(
 		}
 		curr = curr.left
 	}
-	return .OK
+	return
 }
 
 eval_variable_remove :: proc(
@@ -51,7 +51,7 @@ eval_variable_remove :: proc(
 		if obj != nil do stack.remove_object(curr_stack, curr.token.literal)
 		curr = curr.left
 	}
-	return .OK
+	return
 }
 
 eval_array_declaration :: proc(
@@ -63,12 +63,12 @@ eval_array_declaration :: proc(
 	code: types.exit_codes,
 ) {
 	if synt == nil do return nil, .OBJECT_IS_NIL_EVAL_ARRAY_DECLARATION
-	arr := object.create_array() or_return
+	ret_obj = object.create_array() or_return
 	curr := synt.left
 	for curr != nil {
 		obj := eval_primary_expression(curr, stck, prog) or_return
-		object.array_set(arr, arr.data.(types.object_array_t).count, obj) or_return
+		object.array_set(ret_obj, ret_obj.data.(types.object_array_t).count, obj) or_return
 		curr = curr.right
 	}
-	return arr, .OK
+	return
 }

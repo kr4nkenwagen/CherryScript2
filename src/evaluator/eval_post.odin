@@ -29,5 +29,6 @@ eval_post :: proc(
 	else if body.type == .JSON do body_data = object.to_json_string(body) or_return
 	else do return nil, .BODY_NEEDS_TO_BE_STRING_OR_JSON_IN_EVAL_POST
 	ret_body, ret_head := http.post(url.data.(string), header_data, body_data) or_return
-	return object.create_http_response(ret_body, ret_head)
+	obj = object.create_http_response(ret_body, ret_head) or_return
+	return
 }

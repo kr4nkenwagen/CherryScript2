@@ -32,5 +32,6 @@ function_declaration :: proc(
 	if global {
 		return stack.push(curr_stack.global_data, funct)
 	}
-	return stack.push(curr_stack, funct)
+	code = stack.push(curr_stack, funct)
+	return
 }

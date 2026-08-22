@@ -12,5 +12,5 @@ consume_comment :: proc(src: ^types.source_code_t) -> (code: types.exit_codes) {
 		c := source_code.advance(src) or_return
 		if c == grammar.NEWLINE || c == grammar.COMMENT do return .OK
 	}
-	return .OK
+	return
 }

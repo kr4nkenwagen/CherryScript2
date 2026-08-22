@@ -30,5 +30,5 @@ eval_for :: proc(
 	}
 	syntax.branch.exit = false
 	vm.pop_frame(stck) or_return
-	return .OK
+	return
 }

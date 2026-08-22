@@ -10,8 +10,8 @@ eval_time :: proc(
 	stck: ^types.vm_t,
 	program: ^types.program_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	type := syntax.value.token.literal
 	tz_offset_seconds: i64 = 2 * 3600
@@ -58,8 +58,9 @@ eval_time :: proc(
 		seconds := time.duration_seconds(elapsed)
 		return object.create_float(f32(seconds))
 	case:
-		return nil, .UNEXPECTED_MEMBER_IN_EVAL_TIME
+		code = .UNEXPECTED_MEMBER_IN_EVAL_TIME
 	}
+	return
 }
 
 calculate_weekday_number :: proc(dt: datetime.DateTime) -> int {

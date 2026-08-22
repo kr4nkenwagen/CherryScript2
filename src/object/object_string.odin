@@ -6,32 +6,33 @@ import "../types"
 import "core:fmt"
 import "core:strings"
 
-int_len :: proc(n: int) -> (int, types.exit_codes) {
+int_len :: proc(n: int) -> (ret_int: int, code: types.exit_codes) {
 	if n == 0 {
 		return 1, .OK
 	}
-	count := 0
+	ret_int = 0
 	num := abs(n)
 	for num > 0 {
 		num /= 10
-		count += 1
+		ret_int += 1
 	}
-	return count, .OK
+	return
 }
 
-float_len :: proc(n: f32) -> (int, types.exit_codes) {
+float_len :: proc(n: f32) -> (ret_int: int, code: types.exit_codes) {
 	s := fmt.tprintf("%v", n)
-	return len(s), .OK
+	ret_int = len(s)
+	return
 }
 
-int_to_number :: proc(num: int) -> (string, types.exit_codes) {
-	str := fmt.tprintf("%d", num)
-	return str, .OK
+int_to_number :: proc(num: int) -> (ret_str: string, codes: types.exit_codes) {
+	ret_str = fmt.tprintf("%d", num)
+	return
 }
 
-float_to_number :: proc(num: f32) -> (string, types.exit_codes) {
-	str := fmt.tprintf("%g", num)
-	return str, .OK
+float_to_number :: proc(num: f32) -> (ret_str: string, code: types.exit_codes) {
+	ret_str = fmt.tprintf("%g", num)
+	return
 }
 
 join_string :: proc(
@@ -39,8 +40,8 @@ join_string :: proc(
 	b: ^types.object_t,
 	allocator := context.allocator,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	a_str, b_str: string
 	if a.type == .INT {
@@ -66,7 +67,8 @@ join_string :: proc(
 	if err != .None {
 		return nil, .FAILED_TO_CONCAT_STRING_OBJECT_B_IN_OBJECT_STRING_JOIN_STRING
 	}
-	return create_string(res)
+	ret_obj = create_string(res) or_return
+	return
 }
 
 position_of_first_instance :: proc(
@@ -76,36 +78,38 @@ position_of_first_instance :: proc(
 	ret_int: int,
 	code: types.exit_codes,
 ) {
+	ret_int = -1
 	if obj == nil {
-		return -1, .OBJECT_IS_NIL_IN_OBJECT_STRING_POSITION_OF_FIST_INSTANCE
+		return ret_int, .OBJECT_IS_NIL_IN_OBJECT_STRING_POSITION_OF_FIST_INSTANCE
 	}
 	if obj.type != .STRING {
-		return -1,
+		return ret_int,
 			.STRING_OPERATION_ON_NON_STRING_OBJECT_IN_OBJECT_STRING_POSITION_OF_FIRST_INSTANCE
 	}
 	obj_size, err := object.length(obj)
 	if sys.is_error(err) {
-		return -1, err
+		return ret_int, err
 	}
 	instance_size := len(instance)
 	if instance_size == 0 {
-		return -1, .OK
+		return
 	}
 	position := 0
 	for position := 0; position + instance_size <= obj_size; position += 1 {
 		if obj.data.(string)[position:position + instance_size] == instance {
-			return position, .OK
+			ret_int = position
+			return
 		}
 	}
-	return -1, .OK
+	return
 }
 
 position_of_last_instance :: proc(
 	obj: ^types.object_t,
 	instance: string,
 ) -> (
-	int,
-	types.exit_codes,
+	ret_int: int,
+	code: types.exit_codes,
 ) {
 	if obj == nil {
 		return -1, .OBJECT_IS_NIL_IN_OBJECT_STRING_POSITION_OF_LAST_INSTANCE
@@ -118,8 +122,8 @@ position_of_last_instance :: proc(
 		return -1, .OK
 	}
 	src := obj.data.(string)
-	position := strings.last_index(src, instance)
-	return position, .OK
+	ret_int = strings.last_index(src, instance)
+	return
 }
 
 substring :: proc(
@@ -127,8 +131,8 @@ substring :: proc(
 	start: int,
 	length: int,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	if obj == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_STRING_SUBSTRING
@@ -154,7 +158,8 @@ substring :: proc(
 		return nil, .SUBSTRING_LENGTH_TO_LONG_IN_OBJECT_STRING_SUBSTRING
 	}
 	end_index := start + input_length
-	return object.create_string(obj.data.(string)[start:end_index])
+	ret_obj = object.create_string(obj.data.(string)[start:end_index]) or_return
+	return
 }
 
 strip_instances_from_string :: proc(
@@ -180,13 +185,14 @@ strip_instances_from_string :: proc(
 	if !err {
 		return nil, .STRING_REPLACE_FAIL_IN_OBJECT_STRING_STRIP_INSTAANCE_FROM_STRING
 	}
-	return object.create_string(res)
+	ret_obj = object.create_string(res) or_return
+	return
 }
 
 lengthen_string :: proc(
 	target, length: ^types.object_t,
 ) -> (
-	obj_ret: ^types.object_t,
+	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
 	if target == nil || length == nil {
@@ -216,7 +222,8 @@ lengthen_string :: proc(
 	for i := 0; i < new_size; i += 1 {
 		buf[i] = src[i % target_size]
 	}
-	return object.create_string(string(buf))
+	ret_obj = object.create_string(string(buf)) or_return
+	return
 }
 
 shorten_string :: proc(
@@ -243,14 +250,15 @@ shorten_string :: proc(
 		return object.create_string("")
 	}
 	new_size := target_size - len_val
-	return object.create_string(target.data.(string)[0:new_size])
+	ret_obj = object.create_string(target.data.(string)[0:new_size]) or_return
+	return
 }
 
 multiply_string :: proc(
 	target, multiplier: ^types.object_t,
 ) -> (
-	^types.object_t,
-	types.exit_codes,
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
 ) {
 	if target == nil || multiplier == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_STRING_MULTIPLY_STRING
@@ -272,7 +280,8 @@ multiply_string :: proc(
 	if alloc_err != .None {
 		return nil, .FAILED_TO_ALLOCATE_STRING_IN_OBJECT_STRING_MULTIPLY_STRING
 	}
-	return object.create_string(res)
+	ret_obj = object.create_string(res) or_return
+	return
 }
 
 divide_string :: proc(
@@ -296,7 +305,8 @@ divide_string :: proc(
 	}
 	target_size := object.length(target) or_return
 	new_size := target_size / div_val
-	return object.create_string(target.data.(string)[0:new_size])
+	ret_obj = object.create_string(target.data.(string)[0:new_size]) or_return
+	return
 }
 
 modulus_string :: proc(
@@ -321,5 +331,6 @@ modulus_string :: proc(
 	target_size := object.length(target) or_return
 	new_size := target_size % mod_val
 	start := target_size - new_size
-	return object.create_string(target.data.(string)[start:target_size])
+	ret_obj = object.create_string(target.data.(string)[start:target_size]) or_return
+	return
 }

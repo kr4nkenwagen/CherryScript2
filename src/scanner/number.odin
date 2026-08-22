@@ -38,6 +38,6 @@ consume_number :: proc(
 		} else do break
 	}
 	total_length := int(src.pointer - start_position) + 1
-	result := string(src.content[start_position:start_position + total_length])
-	return result, .OK
+	consumed_number = string(src.content[start_position:start_position + total_length])
+	return
 }

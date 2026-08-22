@@ -15,5 +15,6 @@ consume_identifier :: proc(
 	prev_char := source_code.peek(src, -1) or_return
 	if unicode.is_alpha(prev_char) || is_number(prev_char) do return nil, .UNEXPECTED_CHARACTER_IN_SCANNER_IDENTIFIER
 	word := consume_word(src) or_return
-	return token.create(src, .IDENTIFIER, word)
+	tkn = token.create(src, .IDENTIFIER, word) or_return
+	return
 }

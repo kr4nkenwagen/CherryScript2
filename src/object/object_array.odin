@@ -32,7 +32,7 @@ array_set :: proc(
 		data.value[index] = obj
 	}
 	arr.data = data
-	return .OK
+	return
 }
 
 array_get :: proc(
@@ -46,7 +46,8 @@ array_get :: proc(
 	if arr.type != .ARRAY do return nil, .ARRAY_OPERATION_ON_NON_ARRAY_OBJECT_IN_ARRAY_GET
 	if index >= arr.data.(types.object_array_t).count {
 		null_obj := object.create_null() or_return
-		array_set(arr, index, null_obj)
+		array_set(arr, index, null_obj) or_return
 	}
-	return arr.data.(types.object_array_t).value[index], .OK
+	ret_obj = arr.data.(types.object_array_t).value[index]
+	return
 }

@@ -6,7 +6,9 @@ eval_continue :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
 	program: ^types.program_t,
-) -> types.exit_codes {
+) -> (
+	code: types.exit_codes,
+) {
 	curr_prog := program
 	for curr_prog.type != .LOOP {
 		if curr_prog.parent == nil {
@@ -16,5 +18,5 @@ eval_continue :: proc(
 		curr_prog = curr_prog.parent
 	}
 	curr_prog.continueing = true
-	return .OK
+	return
 }

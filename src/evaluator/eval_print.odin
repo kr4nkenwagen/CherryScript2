@@ -83,7 +83,7 @@ print_out :: proc(str: string, debug_mode: bool) {
 	}
 }
 
-eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
+eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_codes) {
 	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINT
 	switch obj.type {
 	case .STRING:
@@ -98,7 +98,7 @@ eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> types.exit_codes {
 	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
 		break
 	}
-	return .OK
+	return
 }
 pretty_print_json :: proc(json_str: string) -> (code: types.exit_codes) {
 	doc, parse_err := json.parse_string(
@@ -123,5 +123,5 @@ pretty_print_json :: proc(json_str: string) -> (code: types.exit_codes) {
 	}
 	defer delete(bytes, context.allocator)
 	fmt.println(string(bytes))
-	return .OK
+	return
 }

@@ -3,42 +3,42 @@ package stack
 import "../types"
 import "base:builtin"
 
-create :: proc() -> (^types.stack_t, types.exit_codes) {
-	stack := new(types.stack_t)
+create :: proc() -> (stack: ^types.stack_t, code: types.exit_codes) {
+	stack = new(types.stack_t)
 	if stack == nil do return nil, .OBJECT_IS_NIL_IN_STACK_CREATE
 	reserve(&stack.data, 8)
 	stack.capacity = 8
 	stack.count = 0
 	stack.parent_references = 0
-	return stack, .OK
+	return
 }
 
-push :: proc(stack: ^types.stack_t, object: ^types.object_t) -> types.exit_codes {
+push :: proc(stack: ^types.stack_t, object: ^types.object_t) -> (code: types.exit_codes) {
 	if stack == nil || object == nil do return .OBJECT_IS_NIL_IN_STACK_PUSH
 	append(&stack.data, object)
 	stack.count = len(stack.data)
 	stack.capacity = cap(stack.data)
-	return .OK
+	return
 }
 
-pop :: proc(stack: ^types.stack_t) -> (^types.object_t, types.exit_codes) {
+pop :: proc(stack: ^types.stack_t) -> (obj: ^types.object_t, code: types.exit_codes) {
 	if stack == nil || len(stack.data) == 0 do return nil, .OBJECT_IS_NIL_IN_STACK_POP
-	obj := builtin.pop(&stack.data)
+	obj = builtin.pop(&stack.data)
 	stack.count = len(stack.data)
-	return obj, .OK
+	return
 }
 
-remove :: proc(stack: ^types.stack_t) -> types.exit_codes {
+remove :: proc(stack: ^types.stack_t) -> (code: types.exit_codes) {
 	if stack == nil do return .OBJECT_IS_NIL_IN_STACK_REMOVE
 	for obj in stack.data {
 		if obj != nil do free(obj)
 	}
 	delete(stack.data)
 	free(stack)
-	return .OK
+	return
 }
 
-remove_nulls :: proc(stack: ^types.stack_t) -> types.exit_codes {
+remove_nulls :: proc(stack: ^types.stack_t) -> (code: types.exit_codes) {
 	if stack == nil do return .OBJECT_IS_NIL_IN_STACK_REMOVE_NULLS
 	new_count := 0
 	for obj in stack.data {
@@ -58,11 +58,16 @@ remove_nulls :: proc(stack: ^types.stack_t) -> types.exit_codes {
 	}
 	resize(&stack.global_data.data, new_count)
 	stack.global_data.count = new_count
-
-	return .OK
+	return
 }
 
-get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit_codes) {
+get :: proc(
+	stack: ^types.stack_t,
+	name: string,
+) -> (
+	obj: ^types.object_t,
+	code: types.exit_codes,
+) {
 	if stack == nil do return nil, .OBJECT_IS_NIL_STACK_GET
 	for obj in stack.data {
 		if obj != nil && obj.name == name do return obj, .OK
@@ -72,10 +77,10 @@ get :: proc(stack: ^types.stack_t, name: string) -> (^types.object_t, types.exit
 			if obj != nil && obj.name == name do return obj, .OK
 		}
 	}
-	return nil, .OK
+	return
 }
 
-remove_object :: proc(stack: ^types.stack_t, name: string) -> types.exit_codes {
+remove_object :: proc(stack: ^types.stack_t, name: string) -> (code: types.exit_codes) {
 	if stack == nil do return .OBJECT_IS_NIL_IN_STACK_REMOVE_OBJECT
 	for i := 0; i < len(stack.data); i += 1 {
 		if stack.data[i] != nil && stack.data[i].name == name {
@@ -92,5 +97,5 @@ remove_object :: proc(stack: ^types.stack_t, name: string) -> types.exit_codes {
 		}
 	}
 	remove_nulls(stack)
-	return .OK
+	return
 }

@@ -13,10 +13,10 @@ variable_declaration :: proc(
 	code: types.exit_codes,
 ) {
 	if tokens == nil do return nil, .OBJECT_IS_NIL_IN_PARSE_VARIABLE_DECLARATION
-	declaration := syntax.create() or_return
-	declaration.token = token_list.peek(tokens, 0) or_return
+	sntx = syntax.create() or_return
+	sntx.token = token_list.peek(tokens, 0) or_return
 	curr_token := token_list.advance(tokens) or_return
-	prev_syntax := declaration
+	prev_syntax := sntx
 	for {
 		if curr_token.type == .COMMA {
 			curr_token = token_list.advance(tokens) or_return
@@ -29,7 +29,7 @@ variable_declaration :: proc(
 			token_list.advance(tokens) or_return
 			curr_syntax.value = expression(tokens) or_return
 		} else {
-			if declaration.token.type == .CONST do return nil, .UNASSIGNED_CONST_IN_VARIABLE_DECLARATION
+			if sntx.token.type == .CONST do return nil, .UNASSIGNED_CONST_IN_VARIABLE_DECLARATION
 			curr_syntax.value = syntax.create() or_return
 			curr_syntax.value.token = token.create(nil, .NULL, "null") or_return
 		}
@@ -38,7 +38,7 @@ variable_declaration :: proc(
 		prev_syntax = curr_syntax
 		if curr_token.type != .COMMA do break
 	}
-	return declaration, .OK
+	return
 }
 
 variable_remove :: proc(
@@ -47,11 +47,11 @@ variable_remove :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	declaration := syntax.create() or_return
+	sntx = syntax.create() or_return
 	peek_err: types.exit_codes
-	declaration.token = token_list.peek(tokens, 0) or_return
+	sntx.token = token_list.peek(tokens, 0) or_return
 	curr_token := token_list.advance(tokens) or_return
-	prev_syntax := declaration
+	prev_syntax := sntx
 	for {
 		if curr_token.type == .COMMA {
 			curr_token = token_list.advance(tokens) or_return
@@ -64,7 +64,7 @@ variable_remove :: proc(
 		curr_token = token_list.advance(tokens) or_return
 		if curr_token.type != .COMMA do break
 	}
-	return declaration, .OK
+	return
 }
 
 array_declaration :: proc(
@@ -73,9 +73,9 @@ array_declaration :: proc(
 	sntx: ^types.syntax_t,
 	code: types.exit_codes,
 ) {
-	declaration := syntax.create() or_return
+	sntx = syntax.create() or_return
 	declaration_err: types.exit_codes
-	declaration.token = token_list.peek(tokens, 0) or_return
+	sntx.token = token_list.peek(tokens, 0) or_return
 	curr_token := token_list.advance(tokens) or_return
 	prev_syntax: ^types.syntax_t = nil
 	for {
@@ -83,7 +83,7 @@ array_declaration :: proc(
 			curr_token = token_list.advance(tokens) or_return
 		}
 		curr_syntax := expression(tokens) or_return
-		if declaration.left == nil do declaration.left = curr_syntax
+		if sntx.left == nil do sntx.left = curr_syntax
 		else do prev_syntax.right = curr_syntax
 		prev_syntax = curr_syntax
 		curr_token = token_list.peek(tokens, 0) or_return
@@ -91,5 +91,5 @@ array_declaration :: proc(
 	}
 	if curr_token.type != .RIGHT_BRACKET do return nil, .BRACKET_NOT_CLOSED_NOT_CLOSED_IN_ARRAY_DECLARATION
 	token_list.advance(tokens) or_return
-	return declaration, .OK
+	return
 }

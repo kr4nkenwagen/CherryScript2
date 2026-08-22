@@ -21,7 +21,6 @@ run :: proc(
 	g_debug = debug_mode
 	prog.pointer = 0
 	prog.exit = false
-	value: ^types.object_t
 	if g_start_time_execution == nil {
 		g_start_time_execution = new(time.Tick)
 		g_start_time_execution^ = time.tick_now()
@@ -33,39 +32,36 @@ run :: proc(
 			prog.continueing = false
 			continue
 		}
-		value_err: types.exit_codes
-		value = eval_primary_expression(prog.statements[prog.pointer], stck, prog) or_return
+		obj = eval_primary_expression(prog.statements[prog.pointer], stck, prog) or_return
 		prog.pointer += 1
 	}
 	if prog.exit do return prog.ret_value, .OK
-	return value, .OK
+	return
 }
 
-branch :: proc(
+branch_with_no_args :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
 ) -> (
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if synt == nil {
-		return nil, .OBJECT_IS_NIL_IN_EVAL_BRANCH
-	}
-	// -------------------------------------------------------------
-	// Path 1: synt.args == nil
-	// -------------------------------------------------------------
-	if synt.args == nil {
-		new_stack := stack.create() or_return
-		vm.push_frame(stck, new_stack, true) or_return
-		defer vm.pop_frame(stck)
-		value_data := run(synt.branch, stck, g_debug) or_return
-		if value_data == nil do return nil, .OK
-		value := object.copy(value_data) or_return
-		return value, .OK
-	}
-	// -------------------------------------------------------------
-	// Path 2: synt.args != nil
-	// -------------------------------------------------------------
+	new_stack := stack.create() or_return
+	vm.push_frame(stck, new_stack, true) or_return
+	defer vm.pop_frame(stck)
+	value_data := run(synt.branch, stck, g_debug) or_return
+	if value_data == nil do return nil, .OK
+	obj = object.copy(value_data) or_return
+	return
+}
+
+branch_with_args :: proc(
+	synt: ^types.syntax_t,
+	stck: ^types.vm_t,
+) -> (
+	obj: ^types.object_t,
+	code: types.exit_codes,
+) {
 	new_stack := stack.create() or_return
 	vm_prev := vm.current_frame(stck) or_return
 	arg_vals: [dynamic]^types.object_t
@@ -91,6 +87,24 @@ branch :: proc(
 	}
 	value_data := run(synt.branch, stck, g_debug) or_return
 	if value_data == nil do return nil, .OK
-	value := object.copy(value_data) or_return
-	return value, .OK
+	obj = object.copy(value_data) or_return
+	return
+}
+
+branch :: proc(
+	synt: ^types.syntax_t,
+	stck: ^types.vm_t,
+) -> (
+	obj: ^types.object_t,
+	code: types.exit_codes,
+) {
+	if synt == nil {
+		return nil, .OBJECT_IS_NIL_IN_EVAL_BRANCH
+	}
+	if synt.args == nil {
+		obj, code = branch_with_no_args(synt, stck)
+	} else {
+		obj, code = branch_with_args(synt, stck)
+	}
+	return
 }

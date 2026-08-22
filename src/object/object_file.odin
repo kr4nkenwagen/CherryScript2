@@ -5,7 +5,13 @@ import "../types"
 import "core:os"
 import "core:strings"
 
-file_set :: proc(filepath: string, new_text: string, target_index: int) -> types.exit_codes {
+file_set :: proc(
+	filepath: string,
+	new_text: string,
+	target_index: int,
+) -> (
+	code: types.exit_codes,
+) {
 	if target_index < 0 {
 		return .INDEX_OUT_OF_BOUNDS_IN_FILE_SET
 	}
@@ -43,10 +49,10 @@ file_set :: proc(filepath: string, new_text: string, target_index: int) -> types
 	if write_ok != os.General_Error.None {
 		return .ERROR_FAILED_TO_WRITE_FILE_IN_FILE_SET
 	}
-	return .OK
+	return
 }
 
-file_get :: proc(filename: string, index: int) -> (string, types.exit_codes) {
+file_get :: proc(filename: string, index: int) -> (ret_str: string, code: types.exit_codes) {
 	if index < 0 {
 		return "", .INDEX_OUT_OF_BOUNDS_IN_FILE_GET
 	}
@@ -60,15 +66,16 @@ file_get :: proc(filename: string, index: int) -> (string, types.exit_codes) {
 	if index >= len(lines) {
 		return "", .INDEX_IS_GREATER_THAN_FILE_LENGTH
 	}
-	result := strings.clone(lines[index])
-	return result, .OK
+	ret_str = strings.clone(lines[index])
+	return
 }
 
-file_exists :: proc(filename: string) -> (bool, types.exit_codes) {
-	return os.exists(filename), .OK
+file_exists :: proc(filename: string) -> (ret_bl: bool, code: types.exit_codes) {
+	ret_bl = os.exists(filename)
+	return
 }
 
-file_length :: proc(filepath: string) -> (int, types.exit_codes) {
+file_length :: proc(filepath: string) -> (ret_int: int, code: types.exit_codes) {
 	data, read_ok := os.read_entire_file(filepath, context.allocator)
 	if read_ok != os.General_Error.None {
 		return 0, .ERROR_READING_FILE_TO_GET_FILE_LENGTH
@@ -78,5 +85,6 @@ file_length :: proc(filepath: string) -> (int, types.exit_codes) {
 	if len(text) == 0 {
 		return 0, .OK
 	}
-	line_count := strings.count(text, "\n") + 1
-	return line_count, .OK}
+	ret_int = strings.count(text, "\n") + 1
+	return
+}

@@ -19,5 +19,5 @@ eval_return :: proc(
 	if syntax.value == nil do return .OK
 	val := eval_primary_expression(syntax.value, stck, program) or_return
 	curr_prog.ret_value = val
-	return .OK
+	return
 }

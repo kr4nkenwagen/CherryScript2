@@ -5,7 +5,7 @@ import "core:strconv"
 import "core:strings"
 
 create_http_head :: proc(head_str: string) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
-	head_obj := create_json("{}") or_return
+	ret_obj = create_json("{}") or_return
 	line_iterator := head_str
 	status_line, _ := strings.split_lines_iterator(&line_iterator)
 	status_parts := strings.fields(status_line)
@@ -14,7 +14,7 @@ create_http_head :: proc(head_str: string) -> (ret_obj: ^types.object_t, code: t
 	if len(status_parts) >= 2 {
 		response_code_str = status_parts[1]
 	}
-	head_ref := &head_obj.data.(types.object_json_t)
+	head_ref := &ret_obj.data.(types.object_json_t)
 
 	response_int, _ := strconv.parse_int(response_code_str)
 	response_item := create_int(response_int) or_return
@@ -31,17 +31,18 @@ create_http_head :: proc(head_str: string) -> (ret_obj: ^types.object_t, code: t
 		item_obj.name = clean_key
 		append(&head_ref.value, item_obj)
 	}
-	head_obj.name = "head"
-	return head_obj, .OK
+	ret_obj.name = "head"
+	return
 }
 
 create_http_body :: proc(body_str: string) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
-	body_obj, body_obj_err := create_json(body_str)
-	if body_obj_err == .FAILED_TO_PARSE_JSON_IN_CREATE_JSON {
-		return create_string(body_str)
+	ret_obj, code = create_json(body_str)
+	if code == .FAILED_TO_PARSE_JSON_IN_CREATE_JSON {
+		code = .OK
+		ret_obj = create_string(body_str) or_return
 	}
-	body_obj.name = "body"
-	return body_obj, body_obj_err
+	ret_obj.name = "body"
+	return
 }
 
 create_http_response :: proc(
@@ -51,17 +52,17 @@ create_http_response :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	response := create_json("{}") or_return
-	response_ref := &response.data.(types.object_json_t)
+	ret_obj = create_json("{}") or_return
+	response_ref := &ret_obj.data.(types.object_json_t)
 	if head_str != {} && head_str != "" {
 		body := create_http_body(body_str) or_return
-		body.parent = response
+		body.parent = ret_obj
 		append(&response_ref.value, body)
 	}
 	if head_str != {} && head_str != "" {
 		head := create_http_head(head_str) or_return
-		head.parent = response
+		head.parent = ret_obj
 		append(&response_ref.value, head)
 	}
-	return response, .OK
+	return
 }

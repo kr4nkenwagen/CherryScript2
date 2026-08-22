@@ -12,9 +12,9 @@ do_request :: proc(
 	json_headers: string = "",
 	body: string = "",
 ) -> (
-	string,
-	string,
-	types.exit_codes,
+	_body: string,
+	_head: string,
+	code: types.exit_codes,
 ) {
 	handle := curl.easy_init()
 	if handle == nil do return "", "", .HANDLE_IS_NIL_IN_DO_REQUEST
@@ -66,11 +66,23 @@ do_request :: proc(
 	defer if header_list != nil do curl.slist_free_all(header_list)
 	res := curl.easy_perform(handle)
 	if res != .E_OK do return "", "", .FAILED_CURL_REQUEST
-
-	return strings.to_string(body_builder), strings.to_string(header_builder), .OK
+	_body = strings.to_string(body_builder)
+	_head = strings.to_string(header_builder)
+	return
 }
 
-header_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) -> c.size_t {
+header_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) -> (ret: c.size_t) {
+	context = runtime.default_context()
+	total_size := size * nmemb
+	if ptr == nil || userdata == nil || total_size == 0 do return c.size_t(total_size)
+	builder := (^strings.Builder)(userdata)
+	bytes := ([^]u8)(ptr)[:total_size]
+	strings.write_bytes(builder, bytes)
+	ret = c.size_t(total_size)
+	return
+}
+
+write_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) -> (ret: c.size_t) {
 	context = runtime.default_context()
 	total_size := size * nmemb
 	if ptr == nil || userdata == nil || total_size == 0 do return c.size_t(total_size)
@@ -78,18 +90,6 @@ header_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) -
 	builder := (^strings.Builder)(userdata)
 	bytes := ([^]u8)(ptr)[:total_size]
 	strings.write_bytes(builder, bytes)
-
-	return c.size_t(total_size)
-}
-
-write_callback :: proc "c" (ptr: rawptr, size, nmemb: uint, userdata: rawptr) -> c.size_t {
-	context = runtime.default_context()
-	total_size := size * nmemb
-	if ptr == nil || userdata == nil || total_size == 0 do return c.size_t(total_size)
-
-	builder := (^strings.Builder)(userdata)
-	bytes := ([^]u8)(ptr)[:total_size]
-	strings.write_bytes(builder, bytes)
-
-	return c.size_t(total_size)
+	ret = c.size_t(total_size)
+	return
 }

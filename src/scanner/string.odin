@@ -61,5 +61,6 @@ consume_string :: proc(
 	for i := 0; i < size; i += 1 {
 		source_code.advance(src) or_return
 	}
-	return strings.to_string(b), .OK
+	consumed_string = strings.to_string(b)
+	return
 }

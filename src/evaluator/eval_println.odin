@@ -8,5 +8,6 @@ eval_println :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exi
 	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINTLN
 	newline := object.create_string("\n") or_return
 	formated_obj := object.add(obj, newline) or_return
-	return eval_print(formated_obj, debug_mode)
+	code = eval_print(formated_obj, debug_mode)
+	return
 }

@@ -29,5 +29,5 @@ eval_file_remove :: proc(
 		}
 		curr = curr.left
 	}
-	return .OK
+	return
 }

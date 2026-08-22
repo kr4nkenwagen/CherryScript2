@@ -3,26 +3,33 @@ package vm
 import "../stack"
 import "../types"
 
-create :: proc() -> (vmem: ^types.vm_t, code: types.exit_codes) {
-	vm := new(types.vm_t)
+create :: proc() -> (vm: ^types.vm_t, code: types.exit_codes) {
+	vm = new(types.vm_t)
 	if vm == nil do return nil, .OBJECT_IS_NIL_IN_VM_CREATE
 	global_err: types.exit_codes
 	vm.global_objects = stack.create() or_return
 	vm.count = 0
-	return vm, .OK
+	return
 }
 
-copy_references :: proc(target: ^types.stack_t, source: ^types.stack_t) -> types.exit_codes {
+copy_references :: proc(
+	target: ^types.stack_t,
+	source: ^types.stack_t,
+) -> (
+	code: types.exit_codes,
+) {
 	if target == nil || source == nil do return .OBJECT_IS_NIL_IN_VM_COPY_REFERENCES
 	for obj in source.data do stack.push(target, obj)
-	return .OK
+	return
 }
 
 push_frame :: proc(
 	stck: ^types.vm_t,
 	frame_stack: ^types.stack_t,
 	inherit_stack: bool,
-) -> types.exit_codes {
+) -> (
+	code: types.exit_codes,
+) {
 	if stck == nil || frame_stack == nil do return .OBJECT_IS_NIL_IN_VM_PUSH_FRAME
 
 	if inherit_stack && len(stck.frames) > 0 {
@@ -34,10 +41,10 @@ push_frame :: proc(
 	}
 	append(&stck.frames, frame_stack)
 	stck.count = len(stck.frames)
-	return .OK
+	return
 }
 
-pop_frame :: proc(stck: ^types.vm_t) -> types.exit_codes {
+pop_frame :: proc(stck: ^types.vm_t) -> (code: types.exit_codes) {
 	if stck == nil || len(stck.frames) == 0 do return .OBJECT_IS_NIL_IN_VM_POP_FRAME
 	frame := pop(&stck.frames)
 	if frame == nil do return .FRAME_IS_NIL_IN_VM_POP_FRAME
@@ -50,21 +57,21 @@ pop_frame :: proc(stck: ^types.vm_t) -> types.exit_codes {
 	delete(frame.data)
 	free(frame)
 	stck.count = len(stck.frames)
-	return .OK
+	return
 }
 
-current_frame :: proc(stck: ^types.vm_t) -> (^types.stack_t, types.exit_codes) {
+current_frame :: proc(stck: ^types.vm_t) -> (stack: ^types.stack_t, code: types.exit_codes) {
 	if stck == nil || len(stck.frames) == 0 do return nil, .OBJECT_IS_NIL_IN_VM_CURRENT_FRAME
-	stack := stck.frames[len(stck.frames) - 1]
+	stack = stck.frames[len(stck.frames) - 1]
 	if stack.global_data == nil do stack.global_data = stck.global_objects
-	return stack, .OK
+	return
 }
 
-destroy :: proc(vm: ^types.vm_t) -> types.exit_codes {
+destroy :: proc(vm: ^types.vm_t) -> (code: types.exit_codes) {
 	if vm == nil do return .OBJECT_IS_NIL_IN_VM_DESTROY
 	for len(vm.frames) > 0 do pop_frame(vm)
 	delete(vm.frames)
 	if vm.global_objects != nil do stack.remove(vm.global_objects)
 	free(vm)
-	return .OK
+	return
 }

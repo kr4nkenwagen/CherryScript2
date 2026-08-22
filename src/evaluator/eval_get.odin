@@ -29,5 +29,6 @@ eval_get :: proc(
 	} else {
 		return nil, .UNSUPPORTED_OBJECT_TYPE_IN_EVAL_GET
 	}
-	return object.create_http_response(body_ret, ret_head)
+	obj = object.create_http_response(body_ret, ret_head) or_return
+	return
 }

@@ -108,8 +108,9 @@ eval_primary_expression :: proc(
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:
 		return eval_binary_expression(syntax, stck, program)
 	case:
-		return nil, .INTERPRETER_ERROR_IN_EVAL_PRIMARY_EXPRESSION
+		code = .INTERPRETER_ERROR_IN_EVAL_PRIMARY_EXPRESSION
 	}
+	return
 }
 
 eval_file_extraction :: proc(
@@ -131,17 +132,24 @@ eval_file_extraction :: proc(
 		}
 	}
 	content := object.file_get(file.data.(types.object_file_t).name, index.data.(int)) or_return
-	return object.create_string(content)
+	obj = object.create_string(content) or_return
+	return
 }
 
-eval_number :: proc(syntax: ^types.syntax_t) -> (^types.object_t, types.exit_codes) {
+eval_number :: proc(
+	syntax: ^types.syntax_t,
+) -> (
+	ret_obj: ^types.object_t,
+	code: types.exit_codes,
+) {
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_NUMBER
 	if strings.contains(syntax.token.literal, ".") {
 		val := strconv.parse_f64(syntax.token.literal) or_else 0.0
 		return object.create_float(f32(val))
 	} else {
 		val := strconv.parse_int(syntax.token.literal) or_else 0
-		return object.create_int(int(val))
+		ret_obj = object.create_int(int(val)) or_return
+		return
 	}
 }
 
@@ -196,7 +204,7 @@ eval_string_operation_expression :: proc(
 		}
 		return nil, .ILLEGAL_OPERATION_IN_EVAL_STRING_OPERATIONS
 	}
-	return nil, .OK
+	return
 }
 
 eval_and_or :: proc(
@@ -213,14 +221,13 @@ eval_and_or :: proc(
 	if left_hand_side.type != .BOOL || right_hand_side.type != .BOOL {
 		return nil, .TYPE_MISMATCH_IN_EVAL_AND_OR
 	}
-
 	#partial switch syntax.token.type {
 	case .AND:
 		return object.create_bool(left_hand_side.data.(bool) && right_hand_side.data.(bool))
 	case .OR:
 		return object.create_bool(left_hand_side.data.(bool) || right_hand_side.data.(bool))
 	}
-	return nil, .OK
+	return
 }
 
 eval_unary_expression :: proc(
@@ -236,7 +243,8 @@ eval_unary_expression :: proc(
 	if left_hand_side != nil && left_hand_side.type == .BOOL {
 		return object.create_bool(!left_hand_side.data.(bool))
 	}
-	return nil, .ILLEGAL_OPERATION_IN_EVAL_UNARY_EXPRESSION
+	code = .ILLEGAL_OPERATION_IN_EVAL_UNARY_EXPRESSION
+	return
 }
 
 eval_comparison_expression :: proc(
@@ -264,17 +272,17 @@ eval_comparison_expression :: proc(
 	case .GREATER:
 		return object.greater(left_hand_side, right_hand_side)
 	}
-	return nil, .OK
+	return
 }
 
-divide_by_zero :: proc(a, b: ^types.object_t) -> bool {
+divide_by_zero :: proc(a, b: ^types.object_t) -> (ret_bl: bool) {
 	if (a.type == .INT && a.data.(int) == 0) ||
 	   (a.type == .FLOAT && a.data.(f32) == 0) ||
 	   (b.type == .INT && b.data.(int) == 0) ||
 	   (b.type == .FLOAT && b.data.(f32) == 0) {
 		return true
 	}
-	return false
+	return
 }
 
 eval_binary_expression :: proc(
@@ -297,7 +305,6 @@ eval_binary_expression :: proc(
 	case .STAR:
 		return object.multiply(left_hand_side, right_hand_side)
 	}
-
 	if divide_by_zero(left_hand_side, right_hand_side) do return nil, .DIVISION_BY_ZERO_IN_EVAL_BINARY_EXPRESSION
 
 	#partial switch syntax.token.type {
@@ -306,7 +313,7 @@ eval_binary_expression :: proc(
 	case .MODULUS:
 		return object.modulus(left_hand_side, right_hand_side)
 	}
-	return nil, .OK
+	return
 }
 
 eval_assignment_expression :: proc(
@@ -335,7 +342,6 @@ eval_assignment_expression :: proc(
 	if left_hand_side.is_const {
 		return .CANNOT_ASSIGN_TO_CONSTANT_IN_EVAL_ASSIGNMENT_EXPRESSION
 	}
-
 	#partial switch syntax.token.type {
 	case .EQUAL:
 		return object.assign(left_hand_side, right_hand_side)
@@ -355,5 +361,5 @@ eval_assignment_expression :: proc(
 		res := object.divide(left_hand_side, right_hand_side) or_return
 		return object.assign(left_hand_side, res)
 	}
-	return .OK
+	return
 }

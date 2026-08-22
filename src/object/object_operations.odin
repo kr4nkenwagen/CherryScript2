@@ -44,10 +44,11 @@ add :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exi
 			return c, .OK
 		}
 	}
-	return nil, .TYPE_MISMATCH_IN_OBJECT_ADD
+	code = .TYPE_MISMATCH_IN_OBJECT_ADD
+	return
 }
 
-subtract :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+subtract :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if a == nil || b == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_SUBTRACT
 	}
@@ -72,10 +73,11 @@ subtract :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return shorten_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH_IN_OBJECT_SUBTRACT
+	code = .TYPE_MISMATCH_IN_OBJECT_SUBTRACT
+	return
 }
 
-multiply :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+multiply :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if a == nil || b == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_MULTIPLY
 	}
@@ -98,10 +100,11 @@ multiply :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return multiply_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH_IN_OBJECT_MULTUPLY
+	code = .TYPE_MISMATCH_IN_OBJECT_MULTUPLY
+	return
 }
 
-divide :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+divide :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if a == nil || b == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_DIVIDE
 	}
@@ -130,10 +133,11 @@ divide :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return divide_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH_IN_OBJECT_DIVIDE
+	code = .TYPE_MISMATCH_IN_OBJECT_DIVIDE
+	return
 }
 
-modulus :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
+modulus :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if a == nil || b == nil {
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_MODULUS
 	}
@@ -148,11 +152,12 @@ modulus :: proc(a, b: ^types.object_t) -> (^types.object_t, types.exit_codes) {
 			return modulus_string(a, b)
 		}
 	}
-	return nil, .TYPE_MISMATCH_IN_OBJECT_MODULUS
+	code = .TYPE_MISMATCH_IN_OBJECT_MODULUS
+	return
 }
 
 
-assign :: proc(target, source: ^types.object_t) -> types.exit_codes {
+assign :: proc(target, source: ^types.object_t) -> (code: types.exit_codes) {
 	if target == nil || source == nil {
 		return .OBJECT_IS_NIL_IN_OBJECT_ASSIGN
 	}
@@ -164,5 +169,5 @@ assign :: proc(target, source: ^types.object_t) -> types.exit_codes {
 	if target.parent != nil {
 		json_write_file(target)
 	}
-	return .OK
+	return
 }

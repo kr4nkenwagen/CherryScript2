@@ -5,14 +5,13 @@ import "core:fmt"
 import "core:strings"
 import "vendor:curl"
 
-parse_header_list :: proc(json_headers: string) -> ^curl.slist {
+parse_header_list :: proc(json_headers: string) -> (header_list: ^curl.slist) {
 	if len(json_headers) == 0 do return nil
 	val, err := json.parse_string(json_headers, parse_integers = true)
 	if err != .None do return nil
 	defer json.destroy_value(val)
 	obj, ok := val.(json.Object)
 	if !ok do return nil
-	header_list: ^curl.slist = nil
 	for key, v in obj {
 		value_str: string
 		#partial switch variant in v {
@@ -36,5 +35,5 @@ parse_header_list :: proc(json_headers: string) -> ^curl.slist {
 		c_hdr := strings.clone_to_cstring(header_fmt, context.temp_allocator)
 		header_list = curl.slist_append(header_list, c_hdr)
 	}
-	return header_list
+	return
 }

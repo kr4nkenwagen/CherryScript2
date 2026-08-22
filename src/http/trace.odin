@@ -7,9 +7,10 @@ trace :: proc(
 	json_headers: string = "",
 	body: string = "",
 ) -> (
-	string,
-	string,
-	types.exit_codes,
+	_body: string,
+	_head: string,
+	code: types.exit_codes,
 ) {
-	return do_request("TRACE", url, json_headers, body)
+	_body, _head = do_request("TRACE", url, json_headers, body) or_return
+	return
 }

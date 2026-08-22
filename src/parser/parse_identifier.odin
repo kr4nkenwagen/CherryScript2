@@ -13,10 +13,10 @@ parse_base_identifier :: proc(
 ) {
 	curr_token := token_list.peek(tokens, 0) or_return
 	if curr_token.type != .IDENTIFIER do return nil, nil, .EXPECTED_IDENTIFIER_IN_PARSE_BASE_IDENTIFIER
-	node := syntax.create() or_return
-	node.token = curr_token
-	next_token := token_list.advance(tokens) or_return
-	return node, next_token, .OK
+	sntx = syntax.create() or_return
+	sntx.token = curr_token
+	tkn = token_list.advance(tokens) or_return
+	return
 }
 
 parse_member_access :: proc(
@@ -30,11 +30,11 @@ parse_member_access :: proc(
 	next_token := token_list.peek(tokens, 1) or_return
 	if next_token.type != .IDENTIFIER do return nil, {}, .EXPECTED_IDENTIFIER_IN_PARSE_MEMBER_ACCESS
 	member_token := token_list.advance(tokens) or_return
-	member_node := syntax.create() or_return
-	member_node.token = member_token
-	curr_syntax.value = member_node
-	following_token := token_list.advance(tokens) or_return
-	return member_node, following_token, .OK
+	sntx = syntax.create() or_return
+	sntx.token = member_token
+	curr_syntax.value = sntx
+	tkn = token_list.advance(tokens) or_return
+	return
 }
 
 parse_index_access :: proc(
@@ -46,10 +46,10 @@ parse_index_access :: proc(
 	code: types.exit_codes,
 ) {
 	token_list.advance(tokens) or_return
-	expr_node := expression(tokens) or_return
-	curr_syntax.value = expr_node
-	following_token := token_list.advance(tokens) or_return
-	return expr_node, following_token, .OK
+	sntx = expression(tokens) or_return
+	curr_syntax.value = sntx
+	tkn = token_list.advance(tokens) or_return
+	return
 }
 
 parse_identifier :: proc(
@@ -58,8 +58,9 @@ parse_identifier :: proc(
 	sntx: ^types.syntax_t,
 	codes: types.exit_codes,
 ) {
-	root_syntax, curr_token := parse_base_identifier(tokens) or_return
-	curr_syntax := root_syntax
+	curr_token: ^types.token_t
+	sntx, curr_token = parse_base_identifier(tokens) or_return
+	curr_syntax := sntx
 	postfix_loop: for {
 		#partial switch curr_token.type {
 		case .DOT:
@@ -76,7 +77,7 @@ parse_identifier :: proc(
 	}
 	if curr_token.type == .LEFT_PAREN {
 		args_node := passed_function_args(tokens) or_return
-		root_syntax.left = args_node
+		sntx.left = args_node
 	}
-	return root_syntax, .OK
+	return
 }
