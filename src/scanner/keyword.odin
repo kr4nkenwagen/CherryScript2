@@ -123,15 +123,8 @@ consume_keyword :: proc(
 		word, match := match_and_consume(src, grammar.PRINT_LINE) or_return
 		if match do return token.create(src, .PRINT_LINE, word)
 
-		word, match = match_and_consume(src, grammar.POST) or_return
-		if match do return token.create(src, .POST, word)
-
 		word, match = match_and_consume(src, grammar.PRINT) or_return
 		if match do return token.create(src, .PRINT, word)
-
-		word, match = match_and_consume(src, grammar.PUT) or_return
-		if match do return token.create(src, .PUT, word)
-
 
 	case 's':
 		fallthrough
@@ -171,8 +164,11 @@ consume_keyword :: proc(
 		word, match := match_and_consume(src, grammar.GLOBAL) or_return
 		if match do return token.create(src, .GLOBAL, word)
 
-		word, match = match_and_consume(src, grammar.GET) or_return
-		if match do return token.create(src, .GET, word)
+	case 'h':
+		fallthrough
+	case 'H':
+		word, match := match_and_consume(src, grammar.HTTP) or_return
+		if match do return token.create(src, .HTTP, word)
 
 	case '&':
 		second_char := source_code.peek(src, 1) or_return
@@ -193,6 +189,5 @@ consume_keyword :: proc(
 		file := consume_string(src) or_return
 		return token.create(src, .AT, file)
 	}
-
 	return
 }

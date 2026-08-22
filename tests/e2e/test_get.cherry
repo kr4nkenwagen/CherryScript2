@@ -1,4 +1,4 @@
-var res = get("https://polisen.se/api/events")
+var res = http.get("https://polisen.se/api/events")
 assert(len(res.body) == 500, "get: fetch successful")
 println(res.head.code)
 assert(res.head.code == 200, "get: response code is 200")

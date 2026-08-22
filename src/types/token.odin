@@ -75,9 +75,7 @@ token_type_t :: enum {
 	CLEAR,
 	GLOBAL,
 	JSON,
-	GET,
-	POST,
-	PUT,
+	HTTP,
 }
 
 token_t :: struct {

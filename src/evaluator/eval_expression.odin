@@ -75,6 +75,8 @@ eval_primary_expression :: proc(
 		return object.create_string(syntax.token.literal)
 	case .TIME:
 		return eval_time(syntax, stck, program)
+	case .HTTP:
+		return eval_http(syntax, stck, program)
 	case .AT:
 		return object.create_file(syntax.token.literal)
 	case .IN:
@@ -83,12 +85,6 @@ eval_primary_expression :: proc(
 		return eval_key()
 	case .JSON:
 		return eval_json(syntax, stck, program)
-	case .GET:
-		return eval_get(syntax, stck, program)
-	case .POST:
-		return eval_post(syntax, stck, program)
-	case .PUT:
-		return eval_put(syntax, stck, program)
 	case .NUMBER:
 		return eval_number(syntax)
 	case .NULL:

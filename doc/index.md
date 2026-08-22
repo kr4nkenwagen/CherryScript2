@@ -39,6 +39,7 @@ This index groups the small topic files in this directory to make it easier to f
 - [file](file.md)
 - [rm](rm.md)
 - [remove](remove.md)
+- [http](http.md)
 
 ## Collections & Utilities
 - [len](len.md)

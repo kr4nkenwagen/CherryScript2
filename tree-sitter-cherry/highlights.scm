@@ -27,6 +27,7 @@
   "exists"
   "sleep"
   "time"
+  "http"
   "key"
   "clr"
 ] @function.builtin
@@ -34,12 +35,12 @@
 ; --- Control Flow Keywords ---
 [
   "if"
+  "elif"
   "else"
 ] @keyword.conditional
 
 [
   "for"
-  "while"
   "break"
   "continue"
   "in"

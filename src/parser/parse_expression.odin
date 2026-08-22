@@ -22,12 +22,8 @@ primary_expression :: proc(
 		return parse_identifier(tokens)
 	case .LENGTH:
 		return parse_len(tokens)
-	case .GET:
-		return parse_get(tokens)
-	case .POST:
-		return parse_post(tokens)
-	case .PUT:
-		return parse_put(tokens)
+	case .HTTP:
+		return parse_http(tokens)
 	case .TIME:
 		return parse_time(tokens)
 	case .EXISTS:
