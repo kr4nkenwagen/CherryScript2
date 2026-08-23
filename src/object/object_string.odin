@@ -140,10 +140,7 @@ substring :: proc(
 	if obj.type != .STRING {
 		return nil, .STRING_OPERATION_ON_NON_STRING_OBJECT_IN_OBJECT_STRING_SUBSTRING
 	}
-	obj_size, obj_err := object.length(obj)
-	if sys.is_error(obj_err) {
-		return nil, obj_err
-	}
+	obj_size := object.length(obj) or_return
 	if start < 0 || start > obj_size {
 		return nil, .SUBSTRING_START_OUT_OF_BOUNDS_IN_OBJECT_STRING_SUBSTRING
 	}
@@ -155,7 +152,7 @@ substring :: proc(
 		return nil, .SUBSTRING_LENGTH_TO_LESS_THAN_ZERO_IN_OBJECT_STRING_SUBSTRING
 	}
 	if start + input_length > obj_size {
-		return nil, .SUBSTRING_LENGTH_TO_LONG_IN_OBJECT_STRING_SUBSTRING
+		input_length = obj_size - start
 	}
 	end_index := start + input_length
 	ret_obj = object.create_string(obj.data.(string)[start:end_index]) or_return

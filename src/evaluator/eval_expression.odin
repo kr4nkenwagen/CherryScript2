@@ -75,6 +75,8 @@ eval_primary_expression :: proc(
 		return object.create_string(syntax.token.literal)
 	case .TIME:
 		return eval_time(syntax, stck, program)
+	case .TERMINAL:
+		return eval_terminal(syntax, stck, program)
 	case .HTTP:
 		return eval_http(syntax, stck, program)
 	case .AT:

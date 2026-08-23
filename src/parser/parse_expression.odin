@@ -26,6 +26,8 @@ primary_expression :: proc(
 		return parse_http(tokens)
 	case .TIME:
 		return parse_time(tokens)
+	case .TERMINAL:
+		return parse_terminal(tokens)
 	case .EXISTS:
 		return parse_exists(tokens)
 	case .IN:

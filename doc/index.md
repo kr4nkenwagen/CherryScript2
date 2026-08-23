@@ -46,6 +46,7 @@ This index groups the small topic files in this directory to make it easier to f
 - [exists](exists.md)
 - [key](key.md)
 - [json](json.md)
+- [terminal](terminal.md)
 
 ## Time & Sleep
 - [time](time.md)

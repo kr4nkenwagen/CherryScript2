@@ -153,6 +153,10 @@ consume_keyword :: proc(
 
 		word, match = match_and_consume(src, grammar.TIME) or_return
 		if match do return token.create(src, .TIME, word)
+
+		word, match = match_and_consume(src, grammar.TERMINAL) or_return
+		if match do return token.create(src, .TERMINAL, word)
+
 	case 'v':
 		fallthrough
 	case 'V':

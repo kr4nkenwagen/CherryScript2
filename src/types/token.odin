@@ -76,6 +76,7 @@ token_type_t :: enum {
 	GLOBAL,
 	JSON,
 	HTTP,
+	TERMINAL,
 }
 
 token_t :: struct {
