@@ -9,6 +9,7 @@ eval_break :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	curr_prog := program
 	for curr_prog.type != .LOOP {
 		if curr_prog.parent == nil do return .BREAK_STATEMENT_NOT_IN_A_LOOP

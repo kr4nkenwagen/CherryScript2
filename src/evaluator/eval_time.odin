@@ -14,6 +14,7 @@ eval_time :: proc(
 	code: types.exit_codes,
 ) {
 	type := syntax.value.token.literal
+	g_current_syntax = syntax.value
 	tz_offset_seconds: i64 = 2 * 3600
 	utc_now := time.now()
 	local_now := time.Time {

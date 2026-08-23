@@ -12,6 +12,7 @@ eval_post :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	val := eval_primary_expression(syntax.value, stck, program) or_return
 	if val.type != .JSON do return nil, .UNSUPPORTED_OBJECT_TYPE_IN_EVAL_POST
 	body := object.json_get(val, "body") or_return

@@ -7,6 +7,8 @@ import "../types"
 import "core:strconv"
 import "core:strings"
 
+g_current_syntax: ^types.syntax_t
+
 eval_primary_expression :: proc(
 	syntax: ^types.syntax_t,
 	stck: ^types.vm_t,
@@ -15,6 +17,7 @@ eval_primary_expression :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_PRIMARY_EXPRESSION
 	if g_debug {
 		debug.prompt_user(syntax.token, stck)
@@ -119,9 +122,8 @@ eval_file_extraction :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL_IN_EVAL_FILE_EXTRACTION
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_FILE_EXTRACTION
+	g_current_syntax = syntax
 	file := eval_primary_expression(syntax.left, stck, program) or_return
 	index := eval_primary_expression(syntax.right, stck, program) or_return
 	if syntax.right.token.type == .LENGTH {
@@ -141,6 +143,7 @@ eval_number :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_NUMBER
+	g_current_syntax = syntax
 	if strings.contains(syntax.token.literal, ".") {
 		val := strconv.parse_f64(syntax.token.literal) or_else 0.0
 		return object.create_float(f32(val))
@@ -159,9 +162,8 @@ eval_string_operation_expression :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return nil, .OBJECT_IS_NIL_IN_EVAL_STRING_OPERATION_EXPRESSION
-	}
+	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_STRING_OPERATION_EXPRESSION
+	g_current_syntax = syntax
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
@@ -214,6 +216,7 @@ eval_and_or :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_AND_OR
+	g_current_syntax = syntax
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	if left_hand_side.type != .BOOL || right_hand_side.type != .BOOL {
@@ -237,6 +240,7 @@ eval_unary_expression :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_UNARY_EXPRESSION
+	g_current_syntax = syntax
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	if left_hand_side != nil && left_hand_side.type == .BOOL {
 		return object.create_bool(!left_hand_side.data.(bool))
@@ -254,6 +258,7 @@ eval_comparison_expression :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_COMPARISON_EXPESSION
+	g_current_syntax = syntax
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
@@ -292,7 +297,7 @@ eval_binary_expression :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return nil, .OBJECT_IS_NIL_IN_EVAL_BINARY_EXPRESSION
-
+	g_current_syntax = syntax
 	left_hand_side := eval_primary_expression(syntax.left, stck, program) or_return
 	right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 	#partial switch syntax.token.type {
@@ -321,9 +326,8 @@ eval_assignment_expression :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	if syntax == nil {
-		return .OBJECT_IS_NIL_IN_EVAL_ASSIGNMENT_EXPRESSION
-	}
+	if syntax == nil do return .OBJECT_IS_NIL_IN_EVAL_ASSIGNMENT_EXPRESSION
+	g_current_syntax = syntax
 	if syntax.left.token.type == .LEFT_ARROW {
 		right_hand_side := eval_primary_expression(syntax.right, stck, program) or_return
 		file := eval_primary_expression(syntax.left.left, stck, program) or_return

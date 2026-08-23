@@ -12,6 +12,7 @@ eval_base_identifier :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = synt
 	curr_stack := vm.current_frame(stck) or_return
 	ret_obj = stack.get(curr_stack, synt.token.literal) or_return
 	if ret_obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST_IN_EVAL_BASE_IDENTIFIER
@@ -26,6 +27,7 @@ eval_member_access :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = member_synt
 	if obj.type != .JSON do return nil, .OBJECT_IS_NOT_JSON_OBJECT_IN_EVAL_MEMBER_ACCESS
 	ret_obj = object.json_get(obj, member_synt.token.literal) or_return
 	return
@@ -40,6 +42,7 @@ eval_index_access :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = index_synt
 	if obj.type != .ARRAY do return nil, .EXPECTED_ARRAY_IN_EVAL_INDEX_ACCESS
 	index_obj: ^types.object_t
 	index_err: types.exit_codes
@@ -61,6 +64,7 @@ eval_function_call :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = synt
 	if synt.left == nil do return obj, .OK
 
 	if obj.type != .FUNCTION do return nil, .OBJECT_IS_NOT_FUNCTION_EVAL_FUNCTION_CALL
@@ -79,6 +83,7 @@ eval_identifier :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = synt
 	curr_obj := eval_base_identifier(synt, stck) or_return
 	curr_synt := synt
 	for curr_synt.value != nil {

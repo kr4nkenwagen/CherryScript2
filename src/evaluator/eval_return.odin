@@ -9,6 +9,7 @@ eval_return :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	if program == nil do return .OBJECT_IS_NIL_IN_EVAL_RETURN
 	curr_prog := program
 	for curr_prog.type != .FUNCTION && curr_prog.type != .SOURCE {

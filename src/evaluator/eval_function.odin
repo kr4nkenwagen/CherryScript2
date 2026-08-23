@@ -12,9 +12,8 @@ function_identifier :: proc(
 	^types.object_t,
 	types.exit_codes,
 ) {
-	if synt == nil {
-		return nil, .OBJECT_IS_NIL_IN_FUNCTION_IDENTIFIER
-	}
+	if synt == nil do return nil, .OBJECT_IS_NIL_IN_FUNCTION_IDENTIFIER
+	g_current_syntax = synt
 	return branch(synt, stck)
 }
 
@@ -26,6 +25,7 @@ function_declaration :: proc(
 	code: types.exit_codes,
 ) {
 	if synt == nil do return .OBJECT_IS_NIL_IN_FUNCTION_DECLARATION
+	g_current_syntax = synt
 	funct := object.create_funct(synt.right) or_return
 	funct.name = synt.right.token.literal
 	curr_stack := vm.current_frame(stck) or_return

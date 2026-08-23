@@ -14,6 +14,7 @@ variable_declarations :: proc(
 	code: types.exit_codes,
 ) {
 	if synt == nil do return .OBJECT_IS_NIL_IN_VARIABLE_DECLARATION
+	g_current_syntax = synt
 	is_const := synt.token.type == .CONST
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {

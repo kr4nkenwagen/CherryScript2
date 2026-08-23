@@ -40,12 +40,22 @@ parse_args :: proc() -> ^types.arguments_t {
 	return args
 }
 
-step_1 :: proc(path: string, args: ^types.arguments_t) -> ^types.token_list_t {
-	src, src_err := source_code.from_file(path)
-	if sys.is_error(src_err) do return nil
+step_0 :: proc(
+	path: string,
+	args: ^types.arguments_t,
+) -> (
+	src: ^types.source_code_t,
+	code: types.exit_codes,
+) {
+	src = source_code.from_file(path) or_return
+	return
+}
+
+step_1 :: proc(src: ^types.source_code_t, args: ^types.arguments_t) -> ^types.token_list_t {
 	tokens, tokens_err := scanner.run(src)
 	if sys.is_error(tokens_err) {
-		sys.print_error(tokens_err, tokens)
+		token := tokens.list[len(tokens.list) - 1]
+		sys.print_error(tokens_err, token, src)
 		return nil
 	}
 	if args.debug_level == .TOKENS {
@@ -60,11 +70,16 @@ step_1 :: proc(path: string, args: ^types.arguments_t) -> ^types.token_list_t {
 	return tokens
 }
 
-step_2 :: proc(tokens: ^types.token_list_t, args: ^types.arguments_t) -> ^types.program_t {
+step_2 :: proc(
+	tokens: ^types.token_list_t,
+	src: ^types.source_code_t,
+	args: ^types.arguments_t,
+) -> ^types.program_t {
 	if tokens == nil do return nil
 	synt, synt_err := parser.run(tokens, nil)
 	if sys.is_error(synt_err) {
-		sys.print_error(synt_err, tokens)
+		token, _ := token_list.peek(tokens, 0)
+		sys.print_error(synt_err, token, src)
 		return nil
 	}
 	if args.debug_level == .AST {
@@ -74,19 +89,25 @@ step_2 :: proc(tokens: ^types.token_list_t, args: ^types.arguments_t) -> ^types.
 	return synt
 }
 
-step_3 :: proc(program: ^types.program_t, tokens: ^types.token_list_t, args: ^types.arguments_t) {
+step_3 :: proc(
+	program: ^types.program_t,
+	tokens: ^types.token_list_t,
+	src: ^types.source_code_t,
+	args: ^types.arguments_t,
+) {
 	if program == nil || tokens == nil do return
 	curr_vm, curr_vm_err := vm.create()
 	if sys.is_error(curr_vm_err) {
-		sys.print_error(curr_vm_err, tokens)
+		sys.print_error(curr_vm_err, nil, src)
 	}
 	curl.global_init(curl.GLOBAL_DEFAULT)
 	curr_stack, curr_stack_err := stack.create()
-	if sys.is_error(curr_stack_err) do sys.print_error(curr_stack_err, tokens)
+
+	if sys.is_error(curr_stack_err) do sys.print_error(curr_stack_err, nil, src)
 	vm_err := vm.push_frame(curr_vm, curr_stack, false)
-	if sys.is_error(vm_err) do sys.print_error(vm_err, tokens)
+	if sys.is_error(vm_err) do sys.print_error(vm_err, nil, src)
 	obj, obj_err := evaluator.run(program, curr_vm, args.debug_level == .EVAL)
-	if sys.is_error(obj_err) do sys.print_error(obj_err, tokens)
+	if sys.is_error(obj_err) do sys.print_error(obj_err, evaluator.g_current_syntax.token, src)
 	if args.debug_level == .EVAL do debug.inspect_snapshots()
 }
 
@@ -94,9 +115,10 @@ main :: proc() {
 	args := parse_args()
 	if args == nil do return
 	for file in args.source_files {
-		tokens := step_1(file, args)
-		program := step_2(tokens, args)
-		step_3(program, tokens, args)
+		src, _ := step_0(file, args)
+		tokens := step_1(src, args)
+		program := step_2(tokens, src, args)
+		step_3(program, tokens, src, args)
 		token_list.remove(tokens)
 	}
 }

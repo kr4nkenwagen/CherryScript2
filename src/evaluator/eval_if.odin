@@ -10,6 +10,7 @@ eval_if :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	curr_syntax := syntax
 	for curr_syntax != nil &&
 	    (curr_syntax.token.type == .IF ||

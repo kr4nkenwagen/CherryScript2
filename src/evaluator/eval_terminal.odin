@@ -13,6 +13,7 @@ eval_terminal :: proc(
 	code: types.exit_codes,
 ) {
 	type := syntax.value.token.literal
+	g_current_syntax = syntax.value
 	switch type {
 	case "width":
 		ws := get_terminal_size()

@@ -10,6 +10,7 @@ eval_while :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return .OBJECT_IS_NIL_IN_EVAL_WHILE
+	g_current_syntax = syntax
 	for !syntax.branch.exit {
 		condition := eval_primary_expression(syntax.value, stck, program) or_return
 		if condition.type != .BOOL do return .CONDIION_IS_NOT_BOOL_EVAL_WHILE

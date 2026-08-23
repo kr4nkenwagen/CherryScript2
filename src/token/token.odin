@@ -15,7 +15,7 @@ create :: proc(
 	if token == nil do return nil, .MEMORY_ALLOCATION_FAILED_IN_TOKEN_CREATE
 	token.literal = literal
 	if src != nil {
-		token.column = src.column
+		token.column = src.column - len(token.literal)
 		token.line = src.line
 	}
 	token.type = type

@@ -12,6 +12,7 @@ eval_delete :: proc(
 	obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	val := eval_primary_expression(syntax.value, stck, program) or_return
 	body_ret: string
 	ret_head: string

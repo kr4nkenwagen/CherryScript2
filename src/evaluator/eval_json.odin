@@ -12,6 +12,7 @@ eval_json :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
+	g_current_syntax = syntax
 	val := eval_primary_expression(syntax.value, stck, program) or_return
 	#partial switch (val.type) {
 	case .STRING:
