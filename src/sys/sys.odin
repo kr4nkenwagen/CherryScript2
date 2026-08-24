@@ -13,7 +13,7 @@ CLR_AMBER :: "\e[38;5;215m" // Soft Amber
 CLR_GREEN :: "\e[38;5;114m" // Pastel Green
 CLR_TEXT :: "\e[38;5;252m" // Crisp Off-White
 CLR_MUTED :: "\e[38;5;243m" // Subdued Gray
-CLR_TYPE :: "\e[38;5;141m" // Lavender/Purple for Types
+CLR_ERR :: "\e[31m" //
 CLR_CONST :: "\e[38;5;220m" // Gold for Const
 CLR_TOKEN_HL :: "\e[7;1m" // Inverse + Bold for Token Highlight
 
@@ -37,7 +37,7 @@ print_error :: proc(
 		fmt.printf(
 			"%s%s[ERR] %s %s\n",
 			CLR_RESET,
-			CLR_TYPE,
+			CLR_ERR,
 			CLR_RESET,
 			parse_error(error_code, token),
 		)
@@ -48,25 +48,33 @@ print_error :: proc(
 	literal_marker := strings.repeat("^", len(token.literal))
 	literal_marker_distance := strings.repeat(" ", token.column)
 	fmt.printf(
-		"%s[ERR]%s In [%s] %d:%d\n",
-		CLR_TYPE,
+		"%s%s[ERR]%s In [%s%s%s] %s%d%s:%s%d\n%s",
+		CLR_ERR,
+		CLR_BOLD,
 		CLR_RESET,
+		CLR_TEXT,
 		src.location,
+		CLR_RESET,
+		CLR_TEXT,
 		token.line,
+		CLR_MUTED,
+		CLR_TEXT,
 		token.column,
+		CLR_RESET,
 	)
 	for i := src_start; i <= raw_line; i += 1 {
 
 		fmt.printf("%3d%s|%s %s\n", i + 1, CLR_MUTED, CLR_RESET, split_src[i])
 	}
 	fmt.printf(
-		"   %s|%s %s%s%s%s %s\n",
+		"   %s|%s %s%s%s%s %s%s\n",
 		CLR_MUTED,
 		CLR_RESET,
 		literal_marker_distance,
-		CLR_TYPE,
+		CLR_ERR,
 		literal_marker,
-		CLR_RESET,
+		CLR_TEXT,
+		CLR_BOLD,
 		parse_error(error_code, token),
 	)
 
