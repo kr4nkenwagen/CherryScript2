@@ -11,7 +11,6 @@ create_int :: proc(value: int) -> (ret_obj: ^types.object_t, code: types.exit_co
 	ret_obj.is_marked = false
 	ret_obj.type = types.object_type_t.INT
 	ret_obj.data = value
-	ret_obj.ref_count = 1
 	return
 }
 
@@ -23,7 +22,6 @@ create_bool :: proc(value: bool) -> (ret_obj: ^types.object_t, code: types.exit_
 	ret_obj.is_marked = false
 	ret_obj.type = types.object_type_t.BOOL
 	ret_obj.data = value
-	ret_obj.ref_count = 1
 	return
 }
 
@@ -35,7 +33,6 @@ create_float :: proc(value: f32) -> (ret_obj: ^types.object_t, code: types.exit_
 	ret_obj.is_marked = false
 	ret_obj.type = types.object_type_t.FLOAT
 	ret_obj.data = value
-	ret_obj.ref_count = 1
 	return
 }
 
@@ -47,7 +44,6 @@ create_string :: proc(value: string) -> (ret_obj: ^types.object_t, code: types.e
 	ret_obj.is_marked = false
 	ret_obj.type = types.object_type_t.STRING
 	ret_obj.data = value
-	ret_obj.ref_count = 1
 	return
 }
 
@@ -58,7 +54,6 @@ create_array :: proc() -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	}
 	ret_obj.is_marked = false
 	ret_obj.type = types.object_type_t.ARRAY
-	ret_obj.ref_count = 1
 	ret_obj.data = types.object_array_t {
 		count = 0,
 	}
@@ -84,7 +79,6 @@ create_vector :: proc(
 		y = y,
 		z = z,
 	}
-	ret_obj.ref_count = 1
 	return
 }
 
@@ -130,7 +124,6 @@ create_null :: proc() -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	}
 	ret_obj.is_marked = false
 	ret_obj.type = types.object_type_t.NULL
-	ret_obj.ref_count = 1
 	return
 }
 

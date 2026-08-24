@@ -28,7 +28,6 @@ object_data_t :: union {
 object_t :: struct {
 	is_marked: bool,
 	is_const:  bool,
-	ref_count: int,
 	type:      object_type_t,
 	name:      string,
 	data:      object_data_t,

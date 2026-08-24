@@ -48,7 +48,6 @@ json_value_to_object :: proc(
 		if ret_obj == nil do return nil, .OBJECT_IS_NIL_IN_JSON_VALUE_TO_OBJECT
 		ret_obj.is_marked = false
 		ret_obj.type = .JSON
-		ret_obj.ref_count = 1
 		json_data := types.object_json_t{}
 		for key, child_val in v {
 			child, child_code := json_value_to_object(child_val, key)
