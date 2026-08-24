@@ -1,0 +1,52 @@
+# Numeric ordering comparisons
+assert(1 < 2, "operators: less than true")
+assert(!(2 < 1), "operators: less than false")
+assert(2 <= 2, "operators: less or equal boundary")
+assert(3 > 2, "operators: greater than")
+assert(2 >= 2, "operators: greater or equal boundary")
+
+# Float ordering
+assert(0.5 < 1.5, "operators: float less than")
+assert(1.5 >= 1.5, "operators: float greater or equal")
+
+# Mixed int/float ordering
+assert(1 < 1.5, "operators: int vs float ordering")
+assert(2.5 > 2, "operators: float vs int ordering")
+
+# Inequality across types
+assert(1 != 2, "operators: int inequality")
+assert("a" != "b", "operators: string inequality")
+assert(true != false, "operators: bool inequality")
+
+# Equality edge values
+var n = null
+assert(n == null, "operators: null equals null")
+remove n
+
+# Logical AND truth table
+assert(true && true, "operators: and true/true")
+assert(!(true && false), "operators: and true/false")
+assert(!(false && true), "operators: and false/true")
+assert(!(false && false), "operators: and false/false")
+
+# Logical OR truth table
+assert(true || false, "operators: or true/false")
+assert(false || true, "operators: or false/true")
+assert(!(false || false), "operators: or false/false")
+
+# Logical NOT
+assert(!false, "operators: not false")
+assert(!(!true), "operators: double negation")
+
+# Both operands are evaluated (non-short-circuit semantics)
+global var calls = 0
+fn side() {
+  calls += 1
+  return true
+}
+var r1 = side() && side()
+assert(calls == 2, "operators: and evaluates both operands")
+var r2 = side() || side()
+assert(calls == 4, "operators: or evaluates both operands")
+assert(r1 == true && r2 == true, "operators: logical results correct")
+remove r1, r2, calls, side

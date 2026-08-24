@@ -1,0 +1,41 @@
+# Single-expression function body (no braces)
+fn one() return 42
+assert(one() == 42, "functions: single-line body returns value")
+
+# Function composition: global functions calling global functions
+global fn double(var x) {
+  return x * 2
+}
+global fn quadruple(var x) {
+  return double(double(x))
+}
+assert(quadruple(3) == 12, "functions: nested global function calls")
+
+# Const parameters are accepted and readable
+fn echo(const v) {
+  return v
+}
+assert(echo(7) == 7, "functions: const parameter passes value")
+assert(echo("hi") == "hi", "functions: const parameter with string")
+
+# Return after a loop completes
+fn scan(var limit) {
+  var total = 0
+  for (var i = 0; i < limit; i += 1) {
+    total += i
+  }
+  return total
+}
+assert(scan(4) == 6, "functions: return after loop completes")
+assert(scan(0) == 0, "functions: return from zero-iteration loop")
+
+# Function results compose into larger expressions
+assert(one() + quadruple(1) == 46, "functions: calls compose in expressions")
+
+# Empty-bodied function can be declared and called
+fn noop() {
+}
+noop()
+assert(true, "functions: empty body call does not crash")
+
+remove one, double, quadruple, echo, scan, noop

@@ -1,0 +1,41 @@
+# Subtract removes every instance of the substring
+var a = "aaa" - "a"
+assert(a == "", "strings: subtract strips all repeated chars")
+remove a
+
+var b = "banana" - "na"
+assert(b == "ba", "strings: subtract strips all substring instances")
+remove b
+
+# Repeat edge cases
+var c = "a" * 0
+assert(c == "" && len(c) == 0, "strings: repeat by zero is empty")
+remove c
+
+var d = "ab" * 1
+assert(d == "ab", "strings: repeat by one is identity")
+remove d
+
+# Modulus keeps the tail of length len % n
+var e = "Hello World" % 2
+assert(e == "d", "strings: modulus keeps last len%%n chars")
+remove e
+
+# Division truncates to len / n
+var f = "abcdef" / 2
+assert(f == "abc", "strings: division truncates to half")
+remove f
+
+# Splices compose with other string operations
+var g = "Hello World":5
+assert(g .. "!" == "Hello!", "strings: splice then concat")
+remove g
+
+var h = "Hello World"
+assert(h:6 == h:len(h) - 5, "strings: head splice equals tail complement")
+assert(h:^5 == "World", "strings: tail splice by count")
+remove h
+
+# Equality and inequality on strings
+assert("cherry" == "cherry", "strings: equal strings compare true")
+assert("cherry" != "Cherry", "strings: comparison is case-sensitive")

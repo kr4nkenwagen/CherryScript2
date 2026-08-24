@@ -1,5 +1,5 @@
 # expanded file ops with unique tempfile
-var tf = @"tmp_file_ops_expanded"
+var tf = @"tests/tmp/tmp_file_ops_expanded"
 # write multiple lines
 tf<-2 = "line2"
 tf<-3 = "line3"

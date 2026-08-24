@@ -41,12 +41,17 @@ print_error :: proc(
 			CLR_RESET,
 			parse_error(error_code, token),
 		)
+		return
 	}
 	split_src := strings.split(src.content, "\n", context.allocator)
 	raw_line := token.line - 1
 	src_start := raw_line - 3 > 0 ? raw_line - 3 : 0
-	literal_marker := strings.repeat("^", len(token.literal))
-	literal_marker_distance := strings.repeat(" ", token.column)
+	marker_length := len(token.literal)
+	if marker_length < 0 do marker_length = 0
+	column := token.column
+	if column < 0 do column = 0
+	literal_marker := strings.repeat("^", marker_length)
+	literal_marker_distance := strings.repeat(" ", column)
 	fmt.printf(
 		"%s%s[ERR]%s In [%s%s%s] %s%d%s:%s%d\n%s",
 		CLR_ERR,

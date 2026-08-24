@@ -1,0 +1,33 @@
+# Compound assignment on integers
+var n = 10
+n += 5
+assert(n == 15, "compound: plus-equals adds")
+n -= 3
+assert(n == 12, "compound: minus-equals subtracts")
+n *= 2
+assert(n == 24, "compound: star-equals multiplies")
+n /= 4
+assert(n == 6, "compound: slash-equals divides")
+remove n
+
+# Compound assignment as accumulator in loops
+var total = 0
+for (var i = 1; i <= 4; i += 1) {
+  total += i
+}
+assert(total == 10, "compound: loop accumulation")
+remove total
+
+# Compound assignment on strings
+var s = "ab"
+s += "cd"
+assert(s == "abcd", "compound: string plus-equals concatenates")
+s *= 2
+assert(s == "abcdabcd", "compound: string star-equals repeats")
+remove s
+
+# Compound assignment with right-hand expressions
+var m = 2
+m *= 3 + 4
+assert(m == 14, "compound: right side fully evaluated first")
+remove m

@@ -1,0 +1,4 @@
+fn greet(var name = "world") {
+  println(name)
+}
+greet()

@@ -20,7 +20,7 @@ assert(len(float) == 5, "len: float representation length == 5")
 remove float
 
 # - file lines
-var file = @"tests/tmp_len_test_file"
+var file = @"tests/tmp/tmp_len_test_file"
 # ensure file is clean
 rm file
 file<-3 = "test"

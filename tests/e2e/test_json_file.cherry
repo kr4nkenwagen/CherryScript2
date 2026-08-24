@@ -1,6 +1,6 @@
-var file = @"testfile"
+var file = @"tests/tmp/testfile"
 file<-0 = "{}"
-var json_file = json(@"testfile")
+var json_file = json(@"tests/tmp/testfile")
 json_file.member = 1
 assert(file->0 == '{"member": 1}', "json file: new members are saved to file")
 json_file.group.member = 1

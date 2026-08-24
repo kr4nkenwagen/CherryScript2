@@ -1,5 +1,5 @@
 # File handler tests using a unique test file path
-var tf = @"tests/tmp_file_handler_test"
+var tf = @"tests/tmp/tmp_file_handler_test"
 
 assert(!exists(tf), "file: file was not created on intiation")
 # Ensure clean start
@@ -15,7 +15,7 @@ assert(!exists(tf), "file: not exists after rm")
 remove tf
 
 # Recreate file and check content placement
-var file = @"tests/tmp_file_handler_test"
+var file = @"tests/tmp/tmp_file_handler_test"
 # ensure empty file
 rm file
 file<-3 = "test"

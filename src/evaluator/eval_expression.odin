@@ -42,8 +42,8 @@ eval_primary_expression :: proc(
 	case .RETURN:
 		return nil, eval_return(syntax, stck, program)
 	case .PRINT_LINE:
-		val, err := eval_primary_expression(syntax.value, stck, program)
-		eval_println(val, g_debug)
+		val := eval_primary_expression(syntax.value, stck, program) or_return
+		eval_println(val, g_debug) or_return
 		return nil, .OK
 	case .FOR:
 		return nil, eval_for(syntax, stck, program)
