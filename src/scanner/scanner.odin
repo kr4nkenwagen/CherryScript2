@@ -134,6 +134,11 @@ run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: 
 			tok := token.create(src, .MODULUS, "%") or_return
 			token_list.add(tkn_list, tok) or_return
 
+		case '$':
+			tok := token.create(src, .EXECUTE, "$") or_return
+			token_list.add(tkn_list, tok) or_return
+
+
 		case '/':
 			second_char := source_code.peek(src, 1) or_return
 			if second_char == '=' {

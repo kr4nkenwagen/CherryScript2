@@ -36,6 +36,8 @@ primary_expression :: proc(
 		return parse_key(tokens)
 	case .JSON:
 		return parse_json(tokens)
+	case .EXECUTE:
+		return parse_execute(tokens)
 	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NULL, .AT:
 		sntx = syntax.create() or_return
 		sntx.token = curr_token

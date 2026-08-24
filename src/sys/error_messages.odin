@@ -268,6 +268,8 @@ error_messages := #partial [types.exit_codes]string {
 	.EXPECTED_DOT_IN_PARSE_TERMINAL                                                    = "Expected '.' after 'terminal', got '%1'.",
 	.EXPECTED_IDENTIFIER_IN_PARSE_TERMINAL                                             = "Expected terminal property, got '%1'.",
 	.UNEXPECTED_MEMBER_IN_EVAL_TERMINAL                                                = "Unknown terminal member '%1'.",
+	.VALUE_IS_NOT_STRING_IN_EVAL_EXECUTE                                              = "Expected a string after '$', got '%1'.",
+	.FAILED_TO_EXECUTE_SYSTEM_COMMAND                                                 = "Failed to execute system command '%1'.",
 }
 
 parse_error :: proc(code: types.exit_codes, token: ^types.token_t) -> (result: string) {

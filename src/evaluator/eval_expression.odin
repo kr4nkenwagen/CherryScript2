@@ -84,6 +84,8 @@ eval_primary_expression :: proc(
 		return eval_http(syntax, stck, program)
 	case .AT:
 		return object.create_file(syntax.token.literal)
+	case .EXECUTE:
+		return eval_execute(syntax, stck, program)
 	case .IN:
 		return eval_in()
 	case .KEY:

@@ -44,7 +44,7 @@ module.exports = grammar({
     // Based on your switch statements for operators
     operator: $ => choice(
       ':^', '..', '-=', '+=', '/=', '*=', '!=', '==', '>=', '<=', '&&', '||',
-      '-', '+', '%', '/', '*', '!', '=', '>', '<', '->', '<-'
+      '-', '+', '%', '/', '*', '!', '=', '>', '<', '->', '<-', '@', '$'
     ),
 
     // Standard punctuation characters from your lexer
