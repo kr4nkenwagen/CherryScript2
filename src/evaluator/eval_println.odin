@@ -4,10 +4,26 @@ import "../object"
 import "../types"
 
 
-eval_println :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_codes) {
-	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINTLN
-	newline := object.create_string("\n") or_return
-	formated_obj := object.add(obj, newline) or_return
-	code = eval_print(formated_obj, debug_mode)
+eval_println :: proc(
+	syntax: ^types.syntax_t,
+	stck: ^types.vm_t,
+	prgm: ^types.program_t,
+	debug_mode: bool,
+) -> (
+	code: types.exit_codes,
+) {
+	if syntax == nil || syntax.value == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINTLN
+	obj := eval_primary_expression(syntax.value, stck, prgm) or_return
+	if obj.type == .JSON {
+		text := object.to_json_string(obj) or_return
+		str_obj := object.create_string(text) or_return
+		newline := object.create_string("\n") or_return
+		formated_obj := object.add(str_obj, newline) or_return
+		eval_print(formated_obj, debug_mode) or_return
+	} else {
+		newline := object.create_string("\n") or_return
+		formated_obj := object.add(obj, newline) or_return
+		eval_print(formated_obj, debug_mode) or_return
+	}
 	return
 }

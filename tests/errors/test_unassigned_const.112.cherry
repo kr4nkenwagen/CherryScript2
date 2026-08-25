@@ -1,0 +1,2 @@
+var err_unassigned_const = $"tests/tmp/cherry tests/errors/scripts/unassigned_const.112.cherry"
+assert(err_unassigned_const.exit_code == 112, "error: unassigned_const.112 exits with 112")

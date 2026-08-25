@@ -1,0 +1,2 @@
+var err_string_first_index_of_from_type_c = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_type_c.36.cherry"
+assert(err_string_first_index_of_from_type_c.exit_code == 36, "error: string_first_index_of_from_type_c.36 exits with 36")

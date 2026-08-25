@@ -1,0 +1,3 @@
+var res_print_concat = $"tests/tmp/cherry tests/output/scripts/print_concat.cherry"
+assert(res_print_concat.stdout == "abc\ndone\n", "print: print/println concatenation")
+remove res_print_concat

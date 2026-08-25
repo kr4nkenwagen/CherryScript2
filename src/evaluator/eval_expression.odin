@@ -42,8 +42,7 @@ eval_primary_expression :: proc(
 	case .RETURN:
 		return nil, eval_return(syntax, stck, program)
 	case .PRINT_LINE:
-		val := eval_primary_expression(syntax.value, stck, program) or_return
-		eval_println(val, g_debug) or_return
+		eval_println(syntax, stck, program, g_debug) or_return
 		return nil, .OK
 	case .FOR:
 		return nil, eval_for(syntax, stck, program)
@@ -76,6 +75,8 @@ eval_primary_expression :: proc(
 		return eval_identifier(syntax, stck, program)
 	case .STRING_WRAPPER:
 		return object.create_string(syntax.token.literal)
+	case .MATH:
+		return eval_math(syntax, stck, program)
 	case .TIME:
 		return eval_time(syntax, stck, program)
 	case .STRING:

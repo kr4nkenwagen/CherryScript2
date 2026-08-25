@@ -1,0 +1,2 @@
+var err_cmp_int_array_equal = $"tests/tmp/cherry tests/errors/scripts/cmp_int_array_equal.28.cherry"
+assert(err_cmp_int_array_equal.exit_code == 28, "error: cmp_int_array_equal.28 exits with 28")

@@ -1,0 +1,2 @@
+var err_cmp_gte_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_gte_type_mismatch.32.cherry"
+assert(err_cmp_gte_type_mismatch.exit_code == 32, "error: cmp_gte_type_mismatch.32 exits with 32")

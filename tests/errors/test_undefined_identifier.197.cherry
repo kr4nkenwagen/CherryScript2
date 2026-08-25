@@ -1,0 +1,2 @@
+var err_undefined_identifier = $"tests/tmp/cherry tests/errors/scripts/undefined_identifier.197.cherry"
+assert(err_undefined_identifier.exit_code == 197, "error: undefined_identifier.197 exits with 197")

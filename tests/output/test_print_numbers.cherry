@@ -1,0 +1,3 @@
+var res_print_numbers = $"tests/tmp/cherry tests/output/scripts/print_numbers.cherry"
+assert(res_print_numbers.stdout == "42\n0\nn=7\n", "print: println prints numbers, print concatenates")
+remove res_print_numbers

@@ -1,3 +1,5 @@
 module "utils/assert.cherry"
 module "e2e"
+module "output"
+module "test_error.cherry"
 test_results()

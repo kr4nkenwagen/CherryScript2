@@ -1,0 +1,2 @@
+var err_string_subtract_type = $"tests/tmp/cherry tests/errors/scripts/string_subtract_type.79.cherry"
+assert(err_string_subtract_type.exit_code == 79, "error: string_subtract_type.79 exits with 79")

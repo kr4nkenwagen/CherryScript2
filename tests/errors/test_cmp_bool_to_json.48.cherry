@@ -1,0 +1,2 @@
+var err_cmp_bool_to_json = $"tests/tmp/cherry tests/errors/scripts/cmp_bool_to_json.48.cherry"
+assert(err_cmp_bool_to_json.exit_code == 48, "error: cmp_bool_to_json.48 exits with 48")

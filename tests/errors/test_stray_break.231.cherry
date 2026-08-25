@@ -1,0 +1,2 @@
+var err_stray_break = $"tests/tmp/cherry tests/errors/scripts/stray_break.231.cherry"
+assert(err_stray_break.exit_code == 231, "error: stray_break.231 exits with 231")

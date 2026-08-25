@@ -94,6 +94,10 @@ consume_keyword :: proc(
 			source_code.import_file(src, path) or_return
 			return token.create(src, .TERMINATOR, "")
 		}
+		word: string
+		word, match = match_and_consume(src, grammar.MATH) or_return
+		if match do return token.create(src, .MATH, word)
+
 	case 'k':
 		fallthrough
 	case 'K':

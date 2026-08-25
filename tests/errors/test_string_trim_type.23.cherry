@@ -1,0 +1,2 @@
+var err_string_trim_type = $"tests/tmp/cherry tests/errors/scripts/string_trim_type.23.cherry"
+assert(err_string_trim_type.exit_code == 23, "error: string_trim_type.23 exits with 23")

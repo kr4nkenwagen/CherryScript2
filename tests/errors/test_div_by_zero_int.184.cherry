@@ -1,0 +1,2 @@
+var err_div_by_zero_int = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_int.184.cherry"
+assert(err_div_by_zero_int.exit_code == 184, "error: div_by_zero_int.184 exits with 184")

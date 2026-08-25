@@ -22,6 +22,8 @@ primary_expression :: proc(
 		return parse_identifier(tokens)
 	case .LENGTH:
 		return parse_len(tokens)
+	case .MATH:
+		return parse_math(tokens)
 	case .STRING:
 		return parse_string(tokens)
 	case .HTTP:

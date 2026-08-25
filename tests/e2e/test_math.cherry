@@ -1,0 +1,77 @@
+# Math constants
+assert(math.pi > 3.14 && math.pi < 3.15, "math: pi is approximately 3.14159")
+assert(math.tau > 6.28 && math.tau < 6.29, "math: tau is approximately 6.28318")
+
+# Rounding and restriction
+assert(math.abs(-42) == 42, "math.abs: negative integer")
+assert(math.abs(42) == 42, "math.abs: positive integer")
+assert(math.abs(0) == 0, "math.abs: zero")
+assert(math.floor(2.7) == 2, "math.floor: rounds down")
+assert(math.floor(-2.3) == -3, "math.floor: negative rounds down")
+assert(math.ceil(2.3) == 3, "math.ceil: rounds up")
+assert(math.ceil(-2.7) == -2, "math.ceil: negative rounds up")
+assert(math.round(2.5) == 3, "math.round: halves round up")
+assert(math.round(2.4) == 2, "math.round: below half rounds down")
+assert(math.round(2.6) == 3, "math.round: above half rounds up")
+assert(math.trunc(3.9) == 3, "math.trunc: truncates toward zero")
+assert(math.trunc(-3.9) == -3, "math.trunc: negative truncates toward zero")
+
+# Min and Max
+assert(math.max(3, 7) == 7, "math.max: returns larger value")
+assert(math.max(7, 3) == 7, "math.max: works with reversed args")
+assert(math.min(3, 7) == 3, "math.min: returns smaller value")
+assert(math.min(7, 3) == 3, "math.min: works with reversed args")
+assert(math.max(-1, -5) == -1, "math.max: negative values")
+assert(math.min(-1, -5) == -5, "math.min: negative values")
+
+# Clamp
+assert(math.clamp(5, 1, 10) == 5, "math.clamp: value in range stays")
+assert(math.clamp(15, 1, 10) == 10, "math.clamp: value above max returns max")
+assert(math.clamp(-5, 1, 10) == 1, "math.clamp: value below min returns min")
+
+# Square root
+assert(math.sqrt(9) == 3, "math.sqrt: perfect square")
+assert(math.sqrt(16) == 4, "math.sqrt: perfect square 16")
+assert(math.sqrt(2) > 1.41 && math.sqrt(2) < 1.42, "math.sqrt: irrational approximation")
+
+# Trigonometry (radians)
+assert(math.sin(0) == 0, "math.sin: sin(0) is 0")
+assert(math.cos(0) == 1, "math.cos: cos(0) is 1")
+assert(math.tan(0) == 0, "math.tan: tan(0) is 0")
+assert(math.asin(0) == 0, "math.asin: asin(0) is 0")
+assert(math.acos(1) == 0, "math.acos: acos(1) is 0")
+assert(math.atan(0) == 0, "math.atan: atan(0) is 0")
+assert(math.atan2(0, 1) == 0, "math.atan2: atan2(0,1) is 0")
+
+# Logarithm
+assert(math.log(100, 10) == 2, "math.log: log base 10 of 100 is 2")
+assert(math.log(8, 2) == 3, "math.log: log base 2 of 8 is 3")
+assert(math.log(1, 10) == 0, "math.log: log of 1 is 0")
+
+# Hypotenuse
+assert(math.hypot(3, 4) == 5, "math.hypot: 3-4-5 triangle")
+assert(math.hypot(0, 5) == 5, "math.hypot: one leg is zero")
+
+# Random
+var r = math.random()
+assert(r >= 0 && r < 1, "math.random: returns value in [0, 1)")
+var mr2 = math.random_range(10, 20)
+assert(mr2 >= 10 && mr2 < 20, "math.random_range: returns value in [min, max)")
+remove r, mr2
+
+# Lerp
+assert(math.lerp(0.5, 0, 100) == 50, "math.lerp: midpoint interpolation")
+assert(math.lerp(0, 10, 20) == 10, "math.lerp: t=0 returns min")
+assert(math.lerp(1, 10, 20) == 20, "math.lerp: t=1 returns max")
+
+# Float arguments
+assert(math.abs(-3.14) > 3.13 && math.abs(-3.14) < 3.15, "math.abs: float value")
+assert(math.floor(2.7) == 2, "math.floor: float value")
+assert(math.ceil(2.3) == 3, "math.ceil: float value")
+assert(math.sqrt(4.0) == 2, "math.sqrt: float perfect square")
+
+# Math in expressions
+var x = 10
+var result = math.max(x, 5) + math.min(x, 3)
+assert(result == 13, "math: combined with other expressions")
+remove x, result

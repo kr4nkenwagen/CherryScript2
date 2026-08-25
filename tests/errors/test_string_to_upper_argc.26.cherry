@@ -1,0 +1,2 @@
+var err_string_to_upper_argc = $"tests/tmp/cherry tests/errors/scripts/string_to_upper_argc.26.cherry"
+assert(err_string_to_upper_argc.exit_code == 26, "error: string_to_upper_argc.26 exits with 26")

@@ -1,0 +1,2 @@
+var err_len_of_bool = $"tests/tmp/cherry tests/errors/scripts/len_of_bool.19.cherry"
+assert(err_len_of_bool.exit_code == 19, "error: len_of_bool.19 exits with 19")

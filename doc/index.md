@@ -44,6 +44,7 @@ This index groups the small topic files in this directory to make it easier to f
 - [terminal](terminal.md)
 
 ## APIs
+- [math](math.md) — Math constants and functions
 - [http](http.md) — HTTP requests
 - [json](json.md) — JSON data
 - [len](len.md)

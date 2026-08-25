@@ -1,0 +1,2 @@
+var err_string_pad_start_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_argc_b.30.cherry"
+assert(err_string_pad_start_argc_b.exit_code == 30, "error: string_pad_start_argc_b.30 exits with 30")

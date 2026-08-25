@@ -79,6 +79,7 @@ token_type_t :: enum {
 	TERMINAL,
 	EXECUTE,
 	STRING,
+	MATH,
 }
 
 token_t :: struct {

@@ -1,0 +1,2 @@
+var err_string_first_index_of_argc = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_argc.15.cherry"
+assert(err_string_first_index_of_argc.exit_code == 15, "error: string_first_index_of_argc.15 exits with 15")
