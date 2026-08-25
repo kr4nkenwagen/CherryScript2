@@ -35,3 +35,20 @@ function_declaration :: proc(
 	code = stack.push(curr_stack, funct)
 	return
 }
+
+eval_builtin_function_args :: proc(
+	synt: ^types.syntax_t,
+	stck: ^types.vm_t,
+	program: ^types.program_t,
+) -> (
+	ret_vals: []^types.object_t,
+	code: types.exit_codes,
+) {
+	ret_vals = make([]^types.object_t, len(synt.branch.statements), context.allocator)
+	for i := 0; i < len(ret_vals); i += 1 {
+		arg_val, arg_code := eval_primary_expression(synt.branch.statements[i], stck, program)
+		if arg_code != .OK do return nil, arg_code
+		ret_vals[i] = arg_val
+	}
+	return
+}

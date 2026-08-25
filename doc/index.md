@@ -31,23 +31,24 @@ This index groups the small topic files in this directory to make it easier to f
 - [fn](fn.md)
 - [module](module.md)
 
-## I/O & Files
+## I/O & System
 - [print](print.md)
 - [println](println.md)
 - [out](out.md)
 - [err](err.md)
+- [in](in.md) — Read from stdin
 - [file](file.md)
 - [rm](rm.md)
 - [remove](remove.md)
-- [http](http.md)
-- [execute](execute.md)
+- [execute](execute.md) — Run system commands
+- [terminal](terminal.md)
 
-## Collections & Utilities
+## APIs
+- [http](http.md) — HTTP requests
+- [json](json.md) — JSON data
 - [len](len.md)
 - [exists](exists.md)
 - [key](key.md)
-- [json](json.md)
-- [terminal](terminal.md)
 
 ## Time & Sleep
 - [time](time.md)

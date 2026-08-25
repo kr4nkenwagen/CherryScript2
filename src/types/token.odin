@@ -78,6 +78,7 @@ token_type_t :: enum {
 	HTTP,
 	TERMINAL,
 	EXECUTE,
+	STRING,
 }
 
 token_t :: struct {

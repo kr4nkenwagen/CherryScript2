@@ -1,0 +1,68 @@
+# String methods: functionality tests
+# Calling convention: string.method(obj, args...)
+
+# --- contains ---
+assert(string.contains("Hello, World!", "World"), "string.contains: basic match")
+assert(!string.contains("Hello, World!", "xyz"), "string.contains: no match returns false")
+assert(string.contains("", ""), "string.contains: empty substring matches")
+assert(string.contains("abc", "abc"), "string.contains: full string match")
+
+# --- first_index_of ---
+assert(string.first_index_of("Hello, World!", "World") == 7, "string.first_index_of: finds first occurrence")
+assert(string.first_index_of("Hello, World!", "xyz") == -1, "string.first_index_of: not found returns -1")
+assert(string.first_index_of("aaa", "a") == 0, "string.first_index_of: first character")
+
+# --- last_index_of ---
+assert(string.last_index_of("Hello, World!", "l") == 10, "string.last_index_of: finds last occurrence")
+assert(string.last_index_of("Hello, World!", "xyz") == -1, "string.last_index_of: not found returns -1")
+assert(string.last_index_of("aaa", "a") == 2, "string.last_index_of: last character")
+
+# --- first_index_of_from ---
+assert(string.first_index_of_from("Hello, World!", "l", 5) == 5, "string.first_index_of_from: search from offset")
+assert(string.first_index_of_from("Hello, World!", "l", 11) == -1, "string.first_index_of_from: past last occurrence")
+assert(string.first_index_of_from("Hello, World!", "Hello", 0) == 0, "string.first_index_of_from: from start")
+
+# --- trim_start ---
+assert(string.trim_start("  hello  ") == "hello  ", "string.trim_start: removes leading spaces")
+assert(string.trim_start("\t\nhello") == "hello", "string.trim_start: removes tabs and newlines")
+assert(string.trim_start("hello") == "hello", "string.trim_start: no whitespace is no-op")
+assert(string.trim_start("   ") == "", "string.trim_start: all whitespace returns empty")
+
+# --- trim_end ---
+assert(string.trim_end("  hello  ") == "  hello", "string.trim_end: removes trailing spaces")
+assert(string.trim_end("hello\t\n") == "hello", "string.trim_end: removes tabs and newlines")
+assert(string.trim_end("hello") == "hello", "string.trim_end: no whitespace is no-op")
+assert(string.trim_end("   ") == "", "string.trim_end: all whitespace returns empty")
+
+# --- trim ---
+assert(string.trim("  hello  ") == "hello", "string.trim: removes both sides")
+assert(string.trim("\t\nhello\t\n") == "hello", "string.trim: removes tabs and newlines both sides")
+assert(string.trim("hello") == "hello", "string.trim: no whitespace is no-op")
+assert(string.trim("   ") == "", "string.trim: all whitespace returns empty")
+
+# --- to_upper ---
+assert(string.to_upper("hello") == "HELLO", "string.to_upper: basic")
+assert(string.to_upper("Hello World") == "HELLO WORLD", "string.to_upper: preserves spaces")
+assert(string.to_upper("123") == "123", "string.to_upper: digits unchanged")
+
+# --- to_lower ---
+assert(string.to_lower("HELLO") == "hello", "string.to_lower: basic")
+assert(string.to_lower("Hello World") == "hello world", "string.to_lower: preserves spaces")
+assert(string.to_lower("123") == "123", "string.to_lower: digits unchanged")
+
+# --- pad_start ---
+assert(string.pad_start("hi", 5) == "     hi", "string.pad_start: adds leading spaces")
+assert(string.pad_start("hello", 3) == "   hello", "string.pad_start: adds spaces even if shorter")
+assert(string.pad_start("", 3) == "   ", "string.pad_start: empty string")
+
+# --- pad_end ---
+assert(string.pad_end("hi", 5) == "hi     ", "string.pad_end: adds trailing spaces")
+assert(string.pad_end("hello", 3) == "hello   ", "string.pad_end: adds spaces even if shorter")
+assert(string.pad_end("", 3) == "   ", "string.pad_end: empty string")
+
+# --- replace_all ---
+assert(string.replace_all("hello world", "world", "cherry") == "hello cherry", "string.replace_all: basic replacement")
+assert(string.replace_all("aaa", "a", "b") == "bbb", "string.replace_all: replaces all occurrences")
+assert(string.replace_all("hello", "x", "y") == "hello", "string.replace_all: no match returns original")
+assert(string.replace_all("", "a", "b") == "", "string.replace_all: empty string")
+assert(string.replace_all("aaa", "a", "") == "", "string.replace_all: replace with empty removes all")

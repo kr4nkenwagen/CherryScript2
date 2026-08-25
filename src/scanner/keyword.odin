@@ -133,6 +133,9 @@ consume_keyword :: proc(
 		word, match := match_and_consume(src, grammar.SLEEP) or_return
 		if match do return token.create(src, .SLEEP, word)
 
+		word, match = match_and_consume(src, grammar.STRING) or_return
+		if match do return token.create(src, .STRING, word)
+
 	case 'r':
 		fallthrough
 	case 'R':
