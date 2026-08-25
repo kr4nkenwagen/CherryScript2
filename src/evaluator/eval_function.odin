@@ -46,8 +46,7 @@ eval_builtin_function_args :: proc(
 ) {
 	ret_vals = make([]^types.object_t, len(synt.branch.statements), context.allocator)
 	for i := 0; i < len(ret_vals); i += 1 {
-		arg_val, arg_code := eval_primary_expression(synt.branch.statements[i], stck, program)
-		if arg_code != .OK do return nil, arg_code
+		arg_val := eval_primary_expression(synt.branch.statements[i], stck, program) or_return
 		ret_vals[i] = arg_val
 	}
 	return

@@ -2,7 +2,6 @@ package evaluator
 
 import "../object"
 import "../types"
-import "core:crypto/_subtle"
 import "core:strings"
 
 eval_string :: proc(
