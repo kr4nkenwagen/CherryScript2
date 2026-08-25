@@ -1,0 +1,2 @@
+var d
+println(d / 1)

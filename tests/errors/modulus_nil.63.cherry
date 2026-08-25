@@ -1,0 +1,2 @@
+var m
+println(m % 1)
