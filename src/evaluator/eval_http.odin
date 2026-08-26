@@ -12,27 +12,42 @@ eval_http :: proc(
 ) {
 	g_current_syntax = syntax
 	type := syntax.value.token.literal
+	args: []^types.object_t
+	defer delete(args)
+	if syntax.value.value != nil {
+		args = eval_builtin_function_args(syntax.value.value, stck, program) or_return
+	}
 	switch type {
 	case "get":
-		return eval_get(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_GET
+		return eval_get(args[0])
 	case "post":
-		return eval_post(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_POST
+		return eval_post(args[0])
 	case "update":
-		return eval_update(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_UPDATE
+		return eval_update(args[0])
 	case "put":
-		return eval_put(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_PUT
+		return eval_put(args[0])
 	case "delete":
-		return eval_delete(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_DELETE
+		return eval_delete(args[0])
 	case "patch":
-		return eval_patch(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_PATCH
+		return eval_patch(args[0])
 	case "head":
-		return eval_head(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_HEAD
+		return eval_head(args[0])
 	case "options":
-		return eval_options(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_OPTIONS
+		return eval_options(args[0])
 	case "trace":
-		return eval_trace(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_TRACE
+		return eval_trace(args[0])
 	case "connect":
-		return eval_connect(syntax.value, stck, program)
+		if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_CONNECT
+		return eval_connect(args[0])
 	case:
 		code = .UNEXPECTED_MEMBER_IN_EVAL_HTTP
 	}

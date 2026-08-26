@@ -54,6 +54,36 @@ remove res_test_for_cond_int_not_bool
 var res_test_for_cond_not_bool = $"tests/tmp/cherry tests/errors/scripts/for_cond_not_bool.221.cherry"
 assert(res_test_for_cond_not_bool.exit_code == 221, "error: for_cond_not_bool.221 exits with 221")
 remove res_test_for_cond_not_bool
+var res_test_incorrect_number_of_parameters_in_http_connect = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_connect.94.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_connect.exit_code == 94, "error: incorrect_number_of_parameters_in_http_connect.94 exits with 94")
+remove res_test_incorrect_number_of_parameters_in_http_connect
+var res_test_incorrect_number_of_parameters_in_http_delete = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_delete.89.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_delete.exit_code == 89, "error: incorrect_number_of_parameters_in_http_delete.89 exits with 89")
+remove res_test_incorrect_number_of_parameters_in_http_delete
+var res_test_incorrect_number_of_parameters_in_http_get = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_get.85.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_get.exit_code == 85, "error: incorrect_number_of_parameters_in_http_get.85 exits with 85")
+remove res_test_incorrect_number_of_parameters_in_http_get
+var res_test_incorrect_number_of_parameters_in_http_head = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_head.91.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_head.exit_code == 91, "error: incorrect_number_of_parameters_in_http_head.91 exits with 91")
+remove res_test_incorrect_number_of_parameters_in_http_head
+var res_test_incorrect_number_of_parameters_in_http_options = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_options.92.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_options.exit_code == 92, "error: incorrect_number_of_parameters_in_http_options.92 exits with 92")
+remove res_test_incorrect_number_of_parameters_in_http_options
+var res_test_incorrect_number_of_parameters_in_http_patch = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_patch.90.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_patch.exit_code == 90, "error: incorrect_number_of_parameters_in_http_patch.90 exits with 90")
+remove res_test_incorrect_number_of_parameters_in_http_patch
+var res_test_incorrect_number_of_parameters_in_http_post = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_post.86.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_post.exit_code == 86, "error: incorrect_number_of_parameters_in_http_post.86 exits with 86")
+remove res_test_incorrect_number_of_parameters_in_http_post
+var res_test_incorrect_number_of_parameters_in_http_put = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_put.88.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_put.exit_code == 88, "error: incorrect_number_of_parameters_in_http_put.88 exits with 88")
+remove res_test_incorrect_number_of_parameters_in_http_put
+var res_test_incorrect_number_of_parameters_in_http_trace = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_trace.93.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_trace.exit_code == 93, "error: incorrect_number_of_parameters_in_http_trace.93 exits with 93")
+remove res_test_incorrect_number_of_parameters_in_http_trace
+var res_test_incorrect_number_of_parameters_in_http_update = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_update.87.cherry"
+assert(res_test_incorrect_number_of_parameters_in_http_update.exit_code == 87, "error: incorrect_number_of_parameters_in_http_update.87 exits with 87")
+remove res_test_incorrect_number_of_parameters_in_http_update
 var res_test_int_div_string_type = $"tests/tmp/cherry tests/errors/scripts/int_div_string_type.60.cherry"
 assert(res_test_int_div_string_type.exit_code == 60, "error: int_div_string_type.60 exits with 60")
 remove res_test_int_div_string_type

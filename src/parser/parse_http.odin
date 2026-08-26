@@ -19,8 +19,12 @@ parse_http :: proc(
 	val := syntax.create() or_return
 	val.token = ident
 	sntx.value = val
-	adv := token_list.advance(tokens) or_return
-	sntx.value.value = expression(tokens) or_return
-	curr_token := token_list.peek(tokens, 0) or_return
+	next := token_list.peek(tokens, 1) or_return
+	if next.type == .LEFT_PAREN {
+		token_list.advance(tokens) or_return
+		sntx.value.value = passed_function_args(tokens) or_return
+	} else {
+		token_list.advance(tokens) or_return
+	}
 	return
 }

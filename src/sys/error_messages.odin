@@ -345,6 +345,16 @@ error_messages := #partial [types.exit_codes]string {
 	.INCORRECT_PARAMETER_TYPE_IN_MATH_LOG                                           = "math.log() arguments must be numbers, got '%1'.",
 	.INCORRECT_NUMBER_OF_PARAMETERS_IN_MATH_HYPOT                                   = "math.hypot() requires exactly 2 arguments.",
 	.INCORRECT_PARAMETER_TYPE_IN_MATH_HYPOT                                         = "math.hypot() arguments must be numbers, got '%1'.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_GET                                     = "http.get() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_POST                                    = "http.post() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_UPDATE                                  = "http.update() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_PUT                                     = "http.put() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_DELETE                                  = "http.delete() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_PATCH                                   = "http.patch() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_HEAD                                    = "http.head() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_OPTIONS                                 = "http.options() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_TRACE                                   = "http.trace() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_CONNECT                                 = "http.connect() requires exactly 1 argument.",
 }
 
 parse_error :: proc(code: types.exit_codes, token: ^types.token_t) -> (result: string) {
