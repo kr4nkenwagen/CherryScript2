@@ -5,6 +5,7 @@ import "../parser"
 import "../scanner"
 import "../source_code"
 import "../stack"
+import "../sys"
 import "../types"
 import "../vm"
 import "core:bufio"
@@ -36,11 +37,27 @@ run :: proc() -> (code: types.exit_codes) {
 			continue
 		}
 
-		src := source_code.from_repl(line) or_return
-		tokens := scanner.run(src) or_return
-		prgm := parser.run(tokens, nil) or_return
-
-		evaluator.run(prgm, stck, false)
+		src, src_err := source_code.from_repl(line)
+		if sys.is_error(src_err) {
+			sys.print_error(src_err, nil, src)
+			continue
+		}
+		tokens, tokens_err := scanner.run(src)
+		if sys.is_error(tokens_err) {
+			last_token := tokens.list[len(tokens.list) - 1]
+			sys.print_error(tokens_err, last_token, src)
+		}
+		prgm, prgm_err := parser.run(tokens, nil)
+		if sys.is_error(prgm_err) {
+			sys.print_error(prgm_err, tokens.list[tokens.pointer], src)
+		}
+		obj, eval_err := evaluator.run(prgm, stck, false)
+		if sys.is_error(eval_err) {
+			sys.print_error(eval_err, evaluator.g_current_syntax.token, src)
+		}
+		if obj != nil {
+			evaluator.eval_print(obj, false)
+		}
 		free_all(context.temp_allocator)
 	}
 	return
