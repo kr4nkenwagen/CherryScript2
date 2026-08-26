@@ -32,11 +32,9 @@ run :: proc() -> (code: types.exit_codes) {
 		if input == "exit" || input == "quit" {
 			break
 		}
-
 		if len(input) == 0 {
 			continue
 		}
-
 		src, src_err := source_code.from_repl(line)
 		if sys.is_error(src_err) {
 			sys.print_error(src_err, nil, src)
@@ -46,14 +44,17 @@ run :: proc() -> (code: types.exit_codes) {
 		if sys.is_error(tokens_err) {
 			last_token := tokens.list[len(tokens.list) - 1]
 			sys.print_error(tokens_err, last_token, src)
+			continue
 		}
 		prgm, prgm_err := parser.run(tokens, nil)
 		if sys.is_error(prgm_err) {
 			sys.print_error(prgm_err, tokens.list[tokens.pointer], src)
+			continue
 		}
 		obj, eval_err := evaluator.run(prgm, stck, false)
 		if sys.is_error(eval_err) {
 			sys.print_error(eval_err, evaluator.g_current_syntax.token, src)
+			continue
 		}
 		if obj != nil {
 			evaluator.eval_print(obj, false)
