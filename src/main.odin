@@ -7,6 +7,7 @@ import "core:strings"
 import "debug"
 import "evaluator"
 import "parser"
+import "repl"
 import "scanner"
 import "source_code"
 import "stack"
@@ -129,8 +130,12 @@ interprete_program :: proc(
 
 main :: proc() {
 	args := parse_args()
-	if args == nil do return
 	err_code := types.exit_codes.OK
+	if len(args.source_files) == 0 {
+		err_code = repl.run()
+		if err_code != .OK do os.exit(int(err_code))
+	}
+	if args == nil do return
 	for file in args.source_files {
 		src, _ := tokenize(file, args)
 		tokens, tokens_code := build_token_list(src, args)
