@@ -9,7 +9,7 @@ create_int :: proc(value: int) -> (ret_obj: ^types.object_t, code: types.exit_co
 		return nil, .OBJECT_IS_NIL_IN_CREATE_INT
 	}
 	ret_obj.is_marked = false
-	ret_obj.type = types.object_type_t.INT
+	ret_obj.type = .INT
 	ret_obj.data = value
 	return
 }
@@ -20,7 +20,7 @@ create_bool :: proc(value: bool) -> (ret_obj: ^types.object_t, code: types.exit_
 		return nil, .OBJECT_IS_NIL_IN_CREATE_BOOL
 	}
 	ret_obj.is_marked = false
-	ret_obj.type = types.object_type_t.BOOL
+	ret_obj.type = .BOOL
 	ret_obj.data = value
 	return
 }
@@ -31,7 +31,7 @@ create_float :: proc(value: f32) -> (ret_obj: ^types.object_t, code: types.exit_
 		return nil, .OBJECT_IS_NIL_CREATE_FLOAT
 	}
 	ret_obj.is_marked = false
-	ret_obj.type = types.object_type_t.FLOAT
+	ret_obj.type = .FLOAT
 	ret_obj.data = value
 	return
 }
@@ -42,7 +42,7 @@ create_string :: proc(value: string) -> (ret_obj: ^types.object_t, code: types.e
 		return nil, .OBJECT_IS_NIL_IN_CREATE_STRING
 	}
 	ret_obj.is_marked = false
-	ret_obj.type = types.object_type_t.STRING
+	ret_obj.type = .STRING
 	ret_obj.data = value
 	return
 }
@@ -53,7 +53,7 @@ create_array :: proc() -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_ARRAY
 	}
 	ret_obj.is_marked = false
-	ret_obj.type = types.object_type_t.ARRAY
+	ret_obj.type = .ARRAY
 	ret_obj.data = types.object_array_t {
 		count = 0,
 	}

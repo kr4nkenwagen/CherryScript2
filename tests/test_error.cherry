@@ -240,5 +240,7 @@ remove res_test_unassigned_const
 var res_test_undefined_identifier = $"tests/tmp/cherry tests/errors/scripts/undefined_identifier.197.cherry"
 assert(res_test_undefined_identifier.exit_code == 197, "error: undefined_identifier.197 exits with 197")
 remove res_test_undefined_identifier
-
+var res_test= $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_paramters_in_println.95.cherry"
+assert(res_test.exit_code == 95, "error: incorrect_number_of_paramters_in_println exits with 95")
+remove res_test
 test_results()

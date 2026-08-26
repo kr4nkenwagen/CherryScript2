@@ -40,7 +40,7 @@ parse_args :: proc() -> ^types.arguments_t {
 	return args
 }
 
-step_0 :: proc(
+tokenize :: proc(
 	path: string,
 	args: ^types.arguments_t,
 ) -> (
@@ -51,7 +51,7 @@ step_0 :: proc(
 	return
 }
 
-step_1 :: proc(
+build_token_list :: proc(
 	src: ^types.source_code_t,
 	args: ^types.arguments_t,
 ) -> (
@@ -76,7 +76,7 @@ step_1 :: proc(
 	return tokens, .OK
 }
 
-step_2 :: proc(
+build_program :: proc(
 	tokens: ^types.token_list_t,
 	src: ^types.source_code_t,
 	args: ^types.arguments_t,
@@ -98,7 +98,7 @@ step_2 :: proc(
 	return program, .OK
 }
 
-step_3 :: proc(
+interprete_program :: proc(
 	program: ^types.program_t,
 	tokens: ^types.token_list_t,
 	src: ^types.source_code_t,
@@ -132,19 +132,19 @@ main :: proc() {
 	if args == nil do return
 	err_code := types.exit_codes.OK
 	for file in args.source_files {
-		src, _ := step_0(file, args)
-		tokens, tokens_code := step_1(src, args)
+		src, _ := tokenize(file, args)
+		tokens, tokens_code := build_token_list(src, args)
 		if tokens_code != .OK {
 			err_code = tokens_code
 			continue
 		}
-		program, parse_code := step_2(tokens, src, args)
+		program, parse_code := build_program(tokens, src, args)
 		if parse_code != .OK {
 			err_code = parse_code
 			token_list.remove(tokens)
 			continue
 		}
-		eval_code := step_3(program, tokens, src, args)
+		eval_code := interprete_program(program, tokens, src, args)
 		if eval_code != .OK do err_code = eval_code
 		token_list.remove(tokens)
 	}

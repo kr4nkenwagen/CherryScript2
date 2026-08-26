@@ -14,6 +14,7 @@ add :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exi
 			return object.create_int(a.data.(int) + b.data.(int))
 		}
 		if b.type == .STRING {
+
 			return join_string(a, b)
 		}
 	}
@@ -22,6 +23,9 @@ add :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exi
 			return object.create_float(f32(f64(a.data.(f32)) + f64(b.data.(int))))
 		} else if b.type == .FLOAT {
 			return object.create_float(a.data.(f32) + b.data.(f32))
+		} else if b.type == .STRING {
+
+			return join_string(a, b)
 		}
 	}
 	if a.type == .STRING {
