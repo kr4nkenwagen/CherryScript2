@@ -7,3 +7,7 @@ tree-sitter-cherry/build/
 *.dylib
 *.dll
 *.o
+
+# Test scratch files
+tests/tmp/
+odin

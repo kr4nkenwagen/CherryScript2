@@ -60,16 +60,16 @@ Lexical elements
 - Numbers: integers and floating-point numbers (e.g., `12`, `12.34`, `.34`).
 - Strings: single- or double-quoted string wrappers.
 - Special punctuation: parentheses `()`, braces `{}`, brackets `[]`, comma `,`, dot `.`, semicolon/terminator, colon `:`.
-- Operators: `+ - * / %`, comparisons `== != > < >= <=`, assignment `=`, compound `+=` etc., range/operator `..`, and arrow file ops `->` `<-`.
-- Keywords: `and`, `break`, `class`, `const`, `continue`, `else`, `err`, `for`, `false`, `fn`, `if`, `null`, `nil`, `module`, `or`, `out`, `println`, `print`, `return`, `remove`, `super`, `this`, `true`, `var`, `while`, `len`, `in`, `key`, `rm`, `exists` (see `tree-sitter-cherry/grammar.js`).
+- Operators: `+ - * / %`, comparisons `== != > < >= <=`, assignment `=`, compound `+=` etc., range/operator `..`, arrow file ops `->` `<-`, and system command execution `$`.
+- Keywords: `break`, `const`, `continue`, `else`, `err`, `for`, `false`, `fn`, `if`, `null`, `out`, `println`, `print`, `return`, `remove`, `true`, `var`, `len`, `in`, `key`, `rm`, `exists`, `sleep`, `global`, `json`, `http`, `terminal` (see `tree-sitter-cherry/grammar.js`).
 
 Types
-- INT, FLOAT, STRING, ARRAY, BOOL, NULL/NIL, FUNCTION, FILE (as seen in object modules and evaluator).
+- INT, FLOAT, STRING, ARRAY, BOOL, NULL, FUNCTION, FILE, JSON (as seen in object modules and evaluator).
 
 Control flow
-- `if` / `else if` / `else` blocks
+- `if` / `elif` / `else` blocks
 - `for` loops with three-part syntax: `for (init; condition; increment) { ... }`
-- `while` loops
+- `for` loops with one-part syntax: `for (condition) { ... }`
 - `break` / `continue`
 
 Functions
@@ -84,6 +84,7 @@ Standard library (selected)
 - key() — read a single keystroke
 - exists(file) — check if file exists
 - rm(file) — remove/delete file
+- $"cmd" — execute a system command and return its stdout as a string
 
 ## Formal grammar (EBNF)
 
@@ -203,6 +204,16 @@ println(len("abc") == 3)
 # float value example
 var f = 12.34
 println(f)
+```
+
+### System Commands
+11) **Execute system commands** — inline `$"cmd"` syntax
+```
+var cwd = $"pwd"
+println(cwd)
+
+var files = $"ls -la"
+println(files)
 ```
 
 ### Real-World Examples
