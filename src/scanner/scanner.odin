@@ -5,6 +5,7 @@ import "../sys"
 import "../token"
 import "../token_list"
 import "../types"
+import "core:fmt"
 
 run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: types.exit_codes) {
 	if src == nil do return nil, .OBJECT_IS_NIL_IN_SCANNER
@@ -266,8 +267,7 @@ run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: 
 			if sys.is_error(err) && err != .OUT_OF_BOUNDS_IN_SOURCE_CODE_PEEK do return nil, err
 
 			if res_word == nil {
-				word, word_err := consume_identifier(src)
-				if sys.is_error(word_err) && word_err != .OUT_OF_BOUNDS_IN_SOURCE_CODE_PEEK do return nil, word_err
+				word := consume_identifier(src) or_return
 				if len(word.literal) > 0 do token_list.add(tkn_list, word) or_return
 			} else {
 				token_list.add(tkn_list, res_word) or_return

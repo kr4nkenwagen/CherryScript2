@@ -359,6 +359,6 @@ error_messages := #partial [types.exit_codes]string {
 }
 
 parse_error :: proc(code: types.exit_codes, token: ^types.token_t) -> (result: string) {
-	result, _ = strings.replace_all(error_messages[code], "%1", token.literal)
+	result, _ = strings.replace_all(error_messages[code], "%1", token != nil ? token.literal : "")
 	return
 }

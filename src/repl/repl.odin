@@ -42,7 +42,7 @@ run :: proc() -> (code: types.exit_codes) {
 		}
 		tokens, tokens_err := scanner.run(src)
 		if sys.is_error(tokens_err) {
-			last_token := tokens.list[len(tokens.list) - 1]
+			last_token := len(tokens.list) > 0 ? tokens.list[len(tokens.list) - 1] : nil
 			sys.print_error(tokens_err, last_token, src)
 			continue
 		}
