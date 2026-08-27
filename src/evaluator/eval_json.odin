@@ -13,7 +13,9 @@ eval_json :: proc(
 	code: types.exit_codes,
 ) {
 	g_current_syntax = syntax
-	val := eval_primary_expression(syntax.value, stck, program) or_return
+	args := eval_builtin_function_args(syntax, stck, program) or_return
+	if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_JSON
+	val := args[0]
 	#partial switch (val.type) {
 	case .STRING:
 		return object.create_json(val.data.(string))

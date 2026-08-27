@@ -12,7 +12,7 @@ parse_print :: proc(
 ) {
 	sntx = syntax.create() or_return
 	sntx.token = token_list.peek(tokens, 0) or_return
-	token_list.advance(tokens) or_return
-	sntx.value = expression(tokens) or_return
+	curr_token := token_list.advance(tokens) or_return
+	sntx.value = passed_function_args(tokens) or_return
 	return
 }

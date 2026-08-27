@@ -93,8 +93,8 @@ remove res_test_int_mod_string_type
 var res_test_int_sub_string_type = $"tests/tmp/cherry tests/errors/scripts/int_sub_string_type.50.cherry"
 assert(res_test_int_sub_string_type.exit_code == 50, "error: int_sub_string_type.50 exits with 50")
 remove res_test_int_sub_string_type
-var res_test_len_of_bool = $"tests/tmp/cherry tests/errors/scripts/len_of_bool.19.cherry"
-assert(res_test_len_of_bool.exit_code == 19, "error: len_of_bool.19 exits with 19")
+var res_test_len_of_bool = $"tests/tmp/cherry tests/errors/scripts/len_of_bool.11.cherry"
+assert(res_test_len_of_bool.exit_code == 11, "error: len_of_bool.11 exits with 11")
 remove res_test_len_of_bool
 var res_test_mod_by_zero = $"tests/tmp/cherry tests/errors/scripts/mod_by_zero.184.cherry"
 assert(res_test_mod_by_zero.exit_code == 184, "error: mod_by_zero.184 exits with 184")

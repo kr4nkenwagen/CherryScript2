@@ -44,6 +44,7 @@ eval_builtin_function_args :: proc(
 	ret_vals: []^types.object_t,
 	code: types.exit_codes,
 ) {
+	synt := synt.value
 	ret_vals = make([]^types.object_t, len(synt.branch.statements), context.allocator)
 	for i := 0; i < len(ret_vals); i += 1 {
 		arg_val := eval_primary_expression(synt.branch.statements[i], stck, program) or_return

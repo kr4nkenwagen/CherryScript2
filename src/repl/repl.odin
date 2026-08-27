@@ -57,7 +57,7 @@ run :: proc() -> (code: types.exit_codes) {
 			continue
 		}
 		if obj != nil {
-			evaluator.eval_print(obj, false)
+			evaluator.print_object(obj, false)
 		}
 		free_all(context.temp_allocator)
 	}

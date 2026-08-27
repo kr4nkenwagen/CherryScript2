@@ -14,7 +14,7 @@ eval_string :: proc(
 ) {
 	g_current_syntax = syntax
 	type := syntax.value.token.literal
-	args := eval_builtin_function_args(syntax.value.value, stck, program) or_return
+	args := eval_builtin_function_args(syntax.value, stck, program) or_return
 	defer delete(args)
 	switch type {
 	case "contains":

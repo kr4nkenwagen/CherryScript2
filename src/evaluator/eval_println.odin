@@ -13,7 +13,7 @@ eval_println :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil || syntax.value == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINTLN
-	args := eval_builtin_function_args(syntax.value, stck, prgm) or_return
+	args := eval_builtin_function_args(syntax, stck, prgm) or_return
 	if len(args) != 1 do return .INCORRECT_NUMBER_OF_PARAMETERS_IN_PRINTLN
 	obj := args[0]
 	if obj.type == .JSON {
@@ -21,11 +21,11 @@ eval_println :: proc(
 		str_obj := object.create_string(text) or_return
 		newline := object.create_string("\n") or_return
 		formated_obj := object.add(str_obj, newline) or_return
-		eval_print(formated_obj, debug_mode) or_return
+		print_object(formated_obj, debug_mode) or_return
 	} else {
 		newline := object.create_string("\n") or_return
 		formated_obj := object.add(obj, newline) or_return
-		eval_print(formated_obj, debug_mode) or_return
+		print_object(formated_obj, debug_mode) or_return
 	}
 	return
 }

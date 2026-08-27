@@ -47,8 +47,7 @@ eval_primary_expression :: proc(
 	case .FOR:
 		return nil, eval_for(syntax, stck, program)
 	case .PRINT:
-		val := eval_primary_expression(syntax.value, stck, program) or_return
-		eval_print(val, g_debug)
+		eval_print(syntax, stck, program, g_debug)
 		return nil, .OK
 	case .FUNCTION:
 		return nil, function_declaration(syntax, stck)
@@ -104,11 +103,9 @@ eval_primary_expression :: proc(
 	case .FALSE:
 		return object.create_bool(false)
 	case .LENGTH:
-		val := eval_primary_expression(syntax.value.branch.statements[0], stck, program) or_return
-		return eval_length(val)
+		return eval_length(syntax, stck, program)
 	case .EXISTS:
-		val := eval_primary_expression(syntax.value.branch.statements[0], stck, program) or_return
-		return eval_exists(val)
+		return eval_exists(syntax, stck, program)
 	case .RIGHT_ARROW:
 		return eval_file_extraction(syntax, stck, program)
 	case .PLUS, .MINUS, .STAR, .SLASH, .MODULUS:

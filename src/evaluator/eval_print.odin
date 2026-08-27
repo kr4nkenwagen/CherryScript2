@@ -83,8 +83,7 @@ print_out :: proc(str: string, debug_mode: bool) {
 	}
 }
 
-eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_codes) {
-	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINT
+print_object :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_codes) {
 	switch obj.type {
 	case .STRING:
 		print_out(obj.data.(string), debug_mode)
@@ -98,6 +97,23 @@ eval_print :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_
 	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
 		break
 	}
+	return
+}
+
+eval_print :: proc(
+	sntx: ^types.syntax_t,
+	stck: ^types.vm_t,
+	prgm: ^types.program_t,
+	debug_mode: bool,
+) -> (
+	code: types.exit_codes,
+) {
+	if sntx.value.branch == nil do return
+	args := eval_builtin_function_args(sntx, stck, prgm) or_return
+	if len(args) != 1 do return .INCORRECT_NUMBER_OF_PARAMETERS_IN_PRINT
+	obj := args[0]
+	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINT
+	print_object(obj, g_debug)
 	return
 }
 pretty_print_json :: proc(json_str: string) -> (code: types.exit_codes) {

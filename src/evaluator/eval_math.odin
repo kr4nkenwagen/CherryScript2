@@ -18,7 +18,7 @@ eval_math :: proc(
 	args: []^types.object_t
 	defer delete(args)
 	if syntax.value.value != nil {
-		args = eval_builtin_function_args(syntax.value.value, stck, program) or_return
+		args = eval_builtin_function_args(syntax.value, stck, program) or_return
 	}
 	switch type {
 	case "pi":
