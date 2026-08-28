@@ -356,6 +356,10 @@ error_messages := #partial [types.exit_codes]string {
 	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_TRACE                                      = "http.trace() requires exactly 1 argument.",
 	.INCORRECT_NUMBER_OF_PARAMETERS_IN_HTTP_CONNECT                                    = "http.connect() requires exactly 1 argument.",
 	.INCORRECT_NUMBER_OF_PARAMETERS_IN_PRINTLN                                         = "println() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_LEN                                             = "len() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_EXISTS                                          = "exists() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_JSON                                            = "json() requires exactly 1 argument.",
+	.INCORRECT_NUMBER_OF_PARAMETERS_IN_PRINT                                           = "print() requires exactly 1 argument.",
 }
 
 parse_error :: proc(code: types.exit_codes, token: ^types.token_t) -> (result: string) {

@@ -10,6 +10,7 @@ eval_out :: proc(
 	code: types.exit_codes,
 ) {
 	g_current_syntax = syntax
-	eval_print(syntax, stck, program, g_debug)
+	val := eval_primary_expression(syntax.value, stck, program) or_return
+	print_object(val, g_debug)
 	return
 }

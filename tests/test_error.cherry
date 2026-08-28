@@ -84,6 +84,18 @@ remove res_test_incorrect_number_of_parameters_in_http_trace
 var res_test_incorrect_number_of_parameters_in_http_update = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_update.87.cherry"
 assert(res_test_incorrect_number_of_parameters_in_http_update.exit_code == 87, "error: incorrect_number_of_parameters_in_http_update.87 exits with 87")
 remove res_test_incorrect_number_of_parameters_in_http_update
+var res_test_incorrect_number_of_parameters_in_exists = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_exists.97.cherry"
+assert(res_test_incorrect_number_of_parameters_in_exists.exit_code == 97, "error: incorrect_number_of_parameters_in_exists.97 exits with 97")
+remove res_test_incorrect_number_of_parameters_in_exists
+var res_test_incorrect_number_of_parameters_in_json = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_json.98.cherry"
+assert(res_test_incorrect_number_of_parameters_in_json.exit_code == 98, "error: incorrect_number_of_parameters_in_json.98 exits with 98")
+remove res_test_incorrect_number_of_parameters_in_json
+var res_test_incorrect_number_of_parameters_in_len = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_len.96.cherry"
+assert(res_test_incorrect_number_of_parameters_in_len.exit_code == 96, "error: incorrect_number_of_parameters_in_len.96 exits with 96")
+remove res_test_incorrect_number_of_parameters_in_len
+var res_test_incorrect_number_of_parameters_in_print = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_print.99.cherry"
+assert(res_test_incorrect_number_of_parameters_in_print.exit_code == 99, "error: incorrect_number_of_parameters_in_print.99 exits with 99")
+remove res_test_incorrect_number_of_parameters_in_print
 var res_test_int_div_string_type = $"tests/tmp/cherry tests/errors/scripts/int_div_string_type.60.cherry"
 assert(res_test_int_div_string_type.exit_code == 60, "error: int_div_string_type.60 exits with 60")
 remove res_test_int_div_string_type
@@ -93,8 +105,8 @@ remove res_test_int_mod_string_type
 var res_test_int_sub_string_type = $"tests/tmp/cherry tests/errors/scripts/int_sub_string_type.50.cherry"
 assert(res_test_int_sub_string_type.exit_code == 50, "error: int_sub_string_type.50 exits with 50")
 remove res_test_int_sub_string_type
-var res_test_len_of_bool = $"tests/tmp/cherry tests/errors/scripts/len_of_bool.11.cherry"
-assert(res_test_len_of_bool.exit_code == 11, "error: len_of_bool.11 exits with 11")
+var res_test_len_of_bool = $"tests/tmp/cherry tests/errors/scripts/len_of_bool.19.cherry"
+assert(res_test_len_of_bool.exit_code == 19, "error: len_of_bool.19 exits with 19")
 remove res_test_len_of_bool
 var res_test_mod_by_zero = $"tests/tmp/cherry tests/errors/scripts/mod_by_zero.184.cherry"
 assert(res_test_mod_by_zero.exit_code == 184, "error: mod_by_zero.184 exits with 184")

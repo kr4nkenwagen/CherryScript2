@@ -47,7 +47,7 @@ eval_primary_expression :: proc(
 	case .FOR:
 		return nil, eval_for(syntax, stck, program)
 	case .PRINT:
-		eval_print(syntax, stck, program, g_debug)
+		eval_print(syntax, stck, program, g_debug) or_return
 		return nil, .OK
 	case .FUNCTION:
 		return nil, function_declaration(syntax, stck)
