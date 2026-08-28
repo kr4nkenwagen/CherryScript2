@@ -121,7 +121,8 @@ interprete_program :: proc(
 	if sys.is_error(vm_err) do sys.print_error(vm_err, nil, src)
 	_, code = evaluator.run(program, curr_vm, args.debug_level == .EVAL)
 	if sys.is_error(code) {
-		sys.print_error(code, evaluator.g_current_syntax.token, src)
+		err_token := evaluator.g_current_syntax != nil ? evaluator.g_current_syntax.token : nil
+		sys.print_error(code, err_token, src)
 		return code
 	}
 	if args.debug_level == .EVAL do debug.inspect_snapshots()

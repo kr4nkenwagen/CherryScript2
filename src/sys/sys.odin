@@ -70,7 +70,7 @@ print_error :: proc(
 	)
 	for i := src_start; i <= raw_line; i += 1 {
 
-		fmt.printf("%3d%s|%s %s\n", i + 1, CLR_MUTED, CLR_RESET, split_src[i])
+		fmt.printf("%3d%s|%s %s\n", i + 1, CLR_MUTED, CLR_RESET, paint_code(split_src[i]))
 	}
 	fmt.printf(
 		"   %s|%s %s%s%s%s %s%s\n",

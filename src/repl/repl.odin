@@ -75,7 +75,8 @@ run :: proc() -> (code: types.exit_codes) {
 		}
 		obj, eval_err := evaluator.run(prgm, stck, false)
 		if sys.is_error(eval_err) {
-			sys.print_error(eval_err, evaluator.g_current_syntax.token, src)
+			err_token := evaluator.g_current_syntax != nil ? evaluator.g_current_syntax.token : nil
+			sys.print_error(eval_err, err_token, src)
 			continue
 		}
 		if obj != nil {
