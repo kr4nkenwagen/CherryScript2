@@ -15,7 +15,7 @@ create :: proc(content: string) -> (src: ^types.source_code_t, code: types.exit_
 	src.length = len(src.content)
 	src.pointer = -1
 	src.line = 1
-	src.column = 0
+	src.column = 1
 	src.is_at_end = false
 	return
 }
@@ -113,7 +113,7 @@ advance :: proc(
 		src.column += 1
 		if src.content[src.pointer] == '\n' {
 			src.line += 1
-			src.column = 0
+			src.column = 1
 		}
 	}
 	char = rune(src.content[src.pointer])

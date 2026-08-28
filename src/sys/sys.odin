@@ -48,7 +48,7 @@ print_error :: proc(
 	src_start := raw_line - 3 > 0 ? raw_line - 3 : 0
 	marker_length := len(token.literal)
 	if marker_length < 0 do marker_length = 0
-	column := token.column
+	column := token.column - 1
 	if column < 0 do column = 0
 	literal_marker := strings.repeat("^", marker_length)
 	literal_marker_distance := strings.repeat(" ", column)
