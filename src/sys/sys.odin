@@ -52,6 +52,7 @@ print_error :: proc(
 	if column < 0 do column = 0
 	literal_marker := strings.repeat("^", marker_length)
 	literal_marker_distance := strings.repeat(" ", column)
+	if src.location == {} do src.location = "REPL"
 	fmt.printf(
 		"%s%s[ERR]%s In [%s%s%s] %s%d%s:%s%d\n%s",
 		CLR_ERR,
