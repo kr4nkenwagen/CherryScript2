@@ -9,7 +9,7 @@ eval_continue :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	curr_prog := program
 	for curr_prog.type != .LOOP {
 		if curr_prog.parent == nil {

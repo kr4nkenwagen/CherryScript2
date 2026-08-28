@@ -10,7 +10,7 @@ eval_http :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	type := syntax.value.token.literal
 	args: []^types.object_t
 	defer delete(args)

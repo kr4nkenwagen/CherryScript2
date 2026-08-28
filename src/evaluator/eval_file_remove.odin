@@ -13,7 +13,7 @@ eval_file_remove :: proc(
 	code: types.exit_codes,
 ) {
 	if synt == nil do return .OBJECT_IS_NIL_IN_EVAL_FILE_REMOVE
-	g_current_syntax = synt
+	prog.stats.current_syntax = synt
 	curr := synt.left
 	for curr != nil && curr.token.type == .IDENTIFIER {
 		curr_stack := vm.current_frame(stck) or_return

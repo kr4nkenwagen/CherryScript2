@@ -119,9 +119,9 @@ interprete_program :: proc(
 	if sys.is_error(stack_code) do sys.print_error(stack_code, nil, src)
 	vm_err := vm.push_frame(curr_vm, curr_stack, false)
 	if sys.is_error(vm_err) do sys.print_error(vm_err, nil, src)
-	_, code = evaluator.run(program, curr_vm, args.debug_level == .EVAL)
+	_, code = evaluator.run(program, curr_vm)
 	if sys.is_error(code) {
-		err_token := evaluator.g_current_syntax != nil ? evaluator.g_current_syntax.token : nil
+		err_token := program.stats.current_syntax != nil ? program.stats.current_syntax.token : nil
 		sys.print_error(code, err_token, src)
 		return code
 	}
@@ -133,7 +133,7 @@ main :: proc() {
 	args := parse_args()
 	err_code := types.exit_codes.OK
 	if len(args.source_files) == 0 {
-		err_code = repl.run()
+		err_code = repl.run(args)
 		if err_code != .OK do os.exit(int(err_code))
 	}
 	if args == nil do return
@@ -145,6 +145,7 @@ main :: proc() {
 			continue
 		}
 		program, parse_code := build_program(tokens, src, args)
+		program.args = args
 		if parse_code != .OK {
 			err_code = parse_code
 			token_list.remove(tokens)

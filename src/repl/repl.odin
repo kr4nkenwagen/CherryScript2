@@ -14,7 +14,7 @@ import "core:os"
 import "core:strings"
 import "vendor:curl"
 
-run :: proc() -> (code: types.exit_codes) {
+run :: proc(args: ^types.arguments_t) -> (code: types.exit_codes) {
 	is_tty := os.is_tty(os.stdin)
 	reader: bufio.Reader
 	editor: Editor
@@ -69,22 +69,23 @@ run :: proc() -> (code: types.exit_codes) {
 			continue
 		}
 		prgm, prgm_err := parser.run(tokens, nil)
+		prgm.args = args
 		if sys.is_error(prgm_err) {
 			sys.print_error(prgm_err, tokens.list[tokens.pointer], src)
 			continue
 		}
-		obj, eval_err := evaluator.run(prgm, stck, false)
+		obj, eval_err := evaluator.run(prgm, stck)
 		if sys.is_error(eval_err) {
-			err_token := evaluator.g_current_syntax != nil ? evaluator.g_current_syntax.token : nil
+			err_token := prgm.stats.current_syntax != nil ? prgm.stats.current_syntax.token : nil
 			sys.print_error(eval_err, err_token, src)
 			continue
 		}
 		if obj != nil {
-			evaluator.print_object(obj, false)
+			evaluator.print_object(obj, prgm)
 			fmt.printf("\n")
-			evaluator.g_terminal_output_newline = true
+			prgm.stats.force_print_newline = true
 		}
-		if is_tty && !evaluator.g_terminal_output_newline {
+		if is_tty && !prgm.stats.force_print_newline {
 			fmt.println()
 		}
 		free_all(context.temp_allocator)

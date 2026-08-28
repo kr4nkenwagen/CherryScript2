@@ -8,11 +8,12 @@ import "../vm"
 eval_base_identifier :: proc(
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
+	prgm: ^types.program_t,
 ) -> (
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = synt
+	prgm.stats.current_syntax = synt
 	curr_stack := vm.current_frame(stck) or_return
 	ret_obj = stack.get(curr_stack, synt.token.literal) or_return
 	if ret_obj == nil do return nil, .IDENTIFIER_DOES_NOT_EXIST_IN_EVAL_BASE_IDENTIFIER
@@ -23,11 +24,12 @@ eval_base_identifier :: proc(
 eval_member_access :: proc(
 	obj: ^types.object_t,
 	member_synt: ^types.syntax_t,
+	prgm: ^types.program_t,
 ) -> (
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = member_synt
+	prgm.stats.current_syntax = member_synt
 	if obj.type != .JSON do return nil, .OBJECT_IS_NOT_JSON_OBJECT_IN_EVAL_MEMBER_ACCESS
 	ret_obj = object.json_get(obj, member_synt.token.literal) or_return
 	return
@@ -42,7 +44,7 @@ eval_index_access :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = index_synt
+	prog.stats.current_syntax = index_synt
 	if obj.type != .ARRAY do return nil, .EXPECTED_ARRAY_IN_EVAL_INDEX_ACCESS
 	index_obj: ^types.object_t
 	index_err: types.exit_codes
@@ -60,18 +62,19 @@ eval_function_call :: proc(
 	obj: ^types.object_t,
 	synt: ^types.syntax_t,
 	stck: ^types.vm_t,
+	prgm: ^types.program_t,
 ) -> (
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = synt
+	prgm.stats.current_syntax = synt
 	if synt.left == nil do return obj, .OK
 
 	if obj.type != .FUNCTION do return nil, .OBJECT_IS_NOT_FUNCTION_EVAL_FUNCTION_CALL
 
 	converted_ptr := transmute(^types.syntax_t)obj.data.(rawptr)
 	converted_ptr.value = synt.left
-	ret_obj = function_identifier(converted_ptr, stck) or_return
+	ret_obj = function_identifier(converted_ptr, stck, prgm) or_return
 	return
 }
 
@@ -83,14 +86,14 @@ eval_identifier :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = synt
-	curr_obj := eval_base_identifier(synt, stck) or_return
+	prog.stats.current_syntax = synt
+	curr_obj := eval_base_identifier(synt, stck, prog) or_return
 	curr_synt := synt
 	for curr_synt.value != nil {
 		curr_synt = curr_synt.value
 		#partial switch curr_obj.type {
 		case .JSON:
-			next_obj := eval_member_access(curr_obj, curr_synt) or_return
+			next_obj := eval_member_access(curr_obj, curr_synt, prog) or_return
 			curr_obj = next_obj
 
 		case .ARRAY:
@@ -101,6 +104,6 @@ eval_identifier :: proc(
 			return nil, .INTERPRETER_ERROR_IN_EVAL_IDENTIFIER
 		}
 	}
-	ret_obj = eval_function_call(curr_obj, synt, stck) or_return
+	ret_obj = eval_function_call(curr_obj, synt, stck, prog) or_return
 	return
 }

@@ -1,6 +1,7 @@
 package program
 
 import "../types"
+import "core:time"
 
 create :: proc(parent: ^types.program_t) -> (prgm: ^types.program_t, code: types.exit_codes) {
 	prgm = new(types.program_t)
@@ -13,6 +14,15 @@ create :: proc(parent: ^types.program_t) -> (prgm: ^types.program_t, code: types
 	prgm.ret_value = nil
 	prgm.type = .SOURCE
 	prgm.parent = parent
+	if parent != nil {
+		prgm.args = parent.args
+		prgm.stats = parent.stats
+	} else {
+		prgm.stats = new(types.statistics_t)
+		prgm.stats.start_time = new(time.Tick)
+		prgm.stats.start_time^ = time.tick_now()
+	}
+
 	return
 }
 

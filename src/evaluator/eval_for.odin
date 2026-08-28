@@ -12,7 +12,7 @@ eval_for :: proc(
 	code: types.exit_codes,
 ) {
 	if syntax == nil do return .OBJECT_IS_NIL_IN_EVAL_FOR
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	if syntax.left == nil && syntax.right == nil {
 		return eval_while(syntax, stck, program)
 	}
@@ -25,7 +25,7 @@ eval_for :: proc(
 	}
 
 	for !syntax.branch.exit && condition.data.(bool) == true {
-		branch(syntax, stck) or_return
+		branch(syntax, stck, program) or_return
 		eval_primary_expression(syntax.right, stck, program) or_return
 		condition = eval_primary_expression(syntax.value, stck, program) or_return
 	}

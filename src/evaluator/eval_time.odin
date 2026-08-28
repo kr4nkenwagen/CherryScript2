@@ -14,7 +14,7 @@ eval_time :: proc(
 	code: types.exit_codes,
 ) {
 	type := syntax.value.token.literal
-	g_current_syntax = syntax.value
+	program.stats.current_syntax = syntax.value
 	tz_offset_seconds: i64 = 2 * 3600
 	utc_now := time.now()
 	local_now := time.Time {
@@ -55,7 +55,7 @@ eval_time :: proc(
 		doy := calculate_day_of_year(int(dt.year), int(dt.month), int(dt.day))
 		return object.create_int(doy)
 	case "execution_time":
-		elapsed := time.tick_since(g_start_time_execution^)
+		elapsed := time.tick_since(program.stats.start_time^)
 		seconds := time.duration_seconds(elapsed)
 		return object.create_float(f32(seconds))
 	case:

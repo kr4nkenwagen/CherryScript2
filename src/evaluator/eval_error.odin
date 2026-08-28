@@ -12,7 +12,7 @@ eval_error :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	val := eval_primary_expression(syntax.value, stck, program) or_return
 	print_object_err(val)
 	return

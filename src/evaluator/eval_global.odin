@@ -9,9 +9,9 @@ eval_global :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	if syntax.value.token.type == .VAR || syntax.value.token.type == .CONST do return variable_declarations(syntax.value, stck, program, true)
-	if syntax.value.token.type == .FUNCTION do return function_declaration(syntax.value, stck, true)
+	if syntax.value.token.type == .FUNCTION do return function_declaration(syntax.value, stck, program, true)
 	code = .OBJECT_NOT_VARIABLE_OR_FUNCTION_CANT_BE_GLOBAL_IN_EVAL_GLOBAL
 	return
 }

@@ -10,7 +10,7 @@ eval_if :: proc(
 ) -> (
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	curr_syntax := syntax
 	for curr_syntax != nil &&
 	    (curr_syntax.token.type == .IF ||
@@ -21,7 +21,7 @@ eval_if :: proc(
 			if sys.is_error(cond_err) do return cond_err
 		}
 		if curr_syntax.token.type == .ELSE || condition.data.(bool) == true {
-			_, branch_err := branch(curr_syntax, stck)
+			_, branch_err := branch(curr_syntax, stck, program)
 			return branch_err
 		}
 		curr_syntax = curr_syntax.right

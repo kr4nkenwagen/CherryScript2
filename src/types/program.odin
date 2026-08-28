@@ -8,6 +8,8 @@ program_type_t :: enum {
 }
 
 program_t :: struct {
+	args:        ^arguments_t,
+	stats:       ^statistics_t,
 	exit:        bool,
 	breaking:    bool,
 	continueing: bool,

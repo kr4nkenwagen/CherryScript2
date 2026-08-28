@@ -9,7 +9,6 @@ import "core:fmt"
 import "core:strconv"
 import "core:strings"
 
-g_terminal_output_newline := true
 
 translate_hex_colors :: proc(input: string, allocator := context.allocator) -> string {
 	b := strings.builder_make(allocator)
@@ -56,9 +55,9 @@ translate_hex_colors :: proc(input: string, allocator := context.allocator) -> s
 	return strings.to_string(b)
 }
 
-print_out :: proc(str: string, debug_mode: bool) {
+print_out :: proc(str: string, prgm: ^types.program_t) {
 	str := translate_hex_colors(str)
-	if debug_mode {
+	if prgm.args != nil && prgm.args.debug_level == .EVAL {
 		append(&debug.g_output_log, str)
 		return
 	}
@@ -89,18 +88,18 @@ print_out :: proc(str: string, debug_mode: bool) {
 		fmt.print("\\")
 		last = '\\'
 	}
-	g_terminal_output_newline = last == '\n'
+	prgm.stats.force_print_newline = last == '\n'
 }
 
-print_object :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_codes) {
+print_object :: proc(obj: ^types.object_t, prgm: ^types.program_t) -> (code: types.exit_codes) {
 	switch obj.type {
 	case .STRING:
-		print_out(obj.data.(string), debug_mode)
+		print_out(obj.data.(string), prgm)
 	case .INT:
 		num, err := object.int_to_number(int(obj.data.(int)))
-		if !sys.is_error(err) do print_out(num, debug_mode)
+		if !sys.is_error(err) do print_out(num, prgm)
 	case .JSON:
-		if debug_mode do break
+		if prgm.args.debug_level == .EVAL do break
 		text := object.to_json_string(obj) or_return
 		pretty_print_json(text)
 	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
@@ -113,7 +112,6 @@ eval_print :: proc(
 	sntx: ^types.syntax_t,
 	stck: ^types.vm_t,
 	prgm: ^types.program_t,
-	debug_mode: bool,
 ) -> (
 	code: types.exit_codes,
 ) {
@@ -122,7 +120,7 @@ eval_print :: proc(
 	if len(args) != 1 do return .INCORRECT_NUMBER_OF_PARAMETERS_IN_PRINT
 	obj := args[0]
 	if obj == nil do return .OBJECT_IS_NIL_IN_EVAL_PRINT
-	print_object(obj, g_debug)
+	print_object(obj, prgm)
 	return
 }
 pretty_print_json :: proc(json_str: string) -> (code: types.exit_codes) {

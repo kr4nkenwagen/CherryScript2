@@ -12,7 +12,7 @@ eval_string :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	type := syntax.value.token.literal
 	args := eval_builtin_function_args(syntax.value, stck, program) or_return
 	defer delete(args)

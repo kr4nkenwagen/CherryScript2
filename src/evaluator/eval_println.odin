@@ -21,11 +21,11 @@ eval_println :: proc(
 		str_obj := object.create_string(text) or_return
 		newline := object.create_string("\n") or_return
 		formated_obj := object.add(str_obj, newline) or_return
-		print_object(formated_obj, debug_mode) or_return
+		print_object(formated_obj, prgm) or_return
 	} else {
 		newline := object.create_string("\n") or_return
 		formated_obj := object.add(obj, newline) or_return
-		print_object(formated_obj, debug_mode) or_return
+		print_object(formated_obj, prgm) or_return
 	}
 	return
 }

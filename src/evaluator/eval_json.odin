@@ -12,7 +12,7 @@ eval_json :: proc(
 	ret_obj: ^types.object_t,
 	code: types.exit_codes,
 ) {
-	g_current_syntax = syntax
+	program.stats.current_syntax = syntax
 	args := eval_builtin_function_args(syntax, stck, program) or_return
 	if len(args) != 1 do return nil, .INCORRECT_NUMBER_OF_PARAMETERS_IN_JSON
 	val := args[0]
