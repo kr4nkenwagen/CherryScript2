@@ -2,7 +2,7 @@ package sys
 
 import "core:strings"
 
-KEYWORDS :: []string{
+KEYWORDS :: []string {
 	"break",
 	"const",
 	"continue",
@@ -44,7 +44,7 @@ paint_t :: struct {
 
 paint_code :: proc(text: string, allocator := context.allocator) -> string {
 	if len(text) == 0 do return ""
-	bytes := transmute([]u8) text
+	bytes := transmute([]u8)text
 	p: paint_t
 	p.b = strings.builder_make(allocator)
 	i := 0
@@ -63,7 +63,9 @@ paint_code :: proc(text: string, allocator := context.allocator) -> string {
 			end := scan_comment(bytes, i)
 			emit(&p, CLR_MUTED, string(bytes[i:end]))
 			i = end
-		} else if is_digit(ch) || (ch == '.' && i + 1 < len(bytes) && is_digit(bytes[i + 1])) || (ch == '-' && is_unary_minus(bytes, i)) {
+		} else if is_digit(ch) ||
+		   (ch == '.' && i + 1 < len(bytes) && is_digit(bytes[i + 1])) ||
+		   (ch == '-' && is_unary_minus(bytes, i)) {
 			end := scan_number(bytes, i)
 			emit(&p, CLR_GREEN, string(bytes[i:end]))
 			i = end
@@ -119,7 +121,27 @@ is_word_start :: proc(ch: u8) -> bool {
 
 is_end_of_word :: proc(ch: u8) -> bool {
 	switch ch {
-	case '\n', '\t', ' ', ';', '[', ']', '(', ')', '{', '}', ':', '=', '+', '-', '/', '*', '!', '<', '>', '.', ',':
+	case '\n',
+	     '\t',
+	     ' ',
+	     ';',
+	     '[',
+	     ']',
+	     '(',
+	     ')',
+	     '{',
+	     '}',
+	     ':',
+	     '=',
+	     '+',
+	     '-',
+	     '/',
+	     '*',
+	     '!',
+	     '<',
+	     '>',
+	     '.',
+	     ',':
 		return true
 	}
 	return false
@@ -175,8 +197,13 @@ is_unary_minus :: proc(text: []u8, i: int) -> bool {
 	if i == 0 do return true
 	prev := text[i - 1]
 	is_operand :=
-		(prev >= 'a' && prev <= 'z') || (prev >= 'A' && prev <= 'Z') || prev == '_' ||
-		is_digit(prev) || prev == ')' || prev == ']' || prev == '}'
+		(prev >= 'a' && prev <= 'z') ||
+		(prev >= 'A' && prev <= 'Z') ||
+		prev == '_' ||
+		is_digit(prev) ||
+		prev == ')' ||
+		prev == ']' ||
+		prev == '}'
 	return !is_operand
 }
 
@@ -196,3 +223,4 @@ is_keyword :: proc(text: []u8, start: int, word: string) -> bool {
 	}
 	return false
 }
+

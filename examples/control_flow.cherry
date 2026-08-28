@@ -1,24 +1,29 @@
-for(var i = 0; i < 10; i+=1) {
+# for loop with break: prints 0..4 then stops at 5
+for(var i = 0; i < 10; i += 1) {
   if(i == 5) {
+    println("breaking at " .. i)
     break
   }
-  println("Iteratin: " .. i)
+  println("for iteration: " .. i)
 }
 
-var i = 0
-while(i < 10) {
-  if(i == 5) {
+# while-style loop (for with condition only) and continue:
+# prints every iteration from 1..10 except 5
+var j = 0
+for(j < 10) {
+  j += 1
+  if(j == 5) {
     continue
   }
-  println("Iteraation: " .. i)
-  i+=1
+  println("while iteration: " .. j)
 }
-remove i
+remove j
 
+# if / elif / else chain
 if(false) {
-  prntln("I will not trigger.")
+  println("I will not trigger.")
 } elif(false) {
-  prntln("I will not trigger.")
+  println("I will not trigger.")
 } else {
   println("Hello World!")
 }

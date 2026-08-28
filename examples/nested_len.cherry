@@ -1,0 +1,25 @@
+# Nested function calls in a single expression.
+
+var len_abc = len("abc")
+var len_hello = len("hello")
+var len_world = len("world")
+
+println("len(\"abc\") = " .. len_abc)
+println("len(\"hello\") + len(\"world\") = " .. len_hello + len_world)
+
+# Comparisons return booleans (usable in conditions, not concatenation)
+if(len_abc == 3) {
+  println("len(\"abc\") is exactly 3: yes")
+} else {
+  println("len(\"abc\") is exactly 3: no")
+}
+
+# Floating point values are supported
+var f = 12.34
+println("float value: " .. f)
+
+# A float in the divisor keeps the calculation accurate
+var half = (f * 1.0) / 2
+println("half of 12.34 is about " .. math.round(half))
+
+remove len_abc, len_hello, len_world, f, half

@@ -1,0 +1,32 @@
+# CSV-style dataset processing: each record is [name, score].
+var records = [
+  ["Alice", 92],
+  ["Bob", 67],
+  ["Carol", 78],
+  ["Dave", 85],
+  ["Eve", 54]
+]
+var pass_mark = 70
+
+# Filter the records into a list of passing students
+var passing = []
+var class_sum = 0
+for(var i = 0; i < len(records); i += 1) {
+  var name = records[i][0]
+  var score = records[i][1]
+  class_sum += score
+  if(score >= pass_mark) {
+    var idx = len(passing)
+    passing[idx] = name
+  }
+}
+
+println("Passing students (score >= " .. pass_mark .. "):")
+for(var i = 0; i < len(passing); i += 1) {
+  println("  " .. passing[i])
+}
+
+var average = (class_sum * 1.0) / len(records)
+println("Records processed: " .. len(records) .. ", class average: " .. average)
+
+remove records, passing, class_sum, average

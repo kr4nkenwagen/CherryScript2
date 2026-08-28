@@ -1,0 +1,33 @@
+# Grade calculator: sum scores, compute the average, assign letter grades.
+
+var names = ["Alice", "Bob", "Carol", "Dave", "Eve"]
+var scores = [92, 67, 78, 85, 54]
+
+var total = 0
+for(var i = 0; i < len(scores); i += 1) {
+  total += scores[i]
+}
+var average = (total * 1.0) / len(scores)
+
+println("Class report")
+println("------------")
+for(var i = 0; i < len(names); i += 1) {
+  var score = scores[i]
+  var letter = ""
+  if(score >= 90) {
+    letter = "A"
+  } elif(score >= 80) {
+    letter = "B"
+  } elif(score >= 70) {
+    letter = "C"
+  } elif(score >= 60) {
+    letter = "D"
+  } else {
+    letter = "F"
+  }
+  println(names[i] .. ": " .. score .. " (" .. letter .. ")")
+}
+println("------------")
+println("Average: " .. average)
+
+remove names, scores, total, average

@@ -1,0 +1,14 @@
+# Live HTTP request: fetch a sample TODO item from JSONPlaceholder.
+# Requires a network connection.
+
+var res = http.get("https://jsonplaceholder.typicode.com/todos/1")
+
+println("HTTP status code: " .. res.head.code)
+println("Todo title: " .. string.to_upper(res.body.title))
+if(res.body.completed) {
+  println("Completed: yes")
+} else {
+  println("Completed: no")
+}
+
+remove res

@@ -1,8 +1,16 @@
-var a, b = 1 # Mutable variables. Variables can be declared without value.
+# Mutable variables. Several may be declared in a single statement.
+var a = 1, b = 2
 
-const c = 2, d = "abc" # Immutable variables. Need to be assigned a value on declaration.
+# Immutable variables. Need to be assigned a value on declaration.
+const c = 3, d = "abc"
 
-global var e = 1.23 # Global variables are accessible across all scopes.
+# Global variables are accessible across all scopes.
+global var e = 1.23
 global const f = .23
 
-remove a, b, c, d, e, f # Removes variables from memory. Useful when using many modules.
+println("a = " .. a .. "  b = " .. b)
+println("c = " .. c .. "  d = " .. d)
+println("e = " .. e .. "  f = " .. f)
+
+# Removes variables from memory. Useful when using many modules.
+remove a, b, c, d, e, f

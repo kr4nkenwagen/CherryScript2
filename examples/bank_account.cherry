@@ -1,0 +1,42 @@
+# A tiny bank account with deposit, withdraw, and a transaction log.
+
+global var balance = 1000
+global var transactions = []
+
+fn deposit(var amount) {
+  balance += amount
+  var idx = len(transactions)
+  transactions[idx] = "deposit: " .. amount
+  return balance
+}
+
+fn withdraw(var amount) {
+  if(amount > balance) {
+    println("Declined: insufficient funds (balance " .. balance .. ").")
+    return balance
+  }
+  balance -= amount
+  var idx = len(transactions)
+  transactions[idx] = "withdraw: " .. amount
+  return balance
+}
+
+fn balance_of() {
+  return balance
+}
+
+println("Starting balance: " .. balance_of())
+deposit(500)
+withdraw(120)
+withdraw(2000)
+deposit(40)
+
+println("")
+println("Transaction log:")
+for(var i = 0; i < len(transactions); i += 1) {
+  println("  " .. transactions[i])
+}
+println("")
+println("Final balance: " .. balance_of())
+
+remove balance, transactions

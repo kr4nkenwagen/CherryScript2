@@ -1,0 +1,32 @@
+# The computer guesses the number you're thinking of (1-100).
+# For each guess, reply with: h (too low), l (too high), or y (correct).
+
+global var lo = 1, hi = 100, attempts = 0
+
+for(true) {
+  attempts += 1
+  var guess = (lo + hi) / 2
+  println("Guess " .. attempts .. ": " .. guess .. "  (h / l / y)")
+
+  var answer = string.trim(in)
+  if(answer == "y") {
+    println("Found " .. guess .. " in " .. attempts .. " tries!")
+    break
+  } elif(answer == "l") {
+    hi = guess - 1
+  } elif(answer == "h") {
+    lo = guess + 1
+  } else {
+    println("Please answer with h, l, or y.")
+  }
+
+  if(lo > hi) {
+    println("Contradiction! Your answers were not consistent.")
+    break
+  } elif(attempts >= 10) {
+    println("I give up after " .. attempts .. " tries.")
+    break
+  }
+}
+
+remove lo, hi, attempts

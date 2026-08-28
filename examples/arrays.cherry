@@ -1,0 +1,19 @@
+# Arrays are zero-based and can be indexed and reassigned
+var arr = [1, 2, 3]
+println("len(arr) = " .. len(arr))
+println("arr[0] = " .. arr[0])
+
+arr[1] = 99
+println("after update, arr[1] = " .. arr[1])
+
+# Nested arrays and chained indexing
+var matrix = [[1, 2], [3, 4]]
+println("matrix[1][1] = " .. matrix[1][1])
+
+# Appending via the current length (captured before the write)
+var items = ["alpha"]
+var next = len(items)
+items[next] = "beta"
+println("items now: " .. items[0] .. ", " .. items[1])
+
+remove arr, matrix, items

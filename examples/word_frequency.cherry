@@ -1,0 +1,42 @@
+# Word frequency counter over a sample text (stored as an array of words).
+
+var words = [
+  "the", "cherry", "runner", "the", "cherry", "tree",
+  "tree", "runner", "the", "cherry"
+]
+
+# Build a histogram using two parallel arrays: unique words and counts.
+var unique = []
+var counts = []
+
+for(var i = 0; i < len(words); i += 1) {
+  var word = words[i]
+  var pos = -1
+  for(var j = 0; j < len(unique); j += 1) {
+    if(unique[j] == word) {
+      pos = j
+    }
+  }
+  if(pos >= 0) {
+    counts[pos] = counts[pos] + 1
+  } else {
+    var u = len(unique)
+    unique[u] = word
+    var c = len(counts)
+    counts[c] = 1
+  }
+}
+
+# Report the histogram and find the most common word.
+var top_word = ""
+var top_count = 0
+for(var i = 0; i < len(unique); i += 1) {
+  if(counts[i] > top_count) {
+    top_count = counts[i]
+    top_word = unique[i]
+  }
+  println(unique[i] .. ": " .. counts[i])
+}
+println("Most common: '" .. top_word .. "' with " .. top_count .. " occurrences")
+
+remove words, unique, counts, top_word, top_count

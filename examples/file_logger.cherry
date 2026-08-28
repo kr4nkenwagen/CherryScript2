@@ -1,0 +1,17 @@
+# Append timestamped entries to a plain-text log file.
+
+var log = @"/tmp/cherry_log_example.txt"
+var line_no = 1
+
+for(var i = 0; i < 3; i += 1) {
+  var stamp = time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second
+  log<-line_no = "[" .. stamp .. "] event #" .. (i + 1)
+  line_no += 1
+}
+
+println("Log written. Contents:")
+for(var l = 1; l < line_no; l += 1) {
+  println(log->l)
+}
+rm log
+remove log

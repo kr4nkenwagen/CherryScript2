@@ -1,0 +1,22 @@
+# Celsius <-> Fahrenheit conversion.
+
+fn to_fahrenheit(var celsius) {
+  return (9.0 / 5) * celsius + 32
+}
+
+fn to_celsius(var fahrenheit) {
+  return math.round((5.0 / 9) * (fahrenheit - 32))
+}
+
+println("0 C -> " .. to_fahrenheit(0) .. " F")
+println("100 C -> " .. to_fahrenheit(100) .. " F")
+println("32 F -> " .. to_celsius(32) .. " C")
+println("212 F -> " .. to_celsius(212) .. " C")
+
+println("")
+println("Conversion table (C -> F):")
+for(var c = 0; c <= 100; c += 20) {
+  println(c .. " C = " .. to_fahrenheit(c) .. " F")
+}
+
+remove to_fahrenheit, to_celsius

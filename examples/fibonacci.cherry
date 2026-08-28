@@ -1,0 +1,27 @@
+# The Fibonacci sequence: recursive and iterative approaches.
+
+fn fib(var n) {
+  if(n <= 1) {
+    return n
+  }
+  return fib(n - 1) + fib(n - 2)
+}
+
+println("First 10 Fibonacci numbers (recursive):")
+for(var i = 0; i < 10; i += 1) {
+  println("  fib(" .. i .. ") = " .. fib(i))
+}
+
+var prev = 0
+var curr = 1
+println("")
+println("Iterative walk (starts 0, 1):")
+println("  " .. prev .. ", " .. curr)
+for(var i = 0; i < 8; i += 1) {
+  var next = prev + curr
+  prev = curr
+  curr = next
+  println("  " .. curr)
+}
+
+remove fib, prev, curr
