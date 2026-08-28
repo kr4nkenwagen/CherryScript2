@@ -9,6 +9,8 @@ import "core:fmt"
 import "core:strconv"
 import "core:strings"
 
+g_terminal_output_newline := true
+
 translate_hex_colors :: proc(input: string, allocator := context.allocator) -> string {
 	b := strings.builder_make(allocator)
 	i := 0
@@ -61,26 +63,33 @@ print_out :: proc(str: string, debug_mode: bool) {
 		return
 	}
 	escaped := false
+	last: rune
 	for r in str {
 		if escaped {
 			switch r {
 			case 'n':
 				fmt.print("\n")
+				last = '\n'
 			case 't':
 				fmt.print("\t")
+				last = '\t'
 			case:
 				fmt.printf("\\%c", r)
+				last = '\\'
 			}
 			escaped = false
 		} else if r == '\\' {
 			escaped = true
 		} else {
 			fmt.printf("%c", r)
+			last = r
 		}
 	}
 	if escaped {
 		fmt.print("\\")
+		last = '\\'
 	}
+	g_terminal_output_newline = last == '\n'
 }
 
 print_object :: proc(obj: ^types.object_t, debug_mode: bool) -> (code: types.exit_codes) {

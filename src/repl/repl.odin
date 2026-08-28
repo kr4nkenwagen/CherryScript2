@@ -15,18 +15,40 @@ import "core:strings"
 import "vendor:curl"
 
 run :: proc() -> (code: types.exit_codes) {
+	is_tty := os.is_tty(os.stdin)
 	reader: bufio.Reader
-	bufio.reader_init(&reader, os.to_stream(os.stdin))
-	defer bufio.reader_destroy(&reader)
+	editor: Editor
+	if is_tty {
+		editor.history = load_history()
+		editor.hist_idx = len(editor.history)
+	} else {
+		bufio.reader_init(&reader, os.to_stream(os.stdin))
+	}
+	defer if is_tty {
+		destroy_editor(&editor)
+	} else {
+		bufio.reader_destroy(&reader)
+	}
 	stck := vm.create() or_return
 	curr_stck := stack.create() or_return
 	curl.global_init(curl.GLOBAL_DEFAULT)
 	vm.push_frame(stck, curr_stck, false) or_return
 	for {
-		fmt.print("> ")
-		line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
-		if err != nil {
-			break
+		line: string
+		defer if is_tty {
+			delete(line)
+		}
+		if is_tty {
+			got, eof := read_line(&editor)
+			if eof do break
+			line = got
+		} else {
+			fmt.print("> ")
+			got, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
+			if err != nil {
+				break
+			}
+			line = got
 		}
 		input := strings.trim_space(line)
 		if input == "exit" || input == "quit" {
@@ -58,6 +80,11 @@ run :: proc() -> (code: types.exit_codes) {
 		}
 		if obj != nil {
 			evaluator.print_object(obj, false)
+			fmt.printf("\n")
+			evaluator.g_terminal_output_newline = true
+		}
+		if is_tty && !evaluator.g_terminal_output_newline {
+			fmt.println()
 		}
 		free_all(context.temp_allocator)
 	}
