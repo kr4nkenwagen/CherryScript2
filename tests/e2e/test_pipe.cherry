@@ -1,0 +1,75 @@
+# Pipe input to cherry: ./cherry 'code' runs code and prints to stdout
+
+# Basic println
+var r1 = $"tests/tmp/cherry println(\"Hello World!\")"
+assert_eq(r1.stdout, "Hello World!\n", "pipe: println outputs to stdout")
+assert_eq(r1.exit_code, 0, "pipe: println exits 0")
+remove r1
+
+# Basic print (no trailing newline)
+var r2 = $"tests/tmp/cherry print(\"Hello\")"
+assert_eq(r2.stdout, "Hello", "pipe: print outputs without newline")
+assert_eq(r2.exit_code, 0, "pipe: print exits 0")
+remove r2
+
+# Variable declaration and expression
+var r3 = $"tests/tmp/cherry var x = 42; println(x * 2)"
+assert_eq(r3.stdout, "84\n", "pipe: variable expression evaluated correctly")
+assert_eq(r3.exit_code, 0, "pipe: variable expression exits 0")
+remove r3
+
+# Multiple statements
+var r4 = $"tests/tmp/cherry println(\"line1\"); println(\"line2\")"
+assert_eq(r4.stdout, "line1\nline2\n", "pipe: multiple statements output in order")
+assert_eq(r4.exit_code, 0, "pipe: multiple statements exits 0")
+remove r4
+
+# Arithmetic
+var r5 = $"tests/tmp/cherry println(1 + 2 + 3)"
+assert_eq(r5.stdout, "6\n", "pipe: arithmetic expression")
+remove r5
+
+# String concatenation
+var r6 = $"tests/tmp/cherry println(\"foo\" .. \"bar\")"
+assert_eq(r6.stdout, "foobar\n", "pipe: string concatenation")
+remove r6
+
+# If/else
+var r7 = $"tests/tmp/cherry if (1 < 2) { println(\"yes\") } else { println(\"no\") }"
+assert_eq(r7.stdout, "yes\n", "pipe: if/else control flow")
+remove r7
+
+# For loop
+var r8 = $"tests/tmp/cherry var s = \"\"; for(var i = 0; i < 5; i+=1) { s = s .. i }; println(s)"
+assert_eq(r8.stdout, "01234\n", "pipe: for loop builds string")
+remove r8
+
+# Function definition and call
+var r9 = $"tests/tmp/cherry fn add(var a, var b) { return a + b }; println(add(3, 4))"
+assert_eq(r9.stdout, "7\n", "pipe: function definition and call")
+remove r9
+
+# Array operations
+var r10 = $"tests/tmp/cherry var arr = [10, 20, 30]; println(arr[1])"
+assert_eq(r10.stdout, "20\n", "pipe: array indexing")
+remove r10
+
+# Len function
+var r11 = $"tests/tmp/cherry println(len(\"hello\"))"
+assert_eq(r11.stdout, "5\n", "pipe: len function")
+remove r11
+
+# Stderr is empty on success
+var r12 = $"tests/tmp/cherry println(\"ok\")"
+assert_eq(r12.stderr, "", "pipe: stderr empty on success")
+remove r12
+
+# Syntax error outputs error to stdout
+var r13 = $"tests/tmp/cherry println("
+assert_gt(len(r13.stdout), 0, "pipe: syntax error produces output")
+remove r13
+
+# Runtime error outputs error to stdout
+var r14 = $"tests/tmp/cherry var x = nil; println(x + 1)"
+assert_gt(len(r14.stdout), 0, "pipe: runtime error produces output")
+remove r14

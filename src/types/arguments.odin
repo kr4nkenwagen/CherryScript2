@@ -8,4 +8,5 @@ debug_type_t :: enum {
 arguments_t :: struct {
 	debug_level:  debug_type_t,
 	source_files: [dynamic]string,
+	pipe:         [dynamic]string,
 }

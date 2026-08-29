@@ -35,7 +35,11 @@ parse_args :: proc() -> ^types.arguments_t {
 					return nil
 				}
 			}
-		} else if os.exists(val) && strings.has_suffix(val, SOURCE_FILE_SUFFIX) do append(&args.source_files, val)
+		} else if os.exists(val) && strings.has_suffix(val, SOURCE_FILE_SUFFIX) {
+			append(&args.source_files, val)
+		} else {
+			append(&args.pipe, val)
+		}
 		i += 1
 	}
 	return args
@@ -132,9 +136,12 @@ interprete_program :: proc(
 main :: proc() {
 	args := parse_args()
 	err_code := types.exit_codes.OK
-	if len(args.source_files) == 0 {
+	if len(args.source_files) == 0 && len(args.pipe) == 0 {
+		fmt.printf("dd")
 		err_code = repl.run(args)
 		if err_code != .OK do os.exit(int(err_code))
+	} else if len(args.pipe) != 0 {
+		repl.pipe(strings.join(args.pipe[:], " "), args)
 	}
 	if args == nil do return
 	for file in args.source_files {
