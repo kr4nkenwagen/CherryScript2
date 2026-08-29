@@ -1,258 +1,258 @@
 module "utils/assert.cherry"
 
 var res_test_bad_json = $"tests/tmp/cherry tests/errors/scripts/bad_json.15.cherry"
-assert(res_test_bad_json.exit_code == 15, "error: bad_json.15 exits with 15")
+assert_eq(res_test_bad_json.exit_code, 15, "error: bad_json.15 exits with 15")
 remove res_test_bad_json
 var res_test_cmp_array_equal = $"tests/tmp/cherry tests/errors/scripts/cmp_array_equal.28.cherry"
-assert(res_test_cmp_array_equal.exit_code == 28, "error: cmp_array_equal.28 exits with 28")
+assert_eq(res_test_cmp_array_equal.exit_code, 28, "error: cmp_array_equal.28 exits with 28")
 remove res_test_cmp_array_equal
 var res_test_cmp_bool_string_equal = $"tests/tmp/cherry tests/errors/scripts/cmp_bool_string_equal.28.cherry"
-assert(res_test_cmp_bool_string_equal.exit_code == 28, "error: cmp_bool_string_equal.28 exits with 28")
+assert_eq(res_test_cmp_bool_string_equal.exit_code, 28, "error: cmp_bool_string_equal.28 exits with 28")
 remove res_test_cmp_bool_string_equal
 var res_test_cmp_bool_to_json = $"tests/tmp/cherry tests/errors/scripts/cmp_bool_to_json.48.cherry"
-assert(res_test_cmp_bool_to_json.exit_code == 48, "error: cmp_bool_to_json.48 exits with 48")
+assert_eq(res_test_cmp_bool_to_json.exit_code, 48, "error: cmp_bool_to_json.48 exits with 48")
 remove res_test_cmp_bool_to_json
 var res_test_cmp_equal_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_equal_type_mismatch.28.cherry"
-assert(res_test_cmp_equal_type_mismatch.exit_code == 28, "error: cmp_equal_type_mismatch.28 exits with 28")
+assert_eq(res_test_cmp_equal_type_mismatch.exit_code, 28, "error: cmp_equal_type_mismatch.28 exits with 28")
 remove res_test_cmp_equal_type_mismatch
 var res_test_cmp_gte_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_gte_type_mismatch.32.cherry"
-assert(res_test_cmp_gte_type_mismatch.exit_code == 32, "error: cmp_gte_type_mismatch.32 exits with 32")
+assert_eq(res_test_cmp_gte_type_mismatch.exit_code, 32, "error: cmp_gte_type_mismatch.32 exits with 32")
 remove res_test_cmp_gte_type_mismatch
 var res_test_cmp_gt_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_gt_type_mismatch.34.cherry"
-assert(res_test_cmp_gt_type_mismatch.exit_code == 34, "error: cmp_gt_type_mismatch.34 exits with 34")
+assert_eq(res_test_cmp_gt_type_mismatch.exit_code, 34, "error: cmp_gt_type_mismatch.34 exits with 34")
 remove res_test_cmp_gt_type_mismatch
 var res_test_cmp_int_array_equal = $"tests/tmp/cherry tests/errors/scripts/cmp_int_array_equal.28.cherry"
-assert(res_test_cmp_int_array_equal.exit_code == 28, "error: cmp_int_array_equal.28 exits with 28")
+assert_eq(res_test_cmp_int_array_equal.exit_code, 28, "error: cmp_int_array_equal.28 exits with 28")
 remove res_test_cmp_int_array_equal
 var res_test_cmp_lte_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_lte_type_mismatch.37.cherry"
-assert(res_test_cmp_lte_type_mismatch.exit_code == 37, "error: cmp_lte_type_mismatch.37 exits with 37")
+assert_eq(res_test_cmp_lte_type_mismatch.exit_code, 37, "error: cmp_lte_type_mismatch.37 exits with 37")
 remove res_test_cmp_lte_type_mismatch
 var res_test_cmp_lt_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_lt_type_mismatch.35.cherry"
-assert(res_test_cmp_lt_type_mismatch.exit_code == 35, "error: cmp_lt_type_mismatch.35 exits with 35")
+assert_eq(res_test_cmp_lt_type_mismatch.exit_code, 35, "error: cmp_lt_type_mismatch.35 exits with 35")
 remove res_test_cmp_lt_type_mismatch
 var res_test_cmp_not_equal_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_not_equal_type_mismatch.30.cherry"
-assert(res_test_cmp_not_equal_type_mismatch.exit_code == 30, "error: cmp_not_equal_type_mismatch.30 exits with 30")
+assert_eq(res_test_cmp_not_equal_type_mismatch.exit_code, 30, "error: cmp_not_equal_type_mismatch.30 exits with 30")
 remove res_test_cmp_not_equal_type_mismatch
 var res_test_const_reassign = $"tests/tmp/cherry tests/errors/scripts/const_reassign.185.cherry"
-assert(res_test_const_reassign.exit_code == 185, "error: const_reassign.185 exits with 185")
+assert_eq(res_test_const_reassign.exit_code, 185, "error: const_reassign.185 exits with 185")
 remove res_test_const_reassign
 var res_test_default_param_internal = $"tests/tmp/cherry tests/errors/scripts/default_param_internal.195.cherry"
-assert(res_test_default_param_internal.exit_code == 195, "error: default_param_internal.195 exits with 195")
+assert_eq(res_test_default_param_internal.exit_code, 195, "error: default_param_internal.195 exits with 195")
 remove res_test_default_param_internal
 var res_test_div_by_zero_float = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_float.184.cherry"
-assert(res_test_div_by_zero_float.exit_code == 184, "error: div_by_zero_float.184 exits with 184")
+assert_eq(res_test_div_by_zero_float.exit_code, 184, "error: div_by_zero_float.184 exits with 184")
 remove res_test_div_by_zero_float
 var res_test_div_by_zero_int = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_int.184.cherry"
-assert(res_test_div_by_zero_int.exit_code == 184, "error: div_by_zero_int.184 exits with 184")
+assert_eq(res_test_div_by_zero_int.exit_code, 184, "error: div_by_zero_int.184 exits with 184")
 remove res_test_div_by_zero_int
 var res_test_divide_nil = $"tests/tmp/cherry tests/errors/scripts/divide_nil.60.cherry"
-assert(res_test_divide_nil.exit_code == 60, "error: divide_nil.60 exits with 60")
+assert_eq(res_test_divide_nil.exit_code, 60, "error: divide_nil.60 exits with 60")
 remove res_test_divide_nil
 var res_test_for_cond_int_not_bool = $"tests/tmp/cherry tests/errors/scripts/for_cond_int_not_bool.221.cherry"
-assert(res_test_for_cond_int_not_bool.exit_code == 221, "error: for_cond_int_not_bool.221 exits with 221")
+assert_eq(res_test_for_cond_int_not_bool.exit_code, 221, "error: for_cond_int_not_bool.221 exits with 221")
 remove res_test_for_cond_int_not_bool
 var res_test_for_cond_not_bool = $"tests/tmp/cherry tests/errors/scripts/for_cond_not_bool.221.cherry"
-assert(res_test_for_cond_not_bool.exit_code == 221, "error: for_cond_not_bool.221 exits with 221")
+assert_eq(res_test_for_cond_not_bool.exit_code, 221, "error: for_cond_not_bool.221 exits with 221")
 remove res_test_for_cond_not_bool
 var res_test_incorrect_number_of_parameters_in_http_connect = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_connect.94.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_connect.exit_code == 94, "error: incorrect_number_of_parameters_in_http_connect.94 exits with 94")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_connect.exit_code, 94, "error: incorrect_number_of_parameters_in_http_connect.94 exits with 94")
 remove res_test_incorrect_number_of_parameters_in_http_connect
 var res_test_incorrect_number_of_parameters_in_http_delete = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_delete.89.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_delete.exit_code == 89, "error: incorrect_number_of_parameters_in_http_delete.89 exits with 89")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_delete.exit_code, 89, "error: incorrect_number_of_parameters_in_http_delete.89 exits with 89")
 remove res_test_incorrect_number_of_parameters_in_http_delete
 var res_test_incorrect_number_of_parameters_in_http_get = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_get.85.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_get.exit_code == 85, "error: incorrect_number_of_parameters_in_http_get.85 exits with 85")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_get.exit_code, 85, "error: incorrect_number_of_parameters_in_http_get.85 exits with 85")
 remove res_test_incorrect_number_of_parameters_in_http_get
 var res_test_incorrect_number_of_parameters_in_http_head = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_head.91.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_head.exit_code == 91, "error: incorrect_number_of_parameters_in_http_head.91 exits with 91")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_head.exit_code, 91, "error: incorrect_number_of_parameters_in_http_head.91 exits with 91")
 remove res_test_incorrect_number_of_parameters_in_http_head
 var res_test_incorrect_number_of_parameters_in_http_options = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_options.92.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_options.exit_code == 92, "error: incorrect_number_of_parameters_in_http_options.92 exits with 92")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_options.exit_code, 92, "error: incorrect_number_of_parameters_in_http_options.92 exits with 92")
 remove res_test_incorrect_number_of_parameters_in_http_options
 var res_test_incorrect_number_of_parameters_in_http_patch = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_patch.90.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_patch.exit_code == 90, "error: incorrect_number_of_parameters_in_http_patch.90 exits with 90")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_patch.exit_code, 90, "error: incorrect_number_of_parameters_in_http_patch.90 exits with 90")
 remove res_test_incorrect_number_of_parameters_in_http_patch
 var res_test_incorrect_number_of_parameters_in_http_post = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_post.86.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_post.exit_code == 86, "error: incorrect_number_of_parameters_in_http_post.86 exits with 86")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_post.exit_code, 86, "error: incorrect_number_of_parameters_in_http_post.86 exits with 86")
 remove res_test_incorrect_number_of_parameters_in_http_post
 var res_test_incorrect_number_of_parameters_in_http_put = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_put.88.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_put.exit_code == 88, "error: incorrect_number_of_parameters_in_http_put.88 exits with 88")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_put.exit_code, 88, "error: incorrect_number_of_parameters_in_http_put.88 exits with 88")
 remove res_test_incorrect_number_of_parameters_in_http_put
 var res_test_incorrect_number_of_parameters_in_http_trace = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_trace.93.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_trace.exit_code == 93, "error: incorrect_number_of_parameters_in_http_trace.93 exits with 93")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_trace.exit_code, 93, "error: incorrect_number_of_parameters_in_http_trace.93 exits with 93")
 remove res_test_incorrect_number_of_parameters_in_http_trace
 var res_test_incorrect_number_of_parameters_in_http_update = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_update.87.cherry"
-assert(res_test_incorrect_number_of_parameters_in_http_update.exit_code == 87, "error: incorrect_number_of_parameters_in_http_update.87 exits with 87")
+assert_eq(res_test_incorrect_number_of_parameters_in_http_update.exit_code, 87, "error: incorrect_number_of_parameters_in_http_update.87 exits with 87")
 remove res_test_incorrect_number_of_parameters_in_http_update
 var res_test_incorrect_number_of_parameters_in_exists = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_exists.97.cherry"
-assert(res_test_incorrect_number_of_parameters_in_exists.exit_code == 97, "error: incorrect_number_of_parameters_in_exists.97 exits with 97")
+assert_eq(res_test_incorrect_number_of_parameters_in_exists.exit_code, 97, "error: incorrect_number_of_parameters_in_exists.97 exits with 97")
 remove res_test_incorrect_number_of_parameters_in_exists
 var res_test_incorrect_number_of_parameters_in_json = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_json.98.cherry"
-assert(res_test_incorrect_number_of_parameters_in_json.exit_code == 98, "error: incorrect_number_of_parameters_in_json.98 exits with 98")
+assert_eq(res_test_incorrect_number_of_parameters_in_json.exit_code, 98, "error: incorrect_number_of_parameters_in_json.98 exits with 98")
 remove res_test_incorrect_number_of_parameters_in_json
 var res_test_incorrect_number_of_parameters_in_len = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_len.96.cherry"
-assert(res_test_incorrect_number_of_parameters_in_len.exit_code == 96, "error: incorrect_number_of_parameters_in_len.96 exits with 96")
+assert_eq(res_test_incorrect_number_of_parameters_in_len.exit_code, 96, "error: incorrect_number_of_parameters_in_len.96 exits with 96")
 remove res_test_incorrect_number_of_parameters_in_len
 var res_test_incorrect_number_of_parameters_in_print = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_print.99.cherry"
-assert(res_test_incorrect_number_of_parameters_in_print.exit_code == 99, "error: incorrect_number_of_parameters_in_print.99 exits with 99")
+assert_eq(res_test_incorrect_number_of_parameters_in_print.exit_code, 99, "error: incorrect_number_of_parameters_in_print.99 exits with 99")
 remove res_test_incorrect_number_of_parameters_in_print
 var res_test_int_div_string_type = $"tests/tmp/cherry tests/errors/scripts/int_div_string_type.60.cherry"
-assert(res_test_int_div_string_type.exit_code == 60, "error: int_div_string_type.60 exits with 60")
+assert_eq(res_test_int_div_string_type.exit_code, 60, "error: int_div_string_type.60 exits with 60")
 remove res_test_int_div_string_type
 var res_test_int_mod_string_type = $"tests/tmp/cherry tests/errors/scripts/int_mod_string_type.63.cherry"
-assert(res_test_int_mod_string_type.exit_code == 63, "error: int_mod_string_type.63 exits with 63")
+assert_eq(res_test_int_mod_string_type.exit_code, 63, "error: int_mod_string_type.63 exits with 63")
 remove res_test_int_mod_string_type
 var res_test_int_sub_string_type = $"tests/tmp/cherry tests/errors/scripts/int_sub_string_type.50.cherry"
-assert(res_test_int_sub_string_type.exit_code == 50, "error: int_sub_string_type.50 exits with 50")
+assert_eq(res_test_int_sub_string_type.exit_code, 50, "error: int_sub_string_type.50 exits with 50")
 remove res_test_int_sub_string_type
 var res_test_len_of_bool = $"tests/tmp/cherry tests/errors/scripts/len_of_bool.19.cherry"
-assert(res_test_len_of_bool.exit_code == 19, "error: len_of_bool.19 exits with 19")
+assert_eq(res_test_len_of_bool.exit_code, 19, "error: len_of_bool.19 exits with 19")
 remove res_test_len_of_bool
 var res_test_mod_by_zero = $"tests/tmp/cherry tests/errors/scripts/mod_by_zero.184.cherry"
-assert(res_test_mod_by_zero.exit_code == 184, "error: mod_by_zero.184 exits with 184")
+assert_eq(res_test_mod_by_zero.exit_code, 184, "error: mod_by_zero.184 exits with 184")
 remove res_test_mod_by_zero
 var res_test_modulus_nil = $"tests/tmp/cherry tests/errors/scripts/modulus_nil.63.cherry"
-assert(res_test_modulus_nil.exit_code == 63, "error: modulus_nil.63 exits with 63")
+assert_eq(res_test_modulus_nil.exit_code, 63, "error: modulus_nil.63 exits with 63")
 remove res_test_modulus_nil
 var res_test_multiply_nil = $"tests/tmp/cherry tests/errors/scripts/multiply_nil.52.cherry"
-assert(res_test_multiply_nil.exit_code == 52, "error: multiply_nil.52 exits with 52")
+assert_eq(res_test_multiply_nil.exit_code, 52, "error: multiply_nil.52 exits with 52")
 remove res_test_multiply_nil
 var res_test_redeclaration = $"tests/tmp/cherry tests/errors/scripts/redeclaration.207.cherry"
-assert(res_test_redeclaration.exit_code == 207, "error: redeclaration.207 exits with 207")
+assert_eq(res_test_redeclaration.exit_code, 207, "error: redeclaration.207 exits with 207")
 remove res_test_redeclaration
 var res_test_sleep_not_number = $"tests/tmp/cherry tests/errors/scripts/sleep_not_number.223.cherry"
-assert(res_test_sleep_not_number.exit_code == 223, "error: sleep_not_number.223 exits with 223")
+assert_eq(res_test_sleep_not_number.exit_code, 223, "error: sleep_not_number.223 exits with 223")
 remove res_test_sleep_not_number
 var res_test_stray_break = $"tests/tmp/cherry tests/errors/scripts/stray_break.231.cherry"
-assert(res_test_stray_break.exit_code == 231, "error: stray_break.231 exits with 231")
+assert_eq(res_test_stray_break.exit_code, 231, "error: stray_break.231 exits with 231")
 remove res_test_stray_break
 var res_test_string_contains_argc = $"tests/tmp/cherry tests/errors/scripts/string_contains_argc.13.cherry"
-assert(res_test_string_contains_argc.exit_code == 13, "error: string_contains_argc.13 exits with 13")
+assert_eq(res_test_string_contains_argc.exit_code, 13, "error: string_contains_argc.13 exits with 13")
 remove res_test_string_contains_argc
 var res_test_string_contains_type_a = $"tests/tmp/cherry tests/errors/scripts/string_contains_type_a.14.cherry"
-assert(res_test_string_contains_type_a.exit_code == 14, "error: string_contains_type_a.14 exits with 14")
+assert_eq(res_test_string_contains_type_a.exit_code, 14, "error: string_contains_type_a.14 exits with 14")
 remove res_test_string_contains_type_a
 var res_test_string_contains_type_b = $"tests/tmp/cherry tests/errors/scripts/string_contains_type_b.14.cherry"
-assert(res_test_string_contains_type_b.exit_code == 14, "error: string_contains_type_b.14 exits with 14")
+assert_eq(res_test_string_contains_type_b.exit_code, 14, "error: string_contains_type_b.14 exits with 14")
 remove res_test_string_contains_type_b
 var res_test_string_divide_type = $"tests/tmp/cherry tests/errors/scripts/string_divide_type.60.cherry"
-assert(res_test_string_divide_type.exit_code == 60, "error: string_divide_type.60 exits with 60")
+assert_eq(res_test_string_divide_type.exit_code, 60, "error: string_divide_type.60 exits with 60")
 remove res_test_string_divide_type
 var res_test_string_first_index_of_argc = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_argc.15.cherry"
-assert(res_test_string_first_index_of_argc.exit_code == 15, "error: string_first_index_of_argc.15 exits with 15")
+assert_eq(res_test_string_first_index_of_argc.exit_code, 15, "error: string_first_index_of_argc.15 exits with 15")
 remove res_test_string_first_index_of_argc
 var res_test_string_first_index_of_from_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_argc_a.35.cherry"
-assert(res_test_string_first_index_of_from_argc_a.exit_code == 35, "error: string_first_index_of_from_argc_a.35 exits with 35")
+assert_eq(res_test_string_first_index_of_from_argc_a.exit_code, 35, "error: string_first_index_of_from_argc_a.35 exits with 35")
 remove res_test_string_first_index_of_from_argc_a
 var res_test_string_first_index_of_from_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_argc_b.35.cherry"
-assert(res_test_string_first_index_of_from_argc_b.exit_code == 35, "error: string_first_index_of_from_argc_b.35 exits with 35")
+assert_eq(res_test_string_first_index_of_from_argc_b.exit_code, 35, "error: string_first_index_of_from_argc_b.35 exits with 35")
 remove res_test_string_first_index_of_from_argc_b
 var res_test_string_first_index_of_from_type_a = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_type_a.36.cherry"
-assert(res_test_string_first_index_of_from_type_a.exit_code == 36, "error: string_first_index_of_from_type_a.36 exits with 36")
+assert_eq(res_test_string_first_index_of_from_type_a.exit_code, 36, "error: string_first_index_of_from_type_a.36 exits with 36")
 remove res_test_string_first_index_of_from_type_a
 var res_test_string_first_index_of_from_type_b = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_type_b.36.cherry"
-assert(res_test_string_first_index_of_from_type_b.exit_code == 36, "error: string_first_index_of_from_type_b.36 exits with 36")
+assert_eq(res_test_string_first_index_of_from_type_b.exit_code, 36, "error: string_first_index_of_from_type_b.36 exits with 36")
 remove res_test_string_first_index_of_from_type_b
 var res_test_string_first_index_of_from_type_c = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_type_c.36.cherry"
-assert(res_test_string_first_index_of_from_type_c.exit_code == 36, "error: string_first_index_of_from_type_c.36 exits with 36")
+assert_eq(res_test_string_first_index_of_from_type_c.exit_code, 36, "error: string_first_index_of_from_type_c.36 exits with 36")
 remove res_test_string_first_index_of_from_type_c
 var res_test_string_first_index_of_type = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_type.16.cherry"
-assert(res_test_string_first_index_of_type.exit_code == 16, "error: string_first_index_of_type.16 exits with 16")
+assert_eq(res_test_string_first_index_of_type.exit_code, 16, "error: string_first_index_of_type.16 exits with 16")
 remove res_test_string_first_index_of_type
 var res_test_string_last_index_of_argc = $"tests/tmp/cherry tests/errors/scripts/string_last_index_of_argc.17.cherry"
-assert(res_test_string_last_index_of_argc.exit_code == 17, "error: string_last_index_of_argc.17 exits with 17")
+assert_eq(res_test_string_last_index_of_argc.exit_code, 17, "error: string_last_index_of_argc.17 exits with 17")
 remove res_test_string_last_index_of_argc
 var res_test_string_last_index_of_type = $"tests/tmp/cherry tests/errors/scripts/string_last_index_of_type.18.cherry"
-assert(res_test_string_last_index_of_type.exit_code == 18, "error: string_last_index_of_type.18 exits with 18")
+assert_eq(res_test_string_last_index_of_type.exit_code, 18, "error: string_last_index_of_type.18 exits with 18")
 remove res_test_string_last_index_of_type
 var res_test_string_modulus_type = $"tests/tmp/cherry tests/errors/scripts/string_modulus_type.63.cherry"
-assert(res_test_string_modulus_type.exit_code == 63, "error: string_modulus_type.63 exits with 63")
+assert_eq(res_test_string_modulus_type.exit_code, 63, "error: string_modulus_type.63 exits with 63")
 remove res_test_string_modulus_type
 var res_test_string_multiply_type = $"tests/tmp/cherry tests/errors/scripts/string_multiply_type.52.cherry"
-assert(res_test_string_multiply_type.exit_code == 52, "error: string_multiply_type.52 exits with 52")
+assert_eq(res_test_string_multiply_type.exit_code, 52, "error: string_multiply_type.52 exits with 52")
 remove res_test_string_multiply_type
 var res_test_string_pad_end_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_end_argc_a.32.cherry"
-assert(res_test_string_pad_end_argc_a.exit_code == 32, "error: string_pad_end_argc_a.32 exits with 32")
+assert_eq(res_test_string_pad_end_argc_a.exit_code, 32, "error: string_pad_end_argc_a.32 exits with 32")
 remove res_test_string_pad_end_argc_a
 var res_test_string_pad_end_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_pad_end_argc_b.32.cherry"
-assert(res_test_string_pad_end_argc_b.exit_code == 32, "error: string_pad_end_argc_b.32 exits with 32")
+assert_eq(res_test_string_pad_end_argc_b.exit_code, 32, "error: string_pad_end_argc_b.32 exits with 32")
 remove res_test_string_pad_end_argc_b
 var res_test_string_pad_end_type_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_end_type_a.31.cherry"
-assert(res_test_string_pad_end_type_a.exit_code == 31, "error: string_pad_end_type_a.31 exits with 31")
+assert_eq(res_test_string_pad_end_type_a.exit_code, 31, "error: string_pad_end_type_a.31 exits with 31")
 remove res_test_string_pad_end_type_a
 var res_test_string_pad_end_type_b = $"tests/tmp/cherry tests/errors/scripts/string_pad_end_type_b.31.cherry"
-assert(res_test_string_pad_end_type_b.exit_code == 31, "error: string_pad_end_type_b.31 exits with 31")
+assert_eq(res_test_string_pad_end_type_b.exit_code, 31, "error: string_pad_end_type_b.31 exits with 31")
 remove res_test_string_pad_end_type_b
 var res_test_string_pad_start_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_argc_a.30.cherry"
-assert(res_test_string_pad_start_argc_a.exit_code == 30, "error: string_pad_start_argc_a.30 exits with 30")
+assert_eq(res_test_string_pad_start_argc_a.exit_code, 30, "error: string_pad_start_argc_a.30 exits with 30")
 remove res_test_string_pad_start_argc_a
 var res_test_string_pad_start_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_argc_b.30.cherry"
-assert(res_test_string_pad_start_argc_b.exit_code == 30, "error: string_pad_start_argc_b.30 exits with 30")
+assert_eq(res_test_string_pad_start_argc_b.exit_code, 30, "error: string_pad_start_argc_b.30 exits with 30")
 remove res_test_string_pad_start_argc_b
 var res_test_string_pad_start_type_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_type_a.29.cherry"
-assert(res_test_string_pad_start_type_a.exit_code == 29, "error: string_pad_start_type_a.29 exits with 29")
+assert_eq(res_test_string_pad_start_type_a.exit_code, 29, "error: string_pad_start_type_a.29 exits with 29")
 remove res_test_string_pad_start_type_a
 var res_test_string_pad_start_type_b = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_type_b.29.cherry"
-assert(res_test_string_pad_start_type_b.exit_code == 29, "error: string_pad_start_type_b.29 exits with 29")
+assert_eq(res_test_string_pad_start_type_b.exit_code, 29, "error: string_pad_start_type_b.29 exits with 29")
 remove res_test_string_pad_start_type_b
 var res_test_string_replace_all_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_argc_a.33.cherry"
-assert(res_test_string_replace_all_argc_a.exit_code == 33, "error: string_replace_all_argc_a.33 exits with 33")
+assert_eq(res_test_string_replace_all_argc_a.exit_code, 33, "error: string_replace_all_argc_a.33 exits with 33")
 remove res_test_string_replace_all_argc_a
 var res_test_string_replace_all_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_argc_b.33.cherry"
-assert(res_test_string_replace_all_argc_b.exit_code == 33, "error: string_replace_all_argc_b.33 exits with 33")
+assert_eq(res_test_string_replace_all_argc_b.exit_code, 33, "error: string_replace_all_argc_b.33 exits with 33")
 remove res_test_string_replace_all_argc_b
 var res_test_string_replace_all_type_a = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_type_a.34.cherry"
-assert(res_test_string_replace_all_type_a.exit_code == 34, "error: string_replace_all_type_a.34 exits with 34")
+assert_eq(res_test_string_replace_all_type_a.exit_code, 34, "error: string_replace_all_type_a.34 exits with 34")
 remove res_test_string_replace_all_type_a
 var res_test_string_replace_all_type_b = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_type_b.34.cherry"
-assert(res_test_string_replace_all_type_b.exit_code == 34, "error: string_replace_all_type_b.34 exits with 34")
+assert_eq(res_test_string_replace_all_type_b.exit_code, 34, "error: string_replace_all_type_b.34 exits with 34")
 remove res_test_string_replace_all_type_b
 var res_test_string_replace_all_type_c = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_type_c.34.cherry"
-assert(res_test_string_replace_all_type_c.exit_code == 34, "error: string_replace_all_type_c.34 exits with 34")
+assert_eq(res_test_string_replace_all_type_c.exit_code, 34, "error: string_replace_all_type_c.34 exits with 34")
 remove res_test_string_replace_all_type_c
 var res_test_string_subtract_type = $"tests/tmp/cherry tests/errors/scripts/string_subtract_type.79.cherry"
-assert(res_test_string_subtract_type.exit_code == 79, "error: string_subtract_type.79 exits with 79")
+assert_eq(res_test_string_subtract_type.exit_code, 79, "error: string_subtract_type.79 exits with 79")
 remove res_test_string_subtract_type
 var res_test_string_to_lower_argc = $"tests/tmp/cherry tests/errors/scripts/string_to_lower_argc.27.cherry"
-assert(res_test_string_to_lower_argc.exit_code == 27, "error: string_to_lower_argc.27 exits with 27")
+assert_eq(res_test_string_to_lower_argc.exit_code, 27, "error: string_to_lower_argc.27 exits with 27")
 remove res_test_string_to_lower_argc
 var res_test_string_to_lower_type = $"tests/tmp/cherry tests/errors/scripts/string_to_lower_type.28.cherry"
-assert(res_test_string_to_lower_type.exit_code == 28, "error: string_to_lower_type.28 exits with 28")
+assert_eq(res_test_string_to_lower_type.exit_code, 28, "error: string_to_lower_type.28 exits with 28")
 remove res_test_string_to_lower_type
 var res_test_string_to_upper_argc = $"tests/tmp/cherry tests/errors/scripts/string_to_upper_argc.26.cherry"
-assert(res_test_string_to_upper_argc.exit_code == 26, "error: string_to_upper_argc.26 exits with 26")
+assert_eq(res_test_string_to_upper_argc.exit_code, 26, "error: string_to_upper_argc.26 exits with 26")
 remove res_test_string_to_upper_argc
 var res_test_string_to_upper_type = $"tests/tmp/cherry tests/errors/scripts/string_to_upper_type.25.cherry"
-assert(res_test_string_to_upper_type.exit_code == 25, "error: string_to_upper_type.25 exits with 25")
+assert_eq(res_test_string_to_upper_type.exit_code, 25, "error: string_to_upper_type.25 exits with 25")
 remove res_test_string_to_upper_type
 var res_test_string_trim_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_argc.24.cherry"
-assert(res_test_string_trim_argc.exit_code == 24, "error: string_trim_argc.24 exits with 24")
+assert_eq(res_test_string_trim_argc.exit_code, 24, "error: string_trim_argc.24 exits with 24")
 remove res_test_string_trim_argc
 var res_test_string_trim_end_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_end_argc.21.cherry"
-assert(res_test_string_trim_end_argc.exit_code == 21, "error: string_trim_end_argc.21 exits with 21")
+assert_eq(res_test_string_trim_end_argc.exit_code, 21, "error: string_trim_end_argc.21 exits with 21")
 remove res_test_string_trim_end_argc
 var res_test_string_trim_end_type = $"tests/tmp/cherry tests/errors/scripts/string_trim_end_type.22.cherry"
-assert(res_test_string_trim_end_type.exit_code == 22, "error: string_trim_end_type.22 exits with 22")
+assert_eq(res_test_string_trim_end_type.exit_code, 22, "error: string_trim_end_type.22 exits with 22")
 remove res_test_string_trim_end_type
 var res_test_string_trim_start_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_start_argc.19.cherry"
-assert(res_test_string_trim_start_argc.exit_code == 19, "error: string_trim_start_argc.19 exits with 19")
+assert_eq(res_test_string_trim_start_argc.exit_code, 19, "error: string_trim_start_argc.19 exits with 19")
 remove res_test_string_trim_start_argc
 var res_test_string_trim_start_type = $"tests/tmp/cherry tests/errors/scripts/string_trim_start_type.20.cherry"
-assert(res_test_string_trim_start_type.exit_code == 20, "error: string_trim_start_type.20 exits with 20")
+assert_eq(res_test_string_trim_start_type.exit_code, 20, "error: string_trim_start_type.20 exits with 20")
 remove res_test_string_trim_start_type
 var res_test_string_trim_type = $"tests/tmp/cherry tests/errors/scripts/string_trim_type.23.cherry"
-assert(res_test_string_trim_type.exit_code == 23, "error: string_trim_type.23 exits with 23")
+assert_eq(res_test_string_trim_type.exit_code, 23, "error: string_trim_type.23 exits with 23")
 remove res_test_string_trim_type
 var res_test_subtract_nil = $"tests/tmp/cherry tests/errors/scripts/subtract_nil.50.cherry"
-assert(res_test_subtract_nil.exit_code == 50, "error: subtract_nil.50 exits with 50")
+assert_eq(res_test_subtract_nil.exit_code, 50, "error: subtract_nil.50 exits with 50")
 remove res_test_subtract_nil
 var res_test_unassigned_const = $"tests/tmp/cherry tests/errors/scripts/unassigned_const.112.cherry"
-assert(res_test_unassigned_const.exit_code == 112, "error: unassigned_const.112 exits with 112")
+assert_eq(res_test_unassigned_const.exit_code, 112, "error: unassigned_const.112 exits with 112")
 remove res_test_unassigned_const
 var res_test_undefined_identifier = $"tests/tmp/cherry tests/errors/scripts/undefined_identifier.197.cherry"
-assert(res_test_undefined_identifier.exit_code == 197, "error: undefined_identifier.197 exits with 197")
+assert_eq(res_test_undefined_identifier.exit_code, 197, "error: undefined_identifier.197 exits with 197")
 remove res_test_undefined_identifier
 var res_test= $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_paramters_in_println.95.cherry"
-assert(res_test.exit_code == 95, "error: incorrect_number_of_paramters_in_println exits with 95")
+assert_eq(res_test.exit_code, 95, "error: incorrect_number_of_paramters_in_println exits with 95")
 remove res_test
 test_results()

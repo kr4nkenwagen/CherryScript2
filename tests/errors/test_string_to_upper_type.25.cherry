@@ -1,2 +1,2 @@
 var err_string_to_upper_type = $"tests/tmp/cherry tests/errors/scripts/string_to_upper_type.25.cherry"
-assert(err_string_to_upper_type.exit_code == 25, "error: string_to_upper_type.25 exits with 25")
+assert_eq(err_string_to_upper_type.exit_code, 25, "error: string_to_upper_type.25 exits with 25")

@@ -1,13 +1,13 @@
 # Operator precedence and grouping
-assert(2 + 3 * 4 == 14, "arithmetic: * binds tighter than +")
-assert((2 + 3) * 4 == 20, "arithmetic: parentheses override precedence")
-assert(10 - 2 - 3 == 5, "arithmetic: left associativity of minus")
-assert(100 / 10 / 2 == 5, "arithmetic: left associativity of division")
+assert_eq(2 + 3 * 4, 14, "arithmetic: * binds tighter than +")
+assert_eq((2 + 3) * 4, 20, "arithmetic: parentheses override precedence")
+assert_eq(10 - 2 - 3, 5, "arithmetic: left associativity of minus")
+assert_eq(100 / 10 / 2, 5, "arithmetic: left associativity of division")
 
 # Integer division and modulus
-assert(7 / 2 == 3, "arithmetic: integer division truncates")
-assert(7 % 2 == 1, "arithmetic: integer modulus remainder")
-assert(8 % 4 == 0, "arithmetic: modulus zero remainder")
+assert_eq(7 / 2, 3, "arithmetic: integer division truncates")
+assert_eq(7 % 2, 1, "arithmetic: integer modulus remainder")
+assert_eq(8 % 4, 0, "arithmetic: modulus zero remainder")
 
 # Float arithmetic and coercion
 var f = 1.5 + 1
@@ -15,24 +15,24 @@ assert(f > 2.4 && f < 2.6, "arithmetic: float plus int coerces")
 remove f
 
 var g = 0.5 * 4
-assert(g == 2, "arithmetic: float times int coerces")
+assert_eq(g, 2, "arithmetic: float times int coerces")
 remove g
 
 var h = 3 - 0.5
-assert(h == 2, "arithmetic: int minus float coerces (result truncates to int)")
+assert_eq(h, 2, "arithmetic: int minus float coerces (result truncates to int)")
 remove h
 
 # Negative number literals in expressions
 var n = -5
-assert(n < -4, "arithmetic: negative literal compares")
-assert(n + 5 == 0, "arithmetic: negative plus positive")
+assert_lt(n, -4, "arithmetic: negative literal compares")
+assert_eq(n + 5, 0, "arithmetic: negative plus positive")
 remove n
 
 # Asymmetric string/number addition semantics
 var s = 1 + "a"
-assert(s == "1a", "arithmetic: int plus string concatenates")
+assert_eq(s, "1a", "arithmetic: int plus string concatenates")
 remove s
 
 var t = "a" .. 1
-assert(t == "a1", "arithmetic: dot concat appends number")
+assert_eq(t, "a1", "arithmetic: dot concat appends number")
 remove t

@@ -1,4 +1,4 @@
-assert(terminal.width >= 0, "terminal: width is greater than 0")
-assert(terminal.height >= 0, "terminal: height is greater than 0")
-assert(terminal.pixel_width >= 0, "terminal: pixel_width is greater than 0")
-assert(terminal.pixel_height >= 0, "terminal: pixel_height is greater than 0")
+assert_ge(terminal.width, 0, "terminal: width is greater than 0")
+assert_ge(terminal.height, 0, "terminal: height is greater than 0")
+assert_ge(terminal.pixel_width, 0, "terminal: pixel_width is greater than 0")
+assert_ge(terminal.pixel_height, 0, "terminal: pixel_height is greater than 0")

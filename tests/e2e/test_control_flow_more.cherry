@@ -7,7 +7,7 @@ if (false) {
 } else {
   y = 3
 }
-assert(y == 3, "control: if-elif-else (else branch)")
+assert_eq(y, 3, "control: if-elif-else (else branch)")
 remove y
 
 var z = 0
@@ -20,7 +20,7 @@ if (false) {
 } else {
   z = 4
 }
-assert(z == 2, "control: elif order (first elif)")
+assert_eq(z, 2, "control: elif order (first elif)")
 remove z
 
 var z = 0
@@ -33,7 +33,7 @@ if (false) {
 } else {
   z = 4
 }
-assert(z == 3, "control: elif order (second elif)")
+assert_eq(z, 3, "control: elif order (second elif)")
 remove z
 
 
@@ -43,7 +43,7 @@ for (var i = 0; i < 5; i = i + 1) {
   if (i == 2) { break }
   k = k + 1
 }
-assert(k == 2, "control: for loop break stops iterations")
+assert_eq(k, 2, "control: for loop break stops iterations")
 remove k
 
 # for loop: continue
@@ -52,7 +52,7 @@ for (var i = 0; i < 3; i = i + 1) {
   if (i == 1) { continue }
   c = c + 1
 }
-assert(c == 2, "control: for loop continue skips body for that iteration")
+assert_eq(c, 2, "control: for loop continue skips body for that iteration")
 remove c
 
 # nested loops / break affects only inner loop
@@ -65,7 +65,7 @@ for (var a = 0; a < 3; a+=1) {
     o+=1
   }
 }
-assert(o == 3, "control: nested loops with inner break")
+assert_eq(o, 3, "control: nested loops with inner break")
 remove o
 
 # while loop: break
@@ -74,5 +74,5 @@ for (true) {
   if (w == 2) { break }
   w = w + 1
 }
-assert(w == 2, "control: while loop break")
+assert_eq(w, 2, "control: while loop break")
 remove w

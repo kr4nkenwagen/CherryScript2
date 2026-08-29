@@ -1,2 +1,2 @@
 var err_int_div_string_type = $"tests/tmp/cherry tests/errors/scripts/int_div_string_type.60.cherry"
-assert(err_int_div_string_type.exit_code == 60, "error: int_div_string_type.60 exits with 60")
+assert_eq(err_int_div_string_type.exit_code, 60, "error: int_div_string_type.60 exits with 60")

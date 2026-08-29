@@ -1,8 +1,8 @@
 # Test: time module properties and boundary checks
 
 # - Year (reasonable calendar year)
-assert(time.year >= 2024, "time: year is reasonable (>= 2024)")
-assert(time.years >= 2024, "time: year alias (years >= 2024)")
+assert_ge(time.year, 2024, "time: year is reasonable (>= 2024)")
+assert_ge(time.years, 2024, "time: year alias (years >= 2024)")
 
 # - Month (1-12)
 assert(time.month >= 1 && time.month <= 12, "time: month range (1-12)")
@@ -49,13 +49,13 @@ assert(len(m_name) >= 3 && len(m_name) <= 9, "time: month_name string length bet
 remove m_name
 
 var m_short = time.month_short_name
-assert(len(m_short) == 3, "time: month_short_name length == 3")
+assert_eq(len(m_short), 3, "time: month_short_name length == 3")
 remove m_short
 
 
 # Test: execution_time
 var exec_start = time.execution_time
-assert(exec_start > 0.0, "time: execution_time is positive")
+assert_gt(exec_start, 0.0, "time: execution_time is positive")
 
 # Sleep to check if execution_time advances correctly
 sleep 0.2
@@ -63,7 +63,7 @@ sleep 0.2
 var exec_end = time.execution_time
 var delta = exec_end - exec_start
 
-assert(delta >= 0.18, "time: execution_time increased by ~0.2s after sleeping")
+assert_ge(delta, 0.18, "time: execution_time increased by ~0.2s after sleeping")
 
 remove exec_start
 remove exec_end

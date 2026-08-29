@@ -5,80 +5,80 @@
 
 var res_ex_hello = $"tests/tmp/cherry examples/hello.cherry"
 if(res_ex_hello.exit_code != 0) { println("stderr: " .. res_ex_hello.stderr) }
-assert(res_ex_hello.exit_code == 0, "examples/hello exits 0")
+assert_eq(res_ex_hello.exit_code, 0, "examples/hello exits 0")
 remove res_ex_hello
 
 var res_ex_hello_world = $"tests/tmp/cherry examples/hello_world.cherry"
 if(res_ex_hello_world.exit_code != 0) { println("stderr: " .. res_ex_hello_world.stderr) }
-assert(res_ex_hello_world.exit_code == 0, "examples/hello_world exits 0")
+assert_eq(res_ex_hello_world.exit_code, 0, "examples/hello_world exits 0")
 remove res_ex_hello_world
 
 var res_ex_variables = $"tests/tmp/cherry examples/variables.cherry"
 if(res_ex_variables.exit_code != 0) { println("stderr: " .. res_ex_variables.stderr) }
-assert(res_ex_variables.exit_code == 0, "examples/variables exits 0")
+assert_eq(res_ex_variables.exit_code, 0, "examples/variables exits 0")
 remove res_ex_variables
 
 var res_ex_control_flow = $"tests/tmp/cherry examples/control_flow.cherry"
 if(res_ex_control_flow.exit_code != 0) { println("stderr: " .. res_ex_control_flow.stderr) }
-assert(res_ex_control_flow.exit_code == 0, "examples/control_flow exits 0")
+assert_eq(res_ex_control_flow.exit_code, 0, "examples/control_flow exits 0")
 remove res_ex_control_flow
 
 var res_ex_functions = $"tests/tmp/cherry examples/functions.cherry"
 if(res_ex_functions.exit_code != 0) { println("stderr: " .. res_ex_functions.stderr) }
-assert(res_ex_functions.exit_code == 0, "examples/functions exits 0")
+assert_eq(res_ex_functions.exit_code, 0, "examples/functions exits 0")
 remove res_ex_functions
 
 var res_ex_arrays = $"tests/tmp/cherry examples/arrays.cherry"
 if(res_ex_arrays.exit_code != 0) { println("stderr: " .. res_ex_arrays.stderr) }
-assert(res_ex_arrays.exit_code == 0, "examples/arrays exits 0")
+assert_eq(res_ex_arrays.exit_code, 0, "examples/arrays exits 0")
 remove res_ex_arrays
 
 var res_ex_nested_len = $"tests/tmp/cherry examples/nested_len.cherry"
 if(res_ex_nested_len.exit_code != 0) { println("stderr: " .. res_ex_nested_len.stderr) }
-assert(res_ex_nested_len.exit_code == 0, "examples/nested_len exits 0")
+assert_eq(res_ex_nested_len.exit_code, 0, "examples/nested_len exits 0")
 remove res_ex_nested_len
 
 var res_ex_fizzbuzz = $"tests/tmp/cherry examples/fizzbuzz.cherry"
 if(res_ex_fizzbuzz.exit_code != 0) { println("stderr: " .. res_ex_fizzbuzz.stderr) }
-assert(res_ex_fizzbuzz.exit_code == 0, "examples/fizzbuzz exits 0")
+assert_eq(res_ex_fizzbuzz.exit_code, 0, "examples/fizzbuzz exits 0")
 remove res_ex_fizzbuzz
 
 var res_ex_fibonacci = $"tests/tmp/cherry examples/fibonacci.cherry"
 if(res_ex_fibonacci.exit_code != 0) { println("stderr: " .. res_ex_fibonacci.stderr) }
-assert(res_ex_fibonacci.exit_code == 0, "examples/fibonacci exits 0")
+assert_eq(res_ex_fibonacci.exit_code, 0, "examples/fibonacci exits 0")
 remove res_ex_fibonacci
 
 var res_ex_grade_calculator = $"tests/tmp/cherry examples/grade_calculator.cherry"
 if(res_ex_grade_calculator.exit_code != 0) { println("stderr: " .. res_ex_grade_calculator.stderr) }
-assert(res_ex_grade_calculator.exit_code == 0, "examples/grade_calculator exits 0")
+assert_eq(res_ex_grade_calculator.exit_code, 0, "examples/grade_calculator exits 0")
 remove res_ex_grade_calculator
 
 var res_ex_csv_processor = $"tests/tmp/cherry examples/csv_processor.cherry"
 if(res_ex_csv_processor.exit_code != 0) { println("stderr: " .. res_ex_csv_processor.stderr) }
-assert(res_ex_csv_processor.exit_code == 0, "examples/csv_processor exits 0")
+assert_eq(res_ex_csv_processor.exit_code, 0, "examples/csv_processor exits 0")
 remove res_ex_csv_processor
 
 var res_ex_temperature_converter = $"tests/tmp/cherry examples/temperature_converter.cherry"
 if(res_ex_temperature_converter.exit_code != 0) { println("stderr: " .. res_ex_temperature_converter.stderr) }
-assert(res_ex_temperature_converter.exit_code == 0, "examples/temperature_converter exits 0")
+assert_eq(res_ex_temperature_converter.exit_code, 0, "examples/temperature_converter exits 0")
 remove res_ex_temperature_converter
 
 var res_ex_word_frequency = $"tests/tmp/cherry examples/word_frequency.cherry"
 if(res_ex_word_frequency.exit_code != 0) { println("stderr: " .. res_ex_word_frequency.stderr) }
-assert(res_ex_word_frequency.exit_code == 0, "examples/word_frequency exits 0")
+assert_eq(res_ex_word_frequency.exit_code, 0, "examples/word_frequency exits 0")
 remove res_ex_word_frequency
 
 var res_ex_bank_account = $"tests/tmp/cherry examples/bank_account.cherry"
 if(res_ex_bank_account.exit_code != 0) { println("stderr: " .. res_ex_bank_account.stderr) }
-assert(res_ex_bank_account.exit_code == 0, "examples/bank_account exits 0")
+assert_eq(res_ex_bank_account.exit_code, 0, "examples/bank_account exits 0")
 remove res_ex_bank_account
 
 var res_ex_http_request = $"tests/tmp/cherry examples/http_request.cherry"
 if(res_ex_http_request.exit_code != 0) { println("stderr: " .. res_ex_http_request.stderr) }
-assert(res_ex_http_request.exit_code == 0, "examples/http_request exits 0")
+assert_eq(res_ex_http_request.exit_code, 0, "examples/http_request exits 0")
 remove res_ex_http_request
 
 var res_ex_file_logger = $"tests/tmp/cherry examples/file_logger.cherry"
 if(res_ex_file_logger.exit_code != 0) { println("stderr: " .. res_ex_file_logger.stderr) }
-assert(res_ex_file_logger.exit_code == 0, "examples/file_logger exits 0")
+assert_eq(res_ex_file_logger.exit_code, 0, "examples/file_logger exits 0")
 remove res_ex_file_logger

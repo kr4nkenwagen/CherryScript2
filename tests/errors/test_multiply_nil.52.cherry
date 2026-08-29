@@ -1,2 +1,2 @@
 var err_multiply_nil = $"tests/tmp/cherry tests/errors/scripts/multiply_nil.52.cherry"
-assert(err_multiply_nil.exit_code == 52, "error: multiply_nil.52 exits with 52")
+assert_eq(err_multiply_nil.exit_code, 52, "error: multiply_nil.52 exits with 52")

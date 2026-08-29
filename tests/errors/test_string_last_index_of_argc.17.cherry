@@ -1,2 +1,2 @@
 var err_string_last_index_of_argc = $"tests/tmp/cherry tests/errors/scripts/string_last_index_of_argc.17.cherry"
-assert(err_string_last_index_of_argc.exit_code == 17, "error: string_last_index_of_argc.17 exits with 17")
+assert_eq(err_string_last_index_of_argc.exit_code, 17, "error: string_last_index_of_argc.17 exits with 17")

@@ -1,2 +1,2 @@
 var err_string_last_index_of_type = $"tests/tmp/cherry tests/errors/scripts/string_last_index_of_type.18.cherry"
-assert(err_string_last_index_of_type.exit_code == 18, "error: string_last_index_of_type.18 exits with 18")
+assert_eq(err_string_last_index_of_type.exit_code, 18, "error: string_last_index_of_type.18 exits with 18")

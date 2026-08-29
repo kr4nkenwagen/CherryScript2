@@ -1,2 +1,2 @@
 var err_default_param_internal = $"tests/tmp/cherry tests/errors/scripts/default_param_internal.195.cherry"
-assert(err_default_param_internal.exit_code == 195, "error: default_param_internal.195 exits with 195")
+assert_eq(err_default_param_internal.exit_code, 195, "error: default_param_internal.195 exits with 195")

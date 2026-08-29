@@ -1,2 +1,2 @@
 var err_string_trim_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_argc.24.cherry"
-assert(err_string_trim_argc.exit_code == 24, "error: string_trim_argc.24 exits with 24")
+assert_eq(err_string_trim_argc.exit_code, 24, "error: string_trim_argc.24 exits with 24")

@@ -3,7 +3,7 @@ var sum = 0
 for (var i = 0; i < 3; i = i + 1) {
   sum = sum + i
 }
-assert(sum == 0 + 1 + 2, "control: for loop sum")
+assert_eq(sum, 0 + 1 + 2, "control: for loop sum")
 remove sum
 
 # while and continue
@@ -12,5 +12,5 @@ for (j < 3) {
   if (j == 1) { j = j + 1; continue }
   j = j + 1
 }
-assert(j == 3, "control: while + continue")
+assert_eq(j, 3, "control: while + continue")
 remove j

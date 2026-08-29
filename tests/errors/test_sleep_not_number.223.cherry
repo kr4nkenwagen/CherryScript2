@@ -1,2 +1,2 @@
 var err_sleep_not_number = $"tests/tmp/cherry tests/errors/scripts/sleep_not_number.223.cherry"
-assert(err_sleep_not_number.exit_code == 223, "error: sleep_not_number.223 exits with 223")
+assert_eq(err_sleep_not_number.exit_code, 223, "error: sleep_not_number.223 exits with 223")

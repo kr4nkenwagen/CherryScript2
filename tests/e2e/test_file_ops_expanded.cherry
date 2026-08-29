@@ -3,10 +3,10 @@ var tf = @"tests/tmp/tmp_file_ops_expanded"
 # write multiple lines
 tf<-2 = "line2"
 tf<-3 = "line3"
-assert(tf->1 == "", "file ops: first line empty")
-assert(tf->3 == "line3", "file ops: third line == line3")
+assert_eq(tf->1, "", "file ops: first line empty")
+assert_eq(tf->3, "line3", "file ops: third line == line3")
 # append last line
 tf<-len(tf) = "last"
-assert(tf->len(tf) == "last", "file ops: appended last line")
+assert_eq(tf->len(tf), "last", "file ops: appended last line")
 rm tf
 remove tf

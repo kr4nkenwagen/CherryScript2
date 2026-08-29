@@ -1,22 +1,22 @@
 # Test: len() for various types
 # - arrays
 var arr = [1, 2, 3]
-assert(len(arr) == 3, "len: array length == 3")
+assert_eq(len(arr), 3, "len: array length == 3")
 remove arr
 
 # - strings
 var str = "Hello World"
-assert(len(str) == 11, "len: string length == 11")
+assert_eq(len(str), 11, "len: string length == 11")
 remove str
 
 # - integers
 var number = 1234567890
-assert(len(number) == 10, "len: integer digit count == 10")
+assert_eq(len(number), 10, "len: integer digit count == 10")
 remove number
 
 # - floats
 var float = 12.34
-assert(len(float) == 5, "len: float representation length == 5")
+assert_eq(len(float), 5, "len: float representation length == 5")
 remove float
 
 # - file lines
@@ -24,6 +24,6 @@ var file = @"tests/tmp/tmp_len_test_file"
 # ensure file is clean
 rm file
 file<-3 = "test"
-assert(len(file) == 4, "len: file length (lines) == 4")
+assert_eq(len(file), 4, "len: file length (lines) == 4")
 rm file
 remove file

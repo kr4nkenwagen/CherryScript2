@@ -1,2 +1,2 @@
 var err_string_pad_end_type_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_end_type_a.31.cherry"
-assert(err_string_pad_end_type_a.exit_code == 31, "error: string_pad_end_type_a.31 exits with 31")
+assert_eq(err_string_pad_end_type_a.exit_code, 31, "error: string_pad_end_type_a.31 exits with 31")

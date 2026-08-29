@@ -1,2 +1,2 @@
 var err_div_by_zero_float = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_float.184.cherry"
-assert(err_div_by_zero_float.exit_code == 184, "error: div_by_zero_float.184 exits with 184")
+assert_eq(err_div_by_zero_float.exit_code, 184, "error: div_by_zero_float.184 exits with 184")

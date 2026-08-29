@@ -1,6 +1,6 @@
 # array literal, nested arrays, indexing
 var arr = [1, [2, 3], 4]
-assert(arr[1][1] == 3, "arrays: nested indexing returns 3")
-assert(len(arr) == 3, "arrays: top-level length == 3")
-assert(arr[1+1] == 4, "arrays: expressions in index bracket")
+assert_eq(arr[1][1], 3, "arrays: nested indexing returns 3")
+assert_eq(len(arr), 3, "arrays: top-level length == 3")
+assert_eq(arr[1+1], 4, "arrays: expressions in index bracket")
 remove arr

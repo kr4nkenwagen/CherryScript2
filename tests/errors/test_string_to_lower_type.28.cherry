@@ -1,2 +1,2 @@
 var err_string_to_lower_type = $"tests/tmp/cherry tests/errors/scripts/string_to_lower_type.28.cherry"
-assert(err_string_to_lower_type.exit_code == 28, "error: string_to_lower_type.28 exits with 28")
+assert_eq(err_string_to_lower_type.exit_code, 28, "error: string_to_lower_type.28 exits with 28")

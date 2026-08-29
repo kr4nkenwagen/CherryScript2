@@ -1,9 +1,9 @@
 # Writing array elements by index
 var arr = [1, 2, 3]
 arr[0] = 99
-assert(arr[0] == 99, "arrays: index write replaces element")
+assert_eq(arr[0], 99, "arrays: index write replaces element")
 arr[2] = arr[0] - 9
-assert(arr[2] == 90, "arrays: write uses right-hand expression")
+assert_eq(arr[2], 90, "arrays: write uses right-hand expression")
 
 # Appending past the end via index
 arr[3] = 4
@@ -12,24 +12,24 @@ assert(arr[3] == 4 && len(arr) == 4, "arrays: index write at end appends")
 # Auto-grow fills gaps with null
 var grown = [1]
 grown[4] = 2
-assert(len(grown) == 5, "arrays: auto-grow extends length to index+1")
-assert(grown[2] == null, "arrays: gap elements read as null")
-assert(grown[1] == null, "arrays: second gap reads as null")
-assert(grown[4] == 2, "arrays: written index survives growth")
+assert_eq(len(grown), 5, "arrays: auto-grow extends length to index+1")
+assert_eq(grown[2], null, "arrays: gap elements read as null")
+assert_eq(grown[1], null, "arrays: second gap reads as null")
+assert_eq(grown[4], 2, "arrays: written index survives growth")
 remove grown
 
 # Nested array element writes
 var grid = [[1, 2], [3, 4]]
 grid[0][1] = 99
-assert(grid[0][1] == 99, "arrays: nested index write mutates inner array")
-assert(grid[1][0] == 3, "arrays: sibling inner array unaffected")
+assert_eq(grid[0][1], 99, "arrays: nested index write mutates inner array")
+assert_eq(grid[1][0], 3, "arrays: sibling inner array unaffected")
 remove grid
 
 # Concatenation produces a new array without touching operands
 var a = [1, 2]
 var b = [3]
 var c = a + b
-assert(len(c) == 3, "arrays: concat length")
+assert_eq(len(c), 3, "arrays: concat length")
 assert(c[0] == 1 && c[2] == 3, "arrays: concat preserves order")
 assert(len(a) == 2 && len(b) == 1, "arrays: concat leaves operands unchanged")
 remove a, b, c, arr

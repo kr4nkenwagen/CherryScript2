@@ -1,2 +1,2 @@
 var err_string_first_index_of_type = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_type.16.cherry"
-assert(err_string_first_index_of_type.exit_code == 16, "error: string_first_index_of_type.16 exits with 16")
+assert_eq(err_string_first_index_of_type.exit_code, 16, "error: string_first_index_of_type.16 exits with 16")

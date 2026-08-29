@@ -1,13 +1,13 @@
 global var a = 1
 global const b = 1
-assert(a == 1, "global: var is initalized")
-assert(b == 1, "global: const is initalized")
+assert_eq(a, 1, "global: var is initalized")
+assert_eq(b, 1, "global: const is initalized")
 
 fn test() {
   a += 1
 }
 test()
-assert(a == 2, "global: var is accessible from within a function")
+assert_eq(a, 2, "global: var is accessible from within a function")
 remove a, b, test
 
 global var a = 0
@@ -19,5 +19,5 @@ fn test() {
   global_test()
 }
 test()
-assert(a == 1, "global: Global functions are accessible from function scopes")
+assert_eq(a, 1, "global: Global functions are accessible from function scopes")
 remove a, b, test, global_test

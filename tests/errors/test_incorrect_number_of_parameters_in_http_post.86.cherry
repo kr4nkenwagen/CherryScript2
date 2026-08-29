@@ -1,3 +1,3 @@
 var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_post.86.cherry"
-assert(res.exit_code == 86, "error: http.post() exits with 86")
+assert_eq(res.exit_code, 86, "error: http.post() exits with 86")
 remove res

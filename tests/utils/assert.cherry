@@ -2,7 +2,7 @@ global var failed_tests = [], passed_tests_count = 0
 global var last_five = ["", "", "", "", ""], last_five_length = 0
 global const TESTRUNNER_HEADER = "[#424242]╭──────────────────────╮\n[#424242]│[#] 🍒 Cherry TestRunner [#424242]│\n[#424242]╰──────────────────────╯"
 
-fn assert(var assertion, var msg) {
+global fn display(var msg) {
   var prev_item = last_five_length - 1
   for(var i = 4; i > 0; i-=1) {
     last_five[i] = last_five[i - 1]
@@ -10,14 +10,7 @@ fn assert(var assertion, var msg) {
   if(prev_item < 0) {
     prev_item = 0
   }
-  if(assertion) {
-    last_five[0] = "[#0F0]PASSED[#]: " .. msg
-    passed_tests_count+= 1
-  } else {
-    last_five[0] = "[#F00]FAILED[#]: " .. msg
-    var failed_tests_length = len(failed_tests)
-    failed_tests[failed_tests_length] = msg
-  }
+  last_five[0] = msg
   if last_five_length < 5 {
     last_five_length += 1
   }
@@ -47,3 +40,13 @@ fn test_results() {
     println("[#424242]└─[#]total: " .. failed_tests_count)
   }
 }
+
+fn assert(var cond, var msg) { if (cond) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var l = len(failed_tests); failed_tests[l] = msg; display("[#F00]FAILED[#]: " .. msg) } }
+fn assert_eq(var act, var exp, var msg) { if (act == exp) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected " .. exp .. ", got " .. act; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_ne(var act, var exp, var msg) { if (act != exp) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected not " .. exp .. ", got " .. act; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_gt(var act, var exp, var msg) { if (act > exp) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected > " .. exp .. ", got " .. act; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_lt(var act, var exp, var msg) { if (act < exp) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected < " .. exp .. ", got " .. act; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_ge(var act, var exp, var msg) { if (act >= exp) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected >= " .. exp .. ", got " .. act; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_le(var act, var exp, var msg) { if (act <= exp) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected <= " .. exp .. ", got " .. act; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_true(var cond, var msg) { if (cond == true) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected true, got " .. cond; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }
+fn assert_false(var cond, var msg) { if (cond == false) { passed_tests_count += 1; display("[#0F0]PASSED[#]: " .. msg) } else { var full = msg .. " | Expected false, got " .. cond; var l = len(failed_tests); failed_tests[l] = full; display("[#F00]FAILED[#]: " .. full) } }

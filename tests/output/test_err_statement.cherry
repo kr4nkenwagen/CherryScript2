@@ -1,4 +1,4 @@
 var res_err = $"tests/tmp/cherry tests/output/scripts/err_statement.cherry"
-assert(res_err.stdout == "after err\n", "err: stdout after err is in order")
-assert(res_err.stderr == "oops\n", "err: outputs correct order of err")
+assert_eq(res_err.stdout, "after err\n", "err: stdout after err is in order")
+assert_eq(res_err.stderr, "oops\n", "err: outputs correct order of err")
 remove res_err

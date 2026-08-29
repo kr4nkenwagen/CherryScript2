@@ -1,75 +1,75 @@
 # String addition / concatenation
 var a = "Hello ", b = "World"
 var s = a + b
-assert(s == "Hello World", "string: concatenation")
+assert_eq(s, "Hello World", "string: concatenation")
 
 remove a, b, s
 
 # String + int (lengthen by N chars)
 var s1 = "Hello World"
 var s2 = s1 + 3
-assert(s2 == "Hello WorldHel", "string: lengthen by integer")
+assert_eq(s2, "Hello WorldHel", "string: lengthen by integer")
 
 remove s1, s2
 
 # String subtraction (shorten)
 var s3 = "Hello WorldHel"
 var s4 = s3 - 3
-assert(s4 == "Hello World", "string: shorten by integer")
+assert_eq(s4, "Hello World", "string: shorten by integer")
 
 remove s3, s4
 
 # Multiply (repeat)
 var s5 = "Hello"
 var s6 = s5 * 2
-assert(s6 == "HelloHello", "string: repeat * operator")
+assert_eq(s6, "HelloHello", "string: repeat * operator")
 
 remove s5, s6
 
 # Division (split/truncate)
 var s7 = "Hello World"
 var s8 = s7 / 2
-assert(s8 == "Hello", "string: division")
+assert_eq(s8, "Hello", "string: division")
 
 remove s7, s8
 
 # Dot concat or other dot ops (ensure consistent behavior)
 var s9 = "Hello World"
 var s10 = s9 .. 1
-assert(s10 == "Hello World1", "string: .. concatenation with number")
+assert_eq(s10, "Hello World1", "string: .. concatenation with number")
 
 remove s9, s10
 
 # Modulus as character extraction
 var s11 = "Hello World"
 var s12 = s11 % 2
-assert(s12 == "d", "string: modulus returns character at pos")
+assert_eq(s12, "d", "string: modulus returns character at pos")
 
 remove s11, s12
 
 # Splicing by index
 var s13 = "Hello World"
 var s14 = s13:5
-assert(s14 == "Hello", "string: left splice up to index")
+assert_eq(s14, "Hello", "string: left splice up to index")
 
 remove s13, s14
 
 # Splicing by literal character removal
 var s15 = "Hello World"
 var s16 = s15:"d"
-assert(s16 == "Hello Worl", "string: remove first instance of char")
+assert_eq(s16, "Hello Worl", "string: remove first instance of char")
 
 remove s15, s16
 
 # Last-letter / last-splice forms
 var s17 = "Hello World"
 var s18 = s17:^"W"
-assert(s18 == "orld", "string: last letter splice by literal")
+assert_eq(s18, "orld", "string: last letter splice by literal")
 
 remove s17, s18
 
 var s19 = "Hello World"
 var s20 = s19:^5
-assert(s20 == "World", "string: last splice by count")
+assert_eq(s20, "World", "string: last splice by count")
 
 remove s19, s20

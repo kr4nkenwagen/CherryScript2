@@ -1,2 +1,2 @@
 var err_redeclaration = $"tests/tmp/cherry tests/errors/scripts/redeclaration.207.cherry"
-assert(err_redeclaration.exit_code == 207, "error: redeclaration.207 exits with 207")
+assert_eq(err_redeclaration.exit_code, 207, "error: redeclaration.207 exits with 207")

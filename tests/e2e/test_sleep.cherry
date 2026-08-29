@@ -14,7 +14,7 @@ var end_ms_1 = time.millisecond
 var end_total_1 = (end_min_1 * 60000) + (end_sec_1 * 1000) + end_ms_1
 
 var elapsed_1 = end_total_1 - start_total_1
-assert(elapsed_1 >= 180, "sleep: 0.2s slept for at least ~200ms")
+assert_ge(elapsed_1, 180, "sleep: 0.2s slept for at least ~200ms")
 
 remove start_min_1
 remove start_sec_1
@@ -34,7 +34,7 @@ sleep(0.5)
 var end_total_2 = (time.minute * 60000) + (time.second * 1000) + time.millisecond
 var elapsed_2 = end_total_2 - start_total_2
 
-assert(elapsed_2 >= 450, "sleep: 0.5s slept for at least ~500ms")
+assert_ge(elapsed_2, 450, "sleep: 0.5s slept for at least ~500ms")
 
 remove start_total_2
 remove end_total_2

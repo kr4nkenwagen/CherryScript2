@@ -1,17 +1,17 @@
 # File handler tests using a unique test file path
 var tf = @"tests/tmp/tmp_file_handler_test"
 
-assert(!exists(tf), "file: file was not created on intiation")
+assert_false(exists(tf), "file: file was not created on intiation")
 # Ensure clean start
 rm tf
 
 # create/write and check exists
 tf<-3 = "test"
-assert(exists(tf), "file: exists after write")
+assert_true(exists(tf), "file: exists after write")
 
 # remove and verify deletion
 rm tf
-assert(!exists(tf), "file: not exists after rm")
+assert_false(exists(tf), "file: not exists after rm")
 remove tf
 
 # Recreate file and check content placement
@@ -19,16 +19,16 @@ var file = @"tests/tmp/tmp_file_handler_test"
 # ensure empty file
 rm file
 file<-3 = "test"
-assert(len(file) == 4, "file: len after writing one line (incl empties)")
+assert_eq(len(file), 4, "file: len after writing one line (incl empties)")
 
-assert(file->1 == "", "file: first line empty")
-assert(file->2 == "", "file: second line empty")
-assert(file->3 == "test", "file: third line contains test")
-assert(file->len(file) == "test", "file: last line by len(file) returns test")
+assert_eq(file->1, "", "file: first line empty")
+assert_eq(file->2, "", "file: second line empty")
+assert_eq(file->3, "test", "file: third line contains test")
+assert_eq(file->len(file), "test", "file: last line by len(file) returns test")
 
 # replace and verify
 file<-3 = "replaced"
-assert(file->3 == "replaced", "file: replaced line is correct")
+assert_eq(file->3, "replaced", "file: replaced line is correct")
 
 # cleanup
 rm file

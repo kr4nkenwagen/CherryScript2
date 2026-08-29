@@ -1,2 +1,2 @@
 var err_cmp_not_equal_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_not_equal_type_mismatch.30.cherry"
-assert(err_cmp_not_equal_type_mismatch.exit_code == 30, "error: cmp_not_equal_type_mismatch.30 exits with 30")
+assert_eq(err_cmp_not_equal_type_mismatch.exit_code, 30, "error: cmp_not_equal_type_mismatch.30 exits with 30")
