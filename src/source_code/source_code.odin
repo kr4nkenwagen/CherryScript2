@@ -34,7 +34,7 @@ from_file :: proc(file: string) -> (src: ^types.source_code_t, code: types.exit_
 }
 
 from_repl :: proc(line: string) -> (src: ^types.source_code_t, code: types.exit_codes) {
-	line := strings.concatenate({line, ";\x00"})
+	line := strings.concatenate({line, ";"})
 	src = create(line) or_return
 	return
 }

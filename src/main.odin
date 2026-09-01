@@ -12,6 +12,7 @@ import "scanner"
 import "source_code"
 import "stack"
 import "sys"
+import "token"
 import "token_list"
 import "types"
 import "vendor:curl"
@@ -63,11 +64,20 @@ build_token_list :: proc(
 	tokens: ^types.token_list_t,
 	code: types.exit_codes,
 ) {
+
 	tokens, code = scanner.run(src)
 	if sys.is_error(code) {
-		token := tokens.list[len(tokens.list) - 1]
-		sys.print_error(code, token, src)
+		tkn: ^types.token_t = nil
+		if tokens != nil && len(tokens.list) > 0 {
+			tkn = tokens.list[len(tokens.list) - 1]
+		} else {
+			tkn = token.generate_unknown_token() or_return
+		}
+		sys.print_error(code, tkn, src)
 		return nil, code
+	}
+	if len(os.get_env_alloc("CHERRY_DUMP", context.temp_allocator)) > 0 {
+		_ = os.write_entire_file_from_string("/tmp/opencode/combined_dump.cherry", src.content)
 	}
 	if args.debug_level == .TOKENS {
 		debug.print_token_list(tokens)
@@ -137,7 +147,6 @@ main :: proc() {
 	args := parse_args()
 	err_code := types.exit_codes.OK
 	if len(args.source_files) == 0 && len(args.pipe) == 0 {
-		fmt.printf("dd")
 		err_code = repl.run(args)
 		if err_code != .OK do os.exit(int(err_code))
 	} else if len(args.pipe) != 0 {
@@ -152,12 +161,12 @@ main :: proc() {
 			continue
 		}
 		program, parse_code := build_program(tokens, src, args)
-		program.args = args
 		if parse_code != .OK {
 			err_code = parse_code
 			token_list.remove(tokens)
 			continue
 		}
+		if program != nil do program.args = args
 		eval_code := interprete_program(program, tokens, src, args)
 		if eval_code != .OK do err_code = eval_code
 		token_list.remove(tokens)
