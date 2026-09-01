@@ -24,7 +24,6 @@ keywords: []types.grammar_t = {
 	{literal = "println", id = .PRINT_LINE},
 	{literal = "len", id = .LENGTH},
 	{literal = "out", id = .OUT},
-	{literal = "module", id = .IMPORT},
 	{literal = "null", id = .NULL},
 	{literal = "if", id = .IF},
 	{literal = "fn", id = .FUNCTION},
@@ -36,32 +35,52 @@ keywords: []types.grammar_t = {
 	{literal = "continue", id = .CONTINUE},
 	{literal = "const", id = .CONST},
 	{literal = "break", id = .BREAK},
+	{literal = "err", id = .ERROR},
 }
 
-logical: []types.grammar_t = {{literal = "&&", id = .AND}, {literal = "||", id = .OR}}
 
-equality: []types.grammar_t = {
-	{literal = "==", id = .EQUAL_EQUAL},
-	{literal = "!=", id = .BANG_EQUAL},
-}
+unary: []types.grammar_t = {{literal = "-", id = .MINUS}}
 
-comparers: []types.grammar_t = {
-	{literal = ">", id = .GREATER},
-	{literal = ">=", id = .GREATER_EQUAL},
-	{literal = "<", id = .LESS},
-	{literal = "<=", id = .LESS_EQUAL},
-}
-
-operators: []types.grammar_t = {
+symbols: []types.grammar_t = {
+	{literal = "+=", id = .PLUS_EQUAL},
+	{literal = "-=", id = .MINUS_EQUAL},
+	{literal = "*=", id = .STAR_EQUAL},
+	{literal = "/=", id = .SLASH_EQUAL},
 	{literal = "+", id = .PLUS},
 	{literal = "-", id = .MINUS},
 	{literal = "*", id = .STAR},
 	{literal = "/", id = .SLASH},
 	{literal = "%", id = .MODULUS},
+	{literal = "&&", id = .AND},
+	{literal = "||", id = .OR},
+	{literal = ">=", id = .GREATER_EQUAL},
+	{literal = ">", id = .GREATER},
+	{literal = "<=", id = .LESS_EQUAL},
+	{literal = "<", id = .LESS},
+	{literal = "==", id = .EQUAL_EQUAL},
+	{literal = "!=", id = .BANG_EQUAL},
+	{literal = "(", id = .LEFT_PAREN},
+	{literal = ")", id = .RIGHT_PAREN},
+	{literal = "{", id = .LEFT_BRACE},
+	{literal = "}", id = .RIGHT_BRACE},
+	{literal = "[", id = .LEFT_BRACKET},
+	{literal = "]", id = .RIGHT_BRACKET},
+	{literal = ";", id = .TERMINATOR},
+	{literal = "\n", id = .TERMINATOR},
+	{literal = ",", id = .COMMA},
+	{literal = ".", id = .DOT},
+	{literal = "=", id = .EQUAL},
+	{literal = "$", id = .EXECUTE},
+	{literal = "@", id = .AT},
+	{literal = ":^", id = .COLON_HAT},
+	{literal = ":", id = .COLON},
+	{literal = "..", id = .DOT_DOT},
+	{literal = "->", id = .RIGHT_ARROW},
+	{literal = "<-", id = .LEFT_ARROW},
+	{literal = "!", id = .BANG},
 }
 
-unary: []types.grammar_t = {{literal = "!", id = .BANG}, {literal = "-", id = .MINUS}}
-
+MODULE: string : "module"
 COMMENT: rune : '#'
 NEWLINE: rune : '\n'
 STRING_WRAPPER: rune : '"'

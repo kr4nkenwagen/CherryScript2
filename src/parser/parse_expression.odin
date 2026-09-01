@@ -42,7 +42,9 @@ primary_expression :: proc(
 		return parse_json(tokens)
 	case .EXECUTE:
 		return parse_execute(tokens)
-	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NULL, .AT:
+	case .AT:
+		return parse_file(tokens)
+	case .STRING_WRAPPER, .NUMBER, .FALSE, .TRUE, .NULL:
 		sntx = syntax.create() or_return
 		sntx.token = curr_token
 		token_list.advance(tokens) or_return

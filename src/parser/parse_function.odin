@@ -5,6 +5,7 @@ import "../syntax"
 import "../token"
 import "../token_list"
 import "../types"
+import "core:fmt"
 
 function_args :: proc(
 	tokens: ^types.token_list_t,
@@ -95,6 +96,7 @@ passed_function_args :: proc(
 	for curr_token.type != .RIGHT_PAREN && curr_token.type != .END_OF_FILE {
 		if curr_token.type == .COMMA do curr_token = token_list.advance(tokens) or_return
 		curr_syntax := expression(tokens) or_return
+		nxt, _ := token_list.peek(tokens, 0)
 		program.add(sntx.branch, curr_syntax) or_return
 		curr_token = token_list.peek(tokens, 0) or_return
 		if curr_token.type == .RIGHT_PAREN do continue
