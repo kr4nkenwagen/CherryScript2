@@ -1,7 +1,11 @@
 package scan
 
+import "../grammar"
 import "../source_code"
+import "../token"
+import "../token_list"
 import "../types"
+import "core:sort"
 import "core:strings"
 
 is_number :: proc(character: rune) -> (is_number: bool) {
@@ -78,21 +82,6 @@ is_end_of_word :: proc(character: rune) -> (at_end_of_word: bool) {
 	return
 }
 
-match_and_consume :: proc(
-	src: ^types.source_code_t,
-	match_word: string,
-) -> (
-	matched_word: string,
-	is_matched: bool,
-	code: types.exit_codes,
-) {
-	is_matched = is_next_word_match(src, match_word) or_return
-	if is_matched {
-		matched_word = consume_word(src) or_return
-	}
-	return
-}
-
 consume_word :: proc(
 	src: ^types.source_code_t,
 ) -> (
@@ -134,5 +123,50 @@ is_next_word_match :: proc(
 		if is_alphanum do return
 	}
 	next_word_match = true
+	return
+}
+
+order_symbols_by_literal_length :: proc() {
+	ordered := make([]types.grammar_t, len(grammar.symbols))
+	copy(ordered[:], grammar.symbols)
+	sort.quick_sort_proc(ordered, proc(a, b: types.grammar_t) -> int {
+		la, lb := len(a.literal), len(b.literal)
+		if la > lb do return -1
+		if la < lb do return +1
+		return 0
+	})
+	grammar.symbols = ordered
+}
+
+append_list_tail :: proc(tkn_list: ^types.token_list_t) -> (code: types.exit_codes) {
+	term_char := token_list.peek(tkn_list, 0) or_return
+	if term_char.type != .TERMINATOR {
+		tok := token.create(nil, .TERMINATOR, ";") or_return
+		token_list.add(tkn_list, tok) or_return
+	}
+	tok := token.create(nil, .END_OF_FILE, "EOF") or_return
+	token_list.add(tkn_list, tok) or_return
+
+	return
+}
+
+
+remove_dupe_terminators :: proc(tkn_list: ^types.token_list_t) -> (code: types.exit_codes) {
+	if tkn_list == nil || tkn_list.list == nil {
+		if tkn_list != nil do tkn_list.length = 0
+		return
+	}
+	write := 0
+	for read := 0; read < len(tkn_list.list); read += 1 {
+		if write > 0 &&
+		   tkn_list.list[read].type == .TERMINATOR &&
+		   tkn_list.list[write - 1].type == .TERMINATOR {
+			continue
+		}
+		tkn_list.list[write] = tkn_list.list[read]
+		write += 1
+	}
+	resize(&tkn_list.list, write)
+	tkn_list.length = write
 	return
 }

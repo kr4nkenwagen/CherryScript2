@@ -5,7 +5,6 @@ import "../source_code"
 import "../token"
 import "../token_list"
 import "../types"
-import "core:sort"
 import "core:strings"
 
 consume_symbols :: proc(
@@ -103,16 +102,4 @@ handle_right_brace :: proc(
 		token_list.add(tkn_list, tok) or_return
 	}
 	return
-}
-
-order_symbols_by_literal_length :: proc() {
-	ordered := make([]types.grammar_t, len(grammar.symbols))
-	copy(ordered[:], grammar.symbols)
-	sort.quick_sort_proc(ordered, proc(a, b: types.grammar_t) -> int {
-		la, lb := len(a.literal), len(b.literal)
-		if la > lb do return -1
-		if la < lb do return +1
-		return 0
-	})
-	grammar.symbols = ordered
 }
