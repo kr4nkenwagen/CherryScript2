@@ -1,2 +1,2 @@
-var err_string_contains_argc = $"tests/tmp/cherry tests/errors/scripts/string_contains_argc.13.cherry"
-assert_eq(err_string_contains_argc.exit_code, 13, "error: string_contains_argc.13 exits with 13")
+var err_string_contains_argc = $"tests/tmp/cherry tests/errors/scripts/string_contains_argc.6.cherry"
+assert_eq(err_string_contains_argc.exit_code, 6, "error: string_contains_argc.6 exits with 6")

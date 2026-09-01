@@ -1,2 +1,2 @@
-var err_string_trim_start_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_start_argc.19.cherry"
-assert_eq(err_string_trim_start_argc.exit_code, 19, "error: string_trim_start_argc.19 exits with 19")
+var err_string_trim_start_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_start_argc.12.cherry"
+assert_eq(err_string_trim_start_argc.exit_code, 12, "error: string_trim_start_argc.12 exits with 12")

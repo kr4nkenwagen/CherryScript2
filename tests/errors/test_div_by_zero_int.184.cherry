@@ -1,2 +1,2 @@
-var err_div_by_zero_int = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_int.184.cherry"
-assert_eq(err_div_by_zero_int.exit_code, 184, "error: div_by_zero_int.184 exits with 184")
+var err_div_by_zero_int = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_int.178.cherry"
+assert_eq(err_div_by_zero_int.exit_code, 178, "error: div_by_zero_int.178 exits with 178")

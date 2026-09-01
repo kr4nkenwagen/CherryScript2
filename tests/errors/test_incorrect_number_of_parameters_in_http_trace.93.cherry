@@ -1,3 +1,3 @@
-var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_trace.93.cherry"
+var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_trace.86.cherry"
 assert_eq(res.exit_code, 93, "error: http.trace() exits with 93")
 remove res

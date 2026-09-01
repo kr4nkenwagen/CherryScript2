@@ -1,2 +1,2 @@
-var err_string_replace_all_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_argc_a.33.cherry"
-assert_eq(err_string_replace_all_argc_a.exit_code, 33, "error: string_replace_all_argc_a.33 exits with 33")
+var err_string_replace_all_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_argc_a.26.cherry"
+assert_eq(err_string_replace_all_argc_a.exit_code, 26, "error: string_replace_all_argc_a.26 exits with 26")

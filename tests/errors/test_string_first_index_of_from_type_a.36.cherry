@@ -1,2 +1,2 @@
-var err_string_first_index_of_from_type_a = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_type_a.36.cherry"
-assert_eq(err_string_first_index_of_from_type_a.exit_code, 36, "error: string_first_index_of_from_type_a.36 exits with 36")
+var err_string_first_index_of_from_type_a = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_type_a.29.cherry"
+assert_eq(err_string_first_index_of_from_type_a.exit_code, 29, "error: string_first_index_of_from_type_a.29 exits with 29")

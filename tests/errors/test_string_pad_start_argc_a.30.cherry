@@ -1,2 +1,2 @@
-var err_string_pad_start_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_argc_a.30.cherry"
-assert_eq(err_string_pad_start_argc_a.exit_code, 30, "error: string_pad_start_argc_a.30 exits with 30")
+var err_string_pad_start_argc_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_argc_a.23.cherry"
+assert_eq(err_string_pad_start_argc_a.exit_code, 23, "error: string_pad_start_argc_a.23 exits with 23")

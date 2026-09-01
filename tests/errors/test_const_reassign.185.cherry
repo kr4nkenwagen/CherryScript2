@@ -1,2 +1,2 @@
-var err_const_reassign = $"tests/tmp/cherry tests/errors/scripts/const_reassign.185.cherry"
-assert_eq(err_const_reassign.exit_code, 185, "error: const_reassign.185 exits with 185")
+var err_const_reassign = $"tests/tmp/cherry tests/errors/scripts/const_reassign.179.cherry"
+assert_eq(err_const_reassign.exit_code, 179, "error: const_reassign.179 exits with 179")

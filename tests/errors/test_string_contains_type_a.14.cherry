@@ -1,2 +1,2 @@
-var err_string_contains_type_a = $"tests/tmp/cherry tests/errors/scripts/string_contains_type_a.14.cherry"
-assert_eq(err_string_contains_type_a.exit_code, 14, "error: string_contains_type_a.14 exits with 14")
+var err_string_contains_type_a = $"tests/tmp/cherry tests/errors/scripts/string_contains_type_a.7.cherry"
+assert_eq(err_string_contains_type_a.exit_code, 7, "error: string_contains_type_a.7 exits with 7")
