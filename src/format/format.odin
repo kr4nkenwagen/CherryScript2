@@ -148,16 +148,75 @@ write_token_literal :: proc(tok: ^types.token_t, b: ^strings.Builder) {
 format_source :: proc(content: string) -> (formatted: string, code: types.exit_codes) {
 	src := source_code.create(content) or_return
 	defer source_code.remove(src)
-
 	scanner.order_symbols_by_literal_length()
 	tokens := scanner.run(src) or_return
 	defer token_list.remove(tokens)
-
+	comments := capture_comments(src.content)
+	defer delete(comments)
+	ci := 0
 	out: strings.Builder
 	strings.builder_init(&out)
 	line: strings.Builder
 	strings.builder_init(&line)
-	flush_line :: proc(out: ^strings.Builder, line: ^strings.Builder, indent: int) {
+	line_src_last := -1
+	last_col := -1
+	indent := 0
+	paren_depth := 0
+	first_on_line := true
+	prev_type: types.token_type_t = types.token_type_t(nil)
+
+	write_indent :: proc(out: ^strings.Builder, indent: int) {
+		for i := 0; i < indent; i += 1 {
+			strings.write_string(out, "    ")
+		}
+	}
+
+	emit_leading :: proc(
+		comments: [dynamic]comment_t,
+		ci: ^int,
+		out: ^strings.Builder,
+		indent: int,
+		target_line: int,
+	) {
+		for ci^ < len(comments) {
+			c := comments[ci^]
+			if c.line >= target_line do break
+			write_indent(out, indent)
+			strings.write_string(out, c.text)
+			strings.write_rune(out, '\n')
+			ci^ += 1
+		}
+	}
+
+	append_trailing :: proc(
+		comments: [dynamic]comment_t,
+		ci: ^int,
+		line: ^strings.Builder,
+		line_src_last: int,
+		last_col: int,
+	) {
+		if ci^ < len(comments) {
+			c := comments[ci^]
+			if c.line == line_src_last && c.column > last_col {
+				if strings.builder_len(line^) > 0 {
+					strings.write_string(line, "  ")
+				}
+				strings.write_string(line, c.text)
+				ci^ += 1
+			}
+		}
+	}
+
+	flush_line :: proc(
+		out: ^strings.Builder,
+		line: ^strings.Builder,
+		indent: int,
+		comments: [dynamic]comment_t,
+		ci: ^int,
+		line_src_last: int,
+		last_col: int,
+	) {
+		append_trailing(comments, ci, line, line_src_last, last_col)
 		for i := 0; i < indent; i += 1 {
 			strings.write_string(out, "    ")
 		}
@@ -165,19 +224,13 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 		strings.write_rune(out, '\n')
 		strings.builder_reset(line)
 	}
-
-	indent := 0
-	paren_depth := 0
-	first_on_line := true
-	prev_type: types.token_type_t = types.token_type_t(nil)
-
 	for i := 0; i < len(tokens.list); i += 1 {
 		tok := tokens.list[i]
 		if tok == nil do continue
 		t := tok.type
-
-		if t == .END_OF_FILE do continue
-
+		if t == .END_OF_FILE {
+			continue
+		}
 		#partial switch t {
 		case .TERMINATOR, .SEMICOLON:
 			if paren_depth > 0 {
@@ -187,9 +240,11 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 				continue
 			}
 			if !first_on_line {
-				flush_line(&out, &line, indent)
+				flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
 				first_on_line = true
 				prev_type = types.token_type_t(nil)
+				line_src_last = -1
+				last_col = -1
 			}
 
 		case .LEFT_BRACE:
@@ -197,18 +252,24 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 				strings.write_rune(&line, ' ')
 			}
 			strings.write_string(&line, "{")
-			flush_line(&out, &line, indent)
+			line_src_last = tok.line
+			last_col = tok.column + 1
+			flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
 			indent += 1
 			first_on_line = true
 			prev_type = types.token_type_t(nil)
-
+			line_src_last = -1
+			last_col = -1
 		case .RIGHT_BRACE:
 			if !first_on_line {
-				flush_line(&out, &line, indent)
+				emit_leading(comments, &ci, &out, indent, tok.line)
+				flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
 			}
 			indent -= 1
 			if indent < 0 do indent = 0
 			strings.write_string(&line, "}")
+			line_src_last = tok.line
+			last_col = tok.column + 1
 			next := types.token_type_t(nil)
 			if i + 1 < len(tokens.list) && tokens.list[i + 1] != nil {
 				next = tokens.list[i + 1].type
@@ -217,12 +278,16 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 				first_on_line = false
 				prev_type = .RIGHT_BRACE
 			} else {
-				flush_line(&out, &line, indent)
+				flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
 				first_on_line = true
 				prev_type = types.token_type_t(nil)
+				line_src_last = -1
+				last_col = -1
 			}
-
 		case:
+			if first_on_line {
+				emit_leading(comments, &ci, &out, indent, tok.line)
+			}
 			if !first_on_line {
 				if needs_space(prev_type, t) {
 					strings.write_rune(&line, ' ')
@@ -232,6 +297,8 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 				write_token_literal(tok, &line)
 				first_on_line = false
 			}
+			line_src_last = tok.line
+			last_col = tok.column + len(tok.literal)
 			prev_type = t
 
 			#partial switch t {
@@ -242,12 +309,10 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 			}
 		}
 	}
-
 	if !first_on_line {
-		flush_line(&out, &line, indent)
+		flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
 	}
-
+	emit_leading(comments, &ci, &out, indent, max(int))
 	formatted = strings.to_string(out)
 	return
 }
-

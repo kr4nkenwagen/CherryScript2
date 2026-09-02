@@ -13,9 +13,10 @@ consume_comment :: proc(src: ^types.source_code_t) -> (consumed: bool, code: typ
 	}
 	if char != grammar.COMMENT do return false, .OK
 	consumed = true
-	for !src.is_at_end {
-		c := source_code.advance(src) or_return
+	for src.pointer + 1 < src.length {
+		c := source_code.peek(src, 1) or_return
 		if c == grammar.NEWLINE || c == grammar.COMMENT do return
+		source_code.advance(src) or_return
 	}
 	return
 }
