@@ -1,7 +1,6 @@
 package parser
 
 import "../syntax"
-import "../sys"
 import "../token_list"
 import "../types"
 
@@ -72,10 +71,7 @@ file_operation :: proc(
 	left = primary_expression(tokens) or_return
 	curr_token := token_list.peek(tokens, 0) or_return
 	for curr_token != nil && (curr_token.type == .RIGHT_ARROW || curr_token.type == .LEFT_ARROW) {
-		op, alloc_err := syntax.create()
-		if sys.is_error(alloc_err) {
-			return nil, alloc_err
-		}
+		op := syntax.create() or_return
 		op.token = curr_token
 		op.left = left
 		token_list.advance(tokens) or_return
@@ -169,16 +165,10 @@ comparision :: proc(
 			    curr_token.type == .LESS_EQUAL ||
 			    curr_token.type == .GREATER ||
 			    curr_token.type == .LESS) {
-		op, alloc_err := syntax.create()
-		if sys.is_error(alloc_err) {
-			return nil, alloc_err
-		}
+		op := syntax.create() or_return
 		op.token = curr_token
 		op.left = left
-		_, adv_err := token_list.advance(tokens)
-		if sys.is_error(adv_err) {
-			return nil, adv_err
-		}
+		token_list.advance(tokens) or_return
 		op.right = additive(tokens) or_return
 		left = op
 		curr_token = token_list.peek(tokens, 0) or_return
