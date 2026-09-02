@@ -1,12 +1,19 @@
 package source_code
 
 import "../types"
+import "core:bytes"
 import "core:fmt"
 import "core:os"
 import "core:path/filepath"
 import "core:strings"
 
-create :: proc(content: string) -> (src: ^types.source_code_t, code: types.exit_codes) {
+create :: proc(
+	content: string,
+	path: string = "",
+) -> (
+	src: ^types.source_code_t,
+	code: types.exit_codes,
+) {
 	src = new(types.source_code_t)
 	if src == nil {
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_CREATE_SOURCE_CODE
@@ -17,6 +24,12 @@ create :: proc(content: string) -> (src: ^types.source_code_t, code: types.exit_
 	src.line = 1
 	src.column = 1
 	src.is_at_end = false
+	if path != "" {
+		src_file := new(types.source_file_t)
+		src_file.imported_at_index = 0
+		src_file.name = path
+		append(&src.included_sources, src_file^)
+	}
 	return
 }
 
@@ -25,7 +38,7 @@ from_file :: proc(file: string) -> (src: ^types.source_code_t, code: types.exit_
 	if err != nil {
 		return nil, .FAILED_TO_READ_SOURCE_CODE_FILE_IN_SOURCE_CODE_FROM_FILE
 	}
-	src = create(string(data)) or_return
+	src = create(string(data), file) or_return
 	wd, _ := os.get_working_directory(context.allocator)
 	defer delete(wd, context.allocator)
 	file_dir := filepath.dir(file)
@@ -72,15 +85,18 @@ import_file :: proc(target: ^types.source_code_t, src_path: string) -> (code: ty
 	for path in paths {
 		path := path
 		if os.is_dir(path) do continue
-
 		for i in target.included_sources {
-			if i == path do return
+			if i.name == path do return
 		}
-		append(&target.included_sources, path)
 		file_data, err := os.read_entire_file(path, context.allocator)
 		if err != nil do return .FAILED_TO_READ_SOURCE_CODE_FILE_IN_SOURCE_CODE_IMPORT_FILE
 		defer delete(file_data)
 		obj_src := string(file_data)
+		src_file := new(types.source_file_t)
+		src_file.name = strings.clone(path)
+		src_file.length = bytes.count(file_data, []u8{'\n'})
+		src_file.imported_at_index = target.line
+		append(&target.included_sources, src_file^)
 		b: strings.Builder
 		strings.builder_init(&b)
 		strings.builder_grow(&b, len(target.content) + len(obj_src) + 2)

@@ -8,5 +8,12 @@ source_code_t :: struct {
 	column:           int,
 	content:          string,
 	location:         string,
-	included_sources: [dynamic]string,
+	included_sources: [dynamic]source_file_t,
+}
+
+
+source_file_t :: struct {
+	name:              string,
+	length:            int,
+	imported_at_index: int,
 }
