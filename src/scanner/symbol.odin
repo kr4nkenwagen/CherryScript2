@@ -33,9 +33,9 @@ consume_symbols :: proc(
 		peeked_str := strings.to_string(builder)
 		if peeked_str == lit {
 			source_code.advance(src, lit_len - 1) or_return
-			if grammar.symbols[i].id == .RIGHT_BRACE do handle_right_brace(tkn_list, src)
+			if grammar.symbols[i].type == .RIGHT_BRACE do handle_right_brace(tkn_list, src)
 			if grammar.symbols[i].literal == "\n" do return handle_right_newline(tkn_list, src)
-			tkn := token.create(src, grammar.symbols[i].id, grammar.symbols[i].literal) or_return
+			tkn := token.create(src, grammar.symbols[i].type, grammar.symbols[i].literal) or_return
 			token_list.add(tkn_list, tkn) or_return
 			consumed = true
 			return

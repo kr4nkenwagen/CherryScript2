@@ -11,7 +11,7 @@ consume_keyword :: proc(tkn_list: ^types.token_list_t) -> (code: types.exit_code
 				if x > 0 {
 					if tkn_list.list[x - 1].type == .DOT do break
 				}
-				tkn_list.list[x].type = grammar.keywords[i].id
+				tkn_list.list[x].type = grammar.keywords[i].type
 			}
 		}
 	}
