@@ -75,27 +75,13 @@ handle_right_newline :: proc(
 	return
 }
 
-handle_right_subtract :: proc(
-	tkn_list: ^types.token_list_t,
-	src: ^types.source_code_t,
-) -> (
-	consumed: bool,
-	code: types.exit_codes,
-) {
-	last_token := (tkn_list.length > 0) ? tkn_list.list[tkn_list.length - 1] : nil
-	if last_token.type != .TERMINATOR {
-		tok := token.create(src, .TERMINATOR, ";") or_return
-		token_list.add(tkn_list, tok) or_return
-	}
-	return
-}
-
 handle_right_brace :: proc(
 	tkn_list: ^types.token_list_t,
 	src: ^types.source_code_t,
 ) -> (
 	code: types.exit_codes,
 ) {
+	if tkn_list.length <= 1 do return
 	last_token := (tkn_list.length > 0) ? tkn_list.list[tkn_list.length - 1] : nil
 	if last_token.type != .TERMINATOR {
 		tok := token.create(src, .TERMINATOR, ";") or_return

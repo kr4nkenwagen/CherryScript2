@@ -65,6 +65,7 @@ build_token_list :: proc(
 	code: types.exit_codes,
 ) {
 
+	scanner.order_symbols_by_literal_length()
 	tokens, code = scanner.run(src)
 	if sys.is_error(code) {
 		tkn: ^types.token_t = nil

@@ -7,7 +7,6 @@ import "../types"
 run :: proc(src: ^types.source_code_t) -> (tkn_list: ^types.token_list_t, code: types.exit_codes) {
 	if src == nil do return nil, .OBJECT_IS_NIL_IN_SCANNER
 	tkn_list = token_list.create() or_return
-	order_symbols_by_literal_length()
 	for !src.is_at_end {
 		c, adv_err := source_code.advance(src)
 		if adv_err == .EOF_IN_SOURCE_CODE_REACHED_IN_SOURCE_CODE_ADVANCE {

@@ -5,7 +5,6 @@ import "../types"
 keywords: []types.grammar_t = {
 	{literal = "math", type = .MATH},
 	{literal = "string", type = .STRING},
-	{literal = "$", type = .EXECUTE},
 	{literal = "terminal", type = .TERMINAL},
 	{literal = "http", type = .HTTP},
 	{literal = "json", type = .JSON},
@@ -37,9 +36,6 @@ keywords: []types.grammar_t = {
 	{literal = "break", type = .BREAK},
 	{literal = "err", type = .ERROR},
 }
-
-
-unary: []types.grammar_t = {{literal = "-", type = .MINUS}}
 
 symbols: []types.grammar_t = {
 	{literal = "+=", type = .PLUS_EQUAL},

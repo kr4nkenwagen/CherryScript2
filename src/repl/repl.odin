@@ -21,6 +21,7 @@ pipe :: proc(input: string, args: ^types.arguments_t) -> (code: types.exit_codes
 	if sys.is_error(src_err) {
 		sys.print_error(src_err, nil, src)
 	}
+	scanner.order_symbols_by_literal_length()
 	tokens, tokens_err := scanner.run(src)
 	defer token_list.remove(tokens)
 	if sys.is_error(tokens_err) {
@@ -68,6 +69,7 @@ run :: proc(args: ^types.arguments_t) -> (code: types.exit_codes) {
 	curr_stck := stack.create() or_return
 	curl.global_init(curl.GLOBAL_DEFAULT)
 	vm.push_frame(stck, curr_stck, false) or_return
+	scanner.order_symbols_by_literal_length()
 	for {
 		line: string
 		defer if is_tty {

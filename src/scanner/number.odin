@@ -23,17 +23,14 @@ consume_number :: proc(
 	}
 	is_float := false
 	start_position := src.pointer
-
-
 	if first_char == '-' {
 		second_char := source_code.peek(src, 1) or_return
 		third_char := source_code.peek(src, 2) or_return
 
 		if is_number(second_char) || (second_char == '.' && third_char != '.') {
 			source_code.advance(src) or_return
-		} else do return false, .UNEXPECTED_CHARACTER_IN_SCANNER_NUMBER
+		} else do return
 	}
-
 	for !src.is_at_end {
 		character := source_code.peek(src, 0) or_return
 		second_char := source_code.peek(src, 1) or_return
