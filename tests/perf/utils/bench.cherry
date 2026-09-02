@@ -4,7 +4,7 @@ global var bench_times = []
 global var bench_thresholds = []
 global var bench_passed = []
 
-global const BENCH_HEADER = "[#424242]╭───────────────────────╮\n[#424242]│[#] 🍒 Cherry PerfBench  [#424242]│\n[#424242]╰───────────────────────╯"
+global const BENCH_HEADER = "[#424242]╭──────────────────────╮\n[#424242]│[#] 🍒 Cherry PerfBench  [#424242]│\n[#424242]╰──────────────────────╯"
 
 global fn bench_record(var name, var elapsed, var threshold) {
   bench_names[bench_count] = name
