@@ -18,6 +18,7 @@ src/
   scanner/                     # Lexer / tokenizer
   parser/                      # Parser productions (if, for, math, http, ...)
   evaluator/                   # AST evaluator / runtime
+  format/                      # `cherry format` token-stream pretty-printer
   object/                      # Object helpers (string, files, arrays, json, http)
   vm/                          # VM frames & stack handling
   stack/                       # Variable scope stack
@@ -77,6 +78,19 @@ odin run src/main.odin -- examples/hello.cherry
 ./cherry examples/fizzbuzz.cherry println("extra")   # mix files + inline code
 ```
 
+### Formatting source
+
+The interpreter also exposes a `format` subcommand that pretty-prints Cherry:
+idempotent 4-space indentation, aligned braces, one statement per line, and
+canonical operator spacing. Because the formatter is token-based, it also
+strips comments.
+
+```
+./cherry format file.cherry       # write formatted output to stdout
+./cherry format -w file.cherry    # format in place (overwrite the file)
+./cherry format < file.cherry     # read stdin, write stdout (IDE use)
+```
+
 ### Debug modes
 
 Pass `-debug <0-3>` (or `debug <0-3>`) before your script to enable a debug level:
@@ -93,8 +107,6 @@ Example:
 ```
 ./cherry -debug 2 examples/hello.cherry
 ```
-
-Environment variable: when `CHERRY_DUMP` is set, the combined source (after imports) is dumped to a file for debugging.
 
 ## Language overview (concise reference)
 
@@ -256,6 +268,7 @@ Runs the benchmark suite (100k iterations per benchmark) and records results to 
 - **Scanner:** `src/scanner/` tokenizes input; keyword/symbol tables live in `src/grammar/grammar.odin`. Changes here should be mirrored in `tree-sitter-cherry/grammar.js`.
 - **Parser:** `src/parser/*.odin` contains one file per production (`parse_if`, `parse_for`, `parse_math`, `parse_http`, `parse_json`, etc.).
 - **Evaluator:** `src/evaluator/*` executes AST nodes (an `eval_*` file per feature). Runtime values live in `src/object/`.
+- **Formatter:** `cherry format` (`src/format/format.odin`) is a token-stream pretty-printer; it does not use the parser and is comment-stripping by design.
 - **HTTP:** network calls are implemented in `src/http/` on top of `vendor:curl`.
 - **Error codes:** there are 353 distinct exit codes in `src/types/exit_codes.odin`; new failures should be added there and exercised via a `tests/errors/` script.
 

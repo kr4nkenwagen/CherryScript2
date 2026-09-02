@@ -6,6 +6,7 @@ import "core:strconv"
 import "core:strings"
 import "debug"
 import "evaluator"
+import "format"
 import "parser"
 import "repl"
 import "scanner"
@@ -19,6 +20,10 @@ import "vendor:curl"
 import "vm"
 
 SOURCE_FILE_SUFFIX :: ".cherry"
+
+run_format :: proc() -> types.exit_codes {
+	return format.run(SOURCE_FILE_SUFFIX)
+}
 
 parse_args :: proc() -> ^types.arguments_t {
 	args := new(types.arguments_t)
@@ -76,9 +81,6 @@ build_token_list :: proc(
 		}
 		sys.print_error(code, tkn, src)
 		return nil, code
-	}
-	if len(os.get_env_alloc("CHERRY_DUMP", context.temp_allocator)) > 0 {
-		_ = os.write_entire_file_from_string("/tmp/opencode/combined_dump.cherry", src.content)
 	}
 	if args.debug_level == .TOKENS {
 		debug.print_token_list(tokens)
@@ -145,6 +147,9 @@ interprete_program :: proc(
 }
 
 main :: proc() {
+	if len(os.args) > 1 && (os.args[1] == "format" || os.args[1] == "-format") {
+		os.exit(int(run_format()))
+	}
 	args := parse_args()
 	err_code := types.exit_codes.OK
 	if len(args.source_files) == 0 && len(args.pipe) == 0 {
