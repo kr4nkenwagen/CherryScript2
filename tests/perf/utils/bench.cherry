@@ -1,0 +1,53 @@
+global var bench_count = 0
+global var bench_names = []
+global var bench_times = []
+global var bench_thresholds = []
+global var bench_passed = []
+
+global const BENCH_HEADER = "[#424242]╭───────────────────────╮\n[#424242]│[#] 🍒 Cherry PerfBench  [#424242]│\n[#424242]╰───────────────────────╯"
+
+global fn bench_record(var name, var elapsed, var threshold) {
+  bench_names[bench_count] = name
+  bench_times[bench_count] = elapsed
+  bench_thresholds[bench_count] = threshold
+  var ok = elapsed <= threshold
+  bench_passed[bench_count] = ok
+  bench_count += 1
+  if (ok) {
+    println("[#0F0]PASS[#]: " .. name .. " (" .. elapsed .. "s / max " .. threshold .. "s)")
+  } else {
+    println("[#F00]FAIL[#]: " .. name .. " (" .. elapsed .. "s / max " .. threshold .. "s)")
+  }
+}
+
+global fn bench_result_line(var name, var elapsed, var threshold) {
+  println("RESULT|" .. name .. "|" .. elapsed .. "|" .. threshold)
+}
+
+global fn bench_summary() {
+  var passed = 0
+  var failed = 0
+  for (var i = 0; i < bench_count; i += 1) {
+    if (bench_passed[i]) { passed += 1 } else { failed += 1 }
+  }
+  println("")
+  println(BENCH_HEADER)
+  println("[#424242]╭─[#]Performance results")
+  println("[#424242]├── [#0F0]PASSED[#]: " .. passed)
+  println("[#424242]├── [#F00]FAILED[#]: " .. failed)
+  println("[#424242]├── [#]TOTAL:   " .. bench_count)
+  println("[#424242]└─[#]elapsed time: " .. time.execution_time .. "s")
+  if (failed > 0) {
+    println("[#424242]╭─[#]Failed benchmarks")
+    for (var i = 0; i < bench_count; i += 1) {
+      if (!bench_passed[i]) {
+        println("[#424242]├── [#F00]FAIL[#]: " .. bench_names[i] .. " (" .. bench_times[i] .. "s > " .. bench_thresholds[i] .. "s)")
+      }
+    }
+    println("[#424242]└─[#]total: " .. failed)
+  }
+  println("")
+  for (var i = 0; i < bench_count; i += 1) {
+    bench_result_line(bench_names[i], bench_times[i], bench_thresholds[i])
+  }
+}

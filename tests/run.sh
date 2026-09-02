@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Cherry test suite runner: e2e assertions + output snapshots + error exit codes.
+# Also runs full performance benchmarks (history + threshold assertions).
 # Usage: tests/run.sh   (override binary with CHERRY_BIN=/path/to/cherry)
 set -u
 cd "$(dirname "$0")/.."
@@ -11,7 +12,7 @@ if [ -z "$BIN" ]; then
   odin build src -o:speed -out:"$BIN" || { echo "build failed"; exit 1; }
 fi
 
-mkdir -p tests/tmp
+mkdir -p tests/tmp tests/perf/history
 ln -sfn "$BIN" tests/tmp/cherry
 
 strip_ansi() { sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g'; }
@@ -48,6 +49,36 @@ else
     fi
     failures=$((failures + unexpected))
   fi
+fi
+echo "==============================="
+
+echo "== performance benchmarks =="
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+HISTORY_FILE="tests/perf/history/history.csv"
+RAW_PERF=$("$BIN" tests/perf_runner.cherry 2>&1)
+
+# Show formatted output (non-RESULT lines)
+echo "$RAW_PERF" | grep -v '^RESULT|' | strip_ansi
+
+result_lines=$(echo "$RAW_PERF" | grep '^RESULT|')
+if [ -z "$result_lines" ]; then
+  echo "FAIL could not parse benchmark results (crash?)"
+  failures=$((failures + 1))
+else
+  if [ ! -f "$HISTORY_FILE" ]; then
+    echo "timestamp,benchmark,elapsed" > "$HISTORY_FILE"
+  fi
+  echo "timestamp,benchmark,elapsed" > tests/perf/history/latest.csv
+  while IFS='|' read -r _ name elapsed threshold; do
+    echo "$TIMESTAMP,$name,$elapsed" >> "$HISTORY_FILE"
+    echo "$TIMESTAMP,$name,$elapsed" >> tests/perf/history/latest.csv
+    exceeded=$(echo "$elapsed $threshold" | awk '{print ($1 > $2) ? 1 : 0}')
+    if [ "$exceeded" -eq 1 ]; then
+      echo "FAILED benchmark: $name (${elapsed}s > ${threshold}s)"
+      failures=$((failures + 1))
+    fi
+  done <<< "$result_lines"
+  echo "benchmarks written to: $HISTORY_FILE"
 fi
 echo "==============================="
 echo "total failures: $failures"

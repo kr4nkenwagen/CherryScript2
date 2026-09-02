@@ -1,0 +1,54 @@
+global fn bench_string_concat_plus() {
+  var start = time.execution_time
+  var s = ""
+  for (var i = 0; i < 100000; i += 1) {
+    s = s + "a"
+  }
+  var elapsed = time.execution_time - start
+  bench_record("string_concat_plus", elapsed, 5.0)
+  remove s
+}
+
+global fn bench_string_concat_dot() {
+  var start = time.execution_time
+  var s = ""
+  for (var i = 0; i < 100000; i += 1) {
+    s = s .. "a"
+  }
+  var elapsed = time.execution_time - start
+  bench_record("string_concat_dot", elapsed, 10.0)
+  remove s
+}
+
+global fn bench_string_to_upper() {
+  var start = time.execution_time
+  var s = "hello world"
+  for (var i = 0; i < 100000; i += 1) {
+    var upper = string.to_upper(s)
+  }
+  var elapsed = time.execution_time - start
+  bench_record("string_to_upper", elapsed, 1.0)
+  remove s
+}
+
+global fn bench_string_replace() {
+  var start = time.execution_time
+  var s = "hello world hello cherry hello"
+  for (var i = 0; i < 100000; i += 1) {
+    var r = string.replace_all(s, "hello", "hi")
+  }
+  var elapsed = time.execution_time - start
+  bench_record("string_replace_all", elapsed, 1.0)
+  remove s
+}
+
+global fn bench_string_contains() {
+  var start = time.execution_time
+  var s = "hello world cherry scripting language"
+  for (var i = 0; i < 100000; i += 1) {
+    var c = string.contains(s, "cherry")
+  }
+  var elapsed = time.execution_time - start
+  bench_record("string_contains", elapsed, 0.5)
+  remove s
+}

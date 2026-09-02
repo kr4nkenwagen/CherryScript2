@@ -1,0 +1,31 @@
+global fn bench_json_parse() {
+  var start = time.execution_time
+  for (var i = 0; i < 10000; i += 1) {
+    var data = json('{ "name": "test", "value": 42, "nested": { "a": 1, "b": 2 } }')
+  }
+  var elapsed = time.execution_time - start
+  bench_record("json_parse", elapsed, 2.0)
+}
+
+global fn bench_json_access() {
+  var data = json('{ "users": [{"id": 1, "name": "alice"}, {"id": 2, "name": "bob"}], "config": { "debug": true, "port": 8080 } }')
+  var start = time.execution_time
+  for (var i = 0; i < 10000; i += 1) {
+    var x = data.users[0].name
+    var y = data.config.port
+  }
+  var elapsed = time.execution_time - start
+  bench_record("json_property_access", elapsed, 1.0)
+  remove data, x, y
+}
+
+global fn bench_json_deep() {
+  var data = json('{ "l1": { "l2": { "l3": { "val": 99 } } } }')
+  var start = time.execution_time
+  for (var i = 0; i < 10000; i += 1) {
+    var v = data.l1.l2.l3.val
+  }
+  var elapsed = time.execution_time - start
+  bench_record("json_deep_access", elapsed, 1.0)
+  remove data, v
+}

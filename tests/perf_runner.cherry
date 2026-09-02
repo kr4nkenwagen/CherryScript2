@@ -1,0 +1,53 @@
+module "perf/utils/bench.cherry"
+module "perf/benchmarks"
+
+println(BENCH_HEADER)
+println("[#424242]╭─[#]Running benchmarks (100k iterations each)")
+println("")
+
+# Arithmetic
+bench_arithmetic_integer()
+bench_arithmetic_float()
+bench_arithmetic_mixed()
+
+# Strings
+bench_string_concat_plus()
+bench_string_concat_dot()
+bench_string_to_upper()
+bench_string_replace()
+bench_string_contains()
+
+# Arrays
+bench_array_index_read()
+bench_array_index_write()
+bench_array_literal_create()
+bench_array_nested_access()
+
+# Loops
+bench_for_loop_empty()
+bench_for_loop_counter()
+bench_while_loop_empty()
+bench_nested_loops()
+
+# Functions
+bench_function_call()
+bench_function_recursive()
+bench_function_nested()
+
+# JSON
+bench_json_parse()
+bench_json_access()
+bench_json_deep()
+
+# Control flow
+bench_if_branch()
+bench_if_nested()
+bench_logical_ops()
+
+# Variables
+bench_var_local_read()
+bench_var_local_write()
+bench_var_global_read()
+bench_var_global_write()
+
+bench_summary()

@@ -1,0 +1,42 @@
+global fn bench_for_loop_empty() {
+  var start = time.execution_time
+  for (var i = 0; i < 100000; i += 1) {
+  }
+  var elapsed = time.execution_time - start
+  bench_record("for_loop_empty", elapsed, 0.3)
+}
+
+global fn bench_for_loop_counter() {
+  var start = time.execution_time
+  var sum = 0
+  for (var i = 0; i < 100000; i += 1) {
+    sum = sum + i
+  }
+  var elapsed = time.execution_time - start
+  bench_record("for_loop_counter", elapsed, 0.3)
+  remove sum
+}
+
+global fn bench_while_loop_empty() {
+  var i = 0
+  var start = time.execution_time
+  for (i < 100000) {
+    i += 1
+  }
+  var elapsed = time.execution_time - start
+  bench_record("while_loop_counter", elapsed, 0.3)
+  remove i
+}
+
+global fn bench_nested_loops() {
+  var start = time.execution_time
+  var x = 0
+  for (var i = 0; i < 1000; i += 1) {
+    for (var j = 0; j < 100; j += 1) {
+      x = x + 1
+    }
+  }
+  var elapsed = time.execution_time - start
+  bench_record("nested_loops_1k100", elapsed, 0.5)
+  remove x
+}

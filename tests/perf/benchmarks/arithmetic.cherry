@@ -1,0 +1,30 @@
+global fn bench_arithmetic_integer() {
+  var start = time.execution_time
+  var x = 0
+  for (var i = 0; i < 100000; i += 1) {
+    x = x + i * 2 - 1
+  }
+  var elapsed = time.execution_time - start
+  bench_record("arithmetic_integer", elapsed, 0.5)
+}
+
+global fn bench_arithmetic_float() {
+  var start = time.execution_time
+  var x = 0.0
+  for (var i = 0; i < 100000; i += 1) {
+    x = x + 1.5 * 2.3 - 0.7
+  }
+  var elapsed = time.execution_time - start
+  bench_record("arithmetic_float", elapsed, 0.5)
+}
+
+global fn bench_arithmetic_mixed() {
+  var start = time.execution_time
+  var x = 0
+  for (var i = 0; i < 100000; i += 1) {
+    x = x + i * 2 - 1
+    x = x / 2 + 1
+  }
+  var elapsed = time.execution_time - start
+  bench_record("arithmetic_mixed", elapsed, 0.8)
+}

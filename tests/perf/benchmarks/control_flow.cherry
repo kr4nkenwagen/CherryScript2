@@ -1,0 +1,49 @@
+global fn bench_if_branch() {
+  var start = time.execution_time
+  var x = 0
+  var toggle = false
+  for (var i = 0; i < 100000; i += 1) {
+    if (toggle) {
+      x = x + 1
+    } else {
+      x = x - 1
+    }
+    toggle = !toggle
+  }
+  var elapsed = time.execution_time - start
+  bench_record("if_branch", elapsed, 0.3)
+  remove x, toggle
+}
+
+global fn bench_if_nested() {
+  var start = time.execution_time
+  var x = 0
+  var c = 0
+  for (var i = 0; i < 100000; i += 1) {
+    if (c == 0) {
+      x = x + 1
+    } elif (c == 1) {
+      x = x + 2
+    } else {
+      x = x + 3
+    }
+    c += 1
+    if (c >= 3) { c = 0 }
+  }
+  var elapsed = time.execution_time - start
+  bench_record("if_nested_elif", elapsed, 0.5)
+  remove x, c
+}
+
+global fn bench_logical_ops() {
+  var start = time.execution_time
+  var x = 0
+  for (var i = 0; i < 100000; i += 1) {
+    var a = i > 50000 && i < 75000
+    var b = i < 10000 || i > 90000
+    var c = !false
+  }
+  var elapsed = time.execution_time - start
+  bench_record("logical_operations", elapsed, 0.5)
+  remove x
+}

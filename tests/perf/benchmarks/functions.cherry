@@ -1,0 +1,41 @@
+global fn noop_fn(var x) {
+  return x
+}
+
+global fn bench_function_call() {
+  var start = time.execution_time
+  for (var i = 0; i < 100000; i += 1) {
+    noop_fn(i)
+  }
+  var elapsed = time.execution_time - start
+  bench_record("function_call", elapsed, 0.5)
+}
+
+global fn fib(var n) {
+  if (n <= 1) { return n }
+  return fib(n - 1) + fib(n - 2)
+}
+
+global fn bench_function_recursive() {
+  var start = time.execution_time
+  for (var i = 0; i < 20; i += 1) {
+    fib(20)
+  }
+  var elapsed = time.execution_time - start
+  bench_record("function_recursive_fib20_x20", elapsed, 2.0)
+}
+
+global fn add_values(var a, var b) {
+  return a + b
+}
+
+global fn bench_function_nested() {
+  var start = time.execution_time
+  var x = 0
+  for (var i = 0; i < 100000; i += 1) {
+    x = add_values(add_values(i, 1), add_values(i, 2))
+  }
+  var elapsed = time.execution_time - start
+  bench_record("function_nested_calls", elapsed, 0.8)
+  remove x
+}

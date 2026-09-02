@@ -1,0 +1,45 @@
+global var bench_global_var = 0
+
+global fn bench_var_local_read() {
+  var x = 42
+  var start = time.execution_time
+  var sum = 0
+  for (var i = 0; i < 100000; i += 1) {
+    sum = sum + x
+  }
+  var elapsed = time.execution_time - start
+  bench_record("var_local_read", elapsed, 0.3)
+  remove x, sum
+}
+
+global fn bench_var_local_write() {
+  var start = time.execution_time
+  var x = 0
+  for (var i = 0; i < 100000; i += 1) {
+    x = i
+  }
+  var elapsed = time.execution_time - start
+  bench_record("var_local_write", elapsed, 0.3)
+  remove x
+}
+
+global fn bench_var_global_read() {
+  bench_global_var = 42
+  var start = time.execution_time
+  var sum = 0
+  for (var i = 0; i < 100000; i += 1) {
+    sum = sum + bench_global_var
+  }
+  var elapsed = time.execution_time - start
+  bench_record("var_global_read", elapsed, 0.5)
+  remove sum
+}
+
+global fn bench_var_global_write() {
+  var start = time.execution_time
+  for (var i = 0; i < 100000; i += 1) {
+    bench_global_var = i
+  }
+  var elapsed = time.execution_time - start
+  bench_record("var_global_write", elapsed, 0.5)
+}
