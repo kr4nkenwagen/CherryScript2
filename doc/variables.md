@@ -9,7 +9,6 @@ Variables can be initialized using [`var`](var.md) or [`const`](const.md). Varia
 | [`boolean`](boolean.md) | Binary value. |
 | [`file`](file.md) | File handler. |
 | [`json`](json.md) | json object. |
-| [`vector`](file.md) | Vector containing `.x`, `.y`. `.z.` |
 | [`array`](array.md) | Contains multiple variables that can be accessed by `identifier[index]`. |
 | [`null`](null.md) | Empty variable. |
 
@@ -50,9 +49,6 @@ var bool = true
 ```
 var file = @"file/location"
 ```
-
-### Vector
-TO BE IMPLEMENTED
 
 ### Array
 ```

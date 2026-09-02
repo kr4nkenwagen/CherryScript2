@@ -151,15 +151,6 @@ serialize_value :: proc(sb: ^strings.Builder, obj: ^types.object_t) -> (code: ty
 			serialize_value(sb, item) or_return
 		}
 		strings.write_byte(sb, '}')
-	case .VECTOR:
-		vec := obj.data.(types.object_vector_t)
-		strings.write_byte(sb, '[')
-		serialize_value(sb, vec.x) or_return
-		strings.write_string(sb, ", ")
-		serialize_value(sb, vec.y) or_return
-		strings.write_string(sb, ", ")
-		serialize_value(sb, vec.z) or_return
-		strings.write_byte(sb, ']')
 	case:
 		strings.write_string(sb, "null")
 	}

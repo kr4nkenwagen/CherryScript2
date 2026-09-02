@@ -1,3 +1,0 @@
-# VECTOR
-## Overview
-TO BE IMPLEMENTED

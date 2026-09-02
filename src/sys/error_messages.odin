@@ -15,7 +15,6 @@ error_messages := #partial [types.exit_codes]string {
 	.OBJECT_IS_NIL_CREATE_FLOAT                                                        = "Memory failure creating float '%1'.",
 	.OBJECT_IS_NIL_IN_CREATE_STRING                                                    = "Memory failure creating string '%1'.",
 	.OBJECT_IS_NIL_IN_CREATE_ARRAY                                                     = "Memory failure creating array '%1'.",
-	.OBJECT_IS_NIL_IN_CREATE_VECTOR                                                    = "Memory failure creating vector '%1'.",
 	.OBJECT_IS_NIL_IN_CREATE_FUNCT                                                     = "Internal error: function object is nil for '%1'.",
 	.MEMORY_ALLOCATION_FAILED_IN_CREATE_FUNCT                                          = "Failed to allocate memory for function '%1'.",
 	.MEMORY_ALLOCATION_FAILED_IN_CREATE_FILE                                           = "Failed to allocate memory for file object '%1'.",

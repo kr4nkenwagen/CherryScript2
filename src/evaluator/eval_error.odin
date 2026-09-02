@@ -53,7 +53,7 @@ print_object_err :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 	case .JSON:
 		text := object.to_json_string(obj) or_return
 		pretty_print_json(text)
-	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
+	case .FLOAT, .ARRAY, .NULL, .BOOL, .FUNCTION, .FILE:
 		break
 	}
 	return

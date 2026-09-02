@@ -76,8 +76,6 @@ get_type_badge :: proc(type: types.object_type_t) -> string {
 		return "STR "
 	case .ARRAY:
 		return "ARR "
-	case .VECTOR:
-		return "VEC "
 	case .NULL:
 		return "NUL "
 	case .BOOL:
@@ -182,18 +180,6 @@ format_object_t :: proc(obj: types.object_t, depth: int = 0) -> string {
 		case:
 			return "[]"
 		}
-
-	case .VECTOR:
-		#partial switch v in obj.data {
-		case types.object_vector_t:
-			x_str := v.x != nil ? format_object_t(v.x^, depth + 1) : "null"
-			y_str := v.y != nil ? format_object_t(v.y^, depth + 1) : "null"
-			z_str := v.z != nil ? format_object_t(v.z^, depth + 1) : "null"
-			return fmt.tprintf("vec3(%s, %s, %s)", x_str, y_str, z_str)
-		case:
-			return "vec3(null, null, null)"
-		}
-
 	case .FILE:
 		#partial switch v in obj.data {
 		case types.object_file_t:
@@ -236,13 +222,6 @@ deep_clone_object :: proc(obj: ^types.object_t) -> ^types.object_t {
 			new_arr.value[i] = deep_clone_object(item)
 		}
 		copied.data = new_arr
-
-	case types.object_vector_t:
-		new_vec: types.object_vector_t
-		new_vec.x = deep_clone_object(v.x)
-		new_vec.y = deep_clone_object(v.y)
-		new_vec.z = deep_clone_object(v.z)
-		copied.data = new_vec
 
 	case string:
 		copied.data = strings.clone(v)

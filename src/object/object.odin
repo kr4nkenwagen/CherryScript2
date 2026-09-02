@@ -60,28 +60,6 @@ create_array :: proc() -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	return
 }
 
-create_vector :: proc(
-	x: ^types.object_t,
-	y: ^types.object_t,
-	z: ^types.object_t,
-) -> (
-	ret_obj: ^types.object_t,
-	code: types.exit_codes,
-) {
-	ret_obj = new(types.object_t)
-	if ret_obj == nil {
-		return nil, .OBJECT_IS_NIL_IN_CREATE_VECTOR
-	}
-	ret_obj.is_marked = false
-	ret_obj.type = .VECTOR
-	ret_obj.data = types.object_vector_t {
-		x = x,
-		y = y,
-		z = z,
-	}
-	return
-}
-
 create_funct :: proc(synt: ^types.syntax_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	if synt == nil {
 		return nil, .OBJECT_IS_NIL_IN_CREATE_FUNCT
@@ -152,7 +130,7 @@ length :: proc(obj: ^types.object_t) -> (ret_int: int, code: types.exit_codes) {
 		return len(obj.data.(types.object_json_t).value), .OK
 	case .FILE:
 		return file_length(obj.data.(types.object_file_t).name)
-	case .VECTOR, .NULL, .BOOL, .FUNCTION:
+	case .NULL, .BOOL, .FUNCTION:
 	}
 	return -1, .OBJECT_IS_UNKNOWN_TYPE_IN_LENGTH
 }
@@ -179,10 +157,6 @@ remove :: proc(obj: ^types.object_t) -> (code: types.exit_codes) {
 		for i := 1; i < obj.data.(types.object_array_t).count; i += 1 {
 			free(&obj.data.(types.object_array_t).value[i])
 		}
-	case .VECTOR:
-		free(obj.data.(types.object_vector_t).x)
-		free(obj.data.(types.object_vector_t).y)
-		free(obj.data.(types.object_vector_t).z)
 	case .JSON:
 		for item in obj.data.(types.object_json_t).value {
 			remove(item)

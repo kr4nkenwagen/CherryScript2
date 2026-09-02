@@ -5,7 +5,6 @@ object_type_t :: enum {
 	FLOAT,
 	STRING,
 	ARRAY,
-	VECTOR,
 	NULL,
 	BOOL,
 	FUNCTION,
@@ -20,7 +19,6 @@ object_data_t :: union {
 	bool,
 	rawptr,
 	object_array_t,
-	object_vector_t,
 	object_file_t,
 	object_json_t,
 }
@@ -37,12 +35,6 @@ object_t :: struct {
 object_array_t :: struct {
 	count: int,
 	value: [dynamic]^object_t,
-}
-
-object_vector_t :: struct {
-	x: ^object_t,
-	y: ^object_t,
-	z: ^object_t,
 }
 
 object_file_t :: struct {

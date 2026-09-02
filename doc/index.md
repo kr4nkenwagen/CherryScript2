@@ -12,7 +12,6 @@ This index groups the small topic files in this directory to make it easier to f
 - [boolean](boolean.md)
 - [null](null.md)
 - [array](array.md)
-- [vector](vector.md)
 
 ## Variables & Constants
 - [var](var.md)

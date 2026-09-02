@@ -102,7 +102,7 @@ print_object :: proc(obj: ^types.object_t, prgm: ^types.program_t) -> (code: typ
 		if prgm.args.debug_level == .EVAL do break
 		text := object.to_json_string(obj) or_return
 		pretty_print_json(text)
-	case .FLOAT, .ARRAY, .VECTOR, .NULL, .BOOL, .FUNCTION, .FILE:
+	case .FLOAT, .ARRAY, .NULL, .BOOL, .FUNCTION, .FILE:
 		break
 	}
 	return
