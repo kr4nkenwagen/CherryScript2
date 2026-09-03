@@ -33,6 +33,30 @@ create :: proc(
 	return
 }
 
+add_args :: proc(src: ^types.source_code_t, arg: []string) -> (code: types.exit_codes) {
+	b: strings.Builder
+	strings.builder_init(&b)
+	strings.write_string(&b, "global const args = [")
+	arg_len := len(arg)
+	for arg_index in 0 ..< arg_len {
+		if arg_index > 0 do strings.write_byte(&b, ',')
+		strings.write_byte(&b, '"')
+		ch_idx: int = 0
+		for ch_idx < len(arg[arg_index]) {
+			ch := arg[arg_index][ch_idx]
+			if ch == '"' || ch == '\\' do strings.write_byte(&b, '\\')
+			strings.write_rune(&b, rune(ch))
+			ch_idx += 1
+		}
+		strings.write_byte(&b, '"')
+	}
+	strings.write_string(&b, "];\n")
+	args := strings.to_string(b)
+	src.content = strings.concatenate({args, src.content})
+	src.length = len(src.content)
+	return
+}
+
 from_file :: proc(file: string) -> (src: ^types.source_code_t, code: types.exit_codes) {
 	data, err := os.read_entire_file(file, context.allocator)
 	if err != nil {

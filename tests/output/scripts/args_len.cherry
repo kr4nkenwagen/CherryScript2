@@ -1,0 +1,2 @@
+println(len(args))
+for(var i = 0; i < len(args); i+=1) { println(args[i]) }

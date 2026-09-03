@@ -28,6 +28,7 @@ run_format :: proc() -> types.exit_codes {
 parse_args :: proc() -> ^types.arguments_t {
 	args := new(types.arguments_t)
 	i := 1
+	seen_source_file := false
 	for i < len(os.args) {
 		val := os.args[i]
 		if val == "debug" || val == "-debug" {
@@ -43,6 +44,9 @@ parse_args :: proc() -> ^types.arguments_t {
 			}
 		} else if os.exists(val) && strings.has_suffix(val, SOURCE_FILE_SUFFIX) {
 			append(&args.source_files, val)
+			seen_source_file = true
+		} else if seen_source_file {
+			append(&args.script_args, val)
 		} else {
 			append(&args.pipe, val)
 		}
@@ -59,6 +63,7 @@ tokenize :: proc(
 	code: types.exit_codes,
 ) {
 	src = source_code.from_file(path) or_return
+	source_code.add_args(src, args.script_args[:]) or_return
 	return
 }
 

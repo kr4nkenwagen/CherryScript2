@@ -1,0 +1,19 @@
+var res_args_basic = $"tests/tmp/cherry tests/output/scripts/args_basic.cherry one two three"
+assert_eq(res_args_basic.stdout, "one\ntwo\nthree\n", "args: args[0] through args[2] positional access")
+remove res_args_basic
+
+var res_args_mixed = $"tests/tmp/cherry tests/output/scripts/args_len.cherry 1 2 3 abc"
+assert_eq(res_args_mixed.stdout, "4\n1\n2\n3\nabc\n", "args: len(args) and iteration with mixed string/number args")
+remove res_args_mixed
+
+var res_args_number = $"tests/tmp/cherry tests/output/scripts/args_basic.cherry 42 -7 0"
+assert_eq(res_args_number.stdout, "42\n-7\n0\n", "args: numeric arguments preserved as strings")
+remove res_args_number
+
+var res_args_single = $"tests/tmp/cherry tests/output/scripts/args_len.cherry solo"
+assert_eq(res_args_single.stdout, "1\nsolo\n", "args: single argument")
+remove res_args_single
+
+var res_args_none = $"tests/tmp/cherry tests/output/scripts/args_no_args.cherry"
+assert_eq(res_args_none.stdout, "0\n", "args: no arguments yields empty args array")
+remove res_args_none
