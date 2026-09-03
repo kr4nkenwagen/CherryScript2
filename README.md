@@ -81,7 +81,7 @@ odin run src/main.odin -- examples/hello.cherry
 ### Formatting source
 
 The interpreter also exposes a `format` subcommand that pretty-prints Cherry:
-idempotent 4-space indentation, aligned braces, one statement per line, and
+idempotent 2-space indentation, aligned braces, one statement per line, and
 canonical operator spacing. Because the formatter is token-based, it also
 strips comments.
 

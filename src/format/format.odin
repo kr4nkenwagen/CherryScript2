@@ -167,7 +167,7 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 
 	write_indent :: proc(out: ^strings.Builder, indent: int) {
 		for i := 0; i < indent; i += 1 {
-			strings.write_string(out, "    ")
+			strings.write_string(out, "  ")
 		}
 	}
 
@@ -218,7 +218,7 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 	) {
 		append_trailing(comments, ci, line, line_src_last, last_col)
 		for i := 0; i < indent; i += 1 {
-			strings.write_string(out, "    ")
+			strings.write_string(out, "  ")
 		}
 		strings.write_string(out, strings.to_string(line^))
 		strings.write_rune(out, '\n')
