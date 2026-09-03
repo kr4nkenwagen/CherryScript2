@@ -108,6 +108,9 @@ is_tight_after :: proc(t: types.token_type_t) -> bool {
 }
 
 needs_space :: proc(prev: types.token_type_t, curr: types.token_type_t) -> bool {
+	if prev == .IF || prev == .FOR || prev == .ELSE_IF {
+		if curr == .LEFT_PAREN do return true
+	}
 	if is_tight_before(curr) do return false
 	if is_tight_after(prev) do return false
 	return true
@@ -239,12 +242,31 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 				if !first_on_line do first_on_line = false
 				continue
 			}
-			if !first_on_line {
-				flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
-				first_on_line = true
-				prev_type = types.token_type_t(nil)
-				line_src_last = -1
-				last_col = -1
+if !first_on_line {
+				if prev_type == .RIGHT_BRACE {
+					continue
+				}
+				next_open_brace := false
+				for j := i + 1; j < len(tokens.list); j += 1 {
+					nt := tokens.list[j]
+					if nt == nil do continue
+					#partial switch nt.type {
+					case .END_OF_FILE, .TERMINATOR, .SEMICOLON:
+						continue
+					case .LEFT_BRACE:
+						next_open_brace = true
+					}
+					break
+				}
+				if next_open_brace {
+					prev_type = t
+				} else {
+					flush_line(&out, &line, indent, comments, &ci, line_src_last, last_col)
+					first_on_line = true
+					prev_type = types.token_type_t(nil)
+					line_src_last = -1
+					last_col = -1
+				}
 			}
 
 		case .LEFT_BRACE:
@@ -271,8 +293,15 @@ format_source :: proc(content: string) -> (formatted: string, code: types.exit_c
 			line_src_last = tok.line
 			last_col = tok.column + 1
 			next := types.token_type_t(nil)
-			if i + 1 < len(tokens.list) && tokens.list[i + 1] != nil {
-				next = tokens.list[i + 1].type
+			for j := i + 1; j < len(tokens.list); j += 1 {
+				nt := tokens.list[j]
+				if nt == nil do continue
+				#partial switch nt.type {
+				case .END_OF_FILE, .TERMINATOR, .SEMICOLON:
+					continue
+				}
+				next = nt.type
+				break
 			}
 			if next == .ELSE_IF || next == .ELSE {
 				first_on_line = false
