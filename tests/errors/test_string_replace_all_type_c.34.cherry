@@ -1,2 +1,0 @@
-var err_string_replace_all_type_c = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_type_c.27.cherry"
-assert_eq(err_string_replace_all_type_c.exit_code, 27, "error: string_replace_all_type_c.27 exits with 27")

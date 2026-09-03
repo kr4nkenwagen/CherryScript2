@@ -1,0 +1,2 @@
+var err_subtract_nil = $"tests/tmp/cherry tests/errors/scripts/subtract_nil.49.cherry"
+assert_eq(err_subtract_nil.exit_code, 49, "error: subtract_nil.49 exits with 49")

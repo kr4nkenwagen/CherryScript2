@@ -1,0 +1,2 @@
+var err_string_replace_all_type_c = $"tests/tmp/cherry tests/errors/scripts/string_replace_all_type_c.26.cherry"
+assert_eq(err_string_replace_all_type_c.exit_code, 26, "error: string_replace_all_type_c.26 exits with 26")

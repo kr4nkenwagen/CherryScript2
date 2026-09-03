@@ -1,2 +1,0 @@
-var err_string_first_index_of_type = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_type.9.cherry"
-assert_eq(err_string_first_index_of_type.exit_code, 9, "error: string_first_index_of_type.9 exits with 9")

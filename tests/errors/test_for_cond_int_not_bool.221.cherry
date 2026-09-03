@@ -1,2 +1,0 @@
-var err_for_cond_int_not_bool = $"tests/tmp/cherry tests/errors/scripts/for_cond_int_not_bool.215.cherry"
-assert_eq(err_for_cond_int_not_bool.exit_code, 215, "error: for_cond_int_not_bool.215 exits with 215")

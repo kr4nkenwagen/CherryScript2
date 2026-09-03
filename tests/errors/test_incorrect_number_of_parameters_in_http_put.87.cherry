@@ -1,0 +1,3 @@
+var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_put.80.cherry"
+assert_eq(res.exit_code, 87, "error: http.put() exits with 87")
+remove res

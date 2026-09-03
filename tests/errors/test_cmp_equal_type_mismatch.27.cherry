@@ -1,0 +1,2 @@
+var err_cmp_equal_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_equal_type_mismatch.27.cherry"
+assert_eq(err_cmp_equal_type_mismatch.exit_code, 27, "error: cmp_equal_type_mismatch.27 exits with 27")

@@ -1,0 +1,2 @@
+var err_mod_by_zero = $"tests/tmp/cherry tests/errors/scripts/mod_by_zero.177.cherry"
+assert_eq(err_mod_by_zero.exit_code, 177, "error: mod_by_zero.177 exits with 177")

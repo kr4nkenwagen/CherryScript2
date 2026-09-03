@@ -1,2 +1,0 @@
-var err_unassigned_const = $"tests/tmp/cherry tests/errors/scripts/unassigned_const.110.cherry"
-assert_eq(err_unassigned_const.exit_code, 110, "error: unassigned_const.110 exits with 110")

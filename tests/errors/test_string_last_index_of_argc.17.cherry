@@ -1,2 +1,0 @@
-var err_string_last_index_of_argc = $"tests/tmp/cherry tests/errors/scripts/string_last_index_of_argc.10.cherry"
-assert_eq(err_string_last_index_of_argc.exit_code, 10, "error: string_last_index_of_argc.10 exits with 10")

@@ -1,2 +1,0 @@
-var err_modulus_nil = $"tests/tmp/cherry tests/errors/scripts/modulus_nil.63.cherry"
-assert_eq(err_modulus_nil.exit_code, 63, "error: modulus_nil.63 exits with 63")

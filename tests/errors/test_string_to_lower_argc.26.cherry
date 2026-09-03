@@ -1,0 +1,2 @@
+var err_string_to_lower_argc = $"tests/tmp/cherry tests/errors/scripts/string_to_lower_argc.19.cherry"
+assert_eq(err_string_to_lower_argc.exit_code, 19, "error: string_to_lower_argc.19 exits with 19")

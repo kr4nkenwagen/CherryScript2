@@ -1,0 +1,2 @@
+var err_string_trim_start_argc = $"tests/tmp/cherry tests/errors/scripts/string_trim_start_argc.11.cherry"
+assert_eq(err_string_trim_start_argc.exit_code, 11, "error: string_trim_start_argc.11 exits with 11")

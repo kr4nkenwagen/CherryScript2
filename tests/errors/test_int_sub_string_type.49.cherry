@@ -1,0 +1,2 @@
+var err_int_sub_string_type = $"tests/tmp/cherry tests/errors/scripts/int_sub_string_type.49.cherry"
+assert_eq(err_int_sub_string_type.exit_code, 49, "error: int_sub_string_type.49 exits with 49")

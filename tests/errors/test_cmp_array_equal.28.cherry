@@ -1,2 +1,0 @@
-var err_cmp_array_equal = $"tests/tmp/cherry tests/errors/scripts/cmp_array_equal.28.cherry"
-assert_eq(err_cmp_array_equal.exit_code, 28, "error: cmp_array_equal.28 exits with 28")

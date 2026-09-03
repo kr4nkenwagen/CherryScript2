@@ -1,2 +1,0 @@
-var err_stray_break = $"tests/tmp/cherry tests/errors/scripts/stray_break.225.cherry"
-assert_eq(err_stray_break.exit_code, 225, "error: stray_break.225 exits with 225")

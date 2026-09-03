@@ -1,0 +1,2 @@
+var err_div_by_zero_int = $"tests/tmp/cherry tests/errors/scripts/div_by_zero_int.177.cherry"
+assert_eq(err_div_by_zero_int.exit_code, 177, "error: div_by_zero_int.177 exits with 177")

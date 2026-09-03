@@ -1,2 +1,0 @@
-var err_bad_json = $"tests/tmp/cherry tests/errors/scripts/bad_json.15.cherry"
-assert_eq(err_bad_json.exit_code, 15, "error: bad_json.15 exits with 15")

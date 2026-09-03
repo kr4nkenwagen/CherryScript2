@@ -1,2 +1,0 @@
-var err_string_divide_type = $"tests/tmp/cherry tests/errors/scripts/string_divide_type.60.cherry"
-assert_eq(err_string_divide_type.exit_code, 60, "error: string_divide_type.60 exits with 60")

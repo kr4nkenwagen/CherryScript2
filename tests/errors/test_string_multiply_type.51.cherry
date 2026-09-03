@@ -1,0 +1,2 @@
+var err_string_multiply_type = $"tests/tmp/cherry tests/errors/scripts/string_multiply_type.51.cherry"
+assert_eq(err_string_multiply_type.exit_code, 51, "error: string_multiply_type.51 exits with 51")

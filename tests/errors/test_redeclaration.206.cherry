@@ -1,0 +1,2 @@
+var err_redeclaration = $"tests/tmp/cherry tests/errors/scripts/redeclaration.200.cherry"
+assert_eq(err_redeclaration.exit_code, 200, "error: redeclaration.200 exits with 200")

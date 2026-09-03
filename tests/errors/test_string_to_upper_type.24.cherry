@@ -1,0 +1,2 @@
+var err_string_to_upper_type = $"tests/tmp/cherry tests/errors/scripts/string_to_upper_type.17.cherry"
+assert_eq(err_string_to_upper_type.exit_code, 17, "error: string_to_upper_type.17 exits with 17")

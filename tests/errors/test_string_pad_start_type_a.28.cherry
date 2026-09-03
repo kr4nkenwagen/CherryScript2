@@ -1,0 +1,2 @@
+var err_string_pad_start_type_a = $"tests/tmp/cherry tests/errors/scripts/string_pad_start_type_a.21.cherry"
+assert_eq(err_string_pad_start_type_a.exit_code, 21, "error: string_pad_start_type_a.21 exits with 21")

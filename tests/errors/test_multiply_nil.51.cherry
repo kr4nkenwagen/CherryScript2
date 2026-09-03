@@ -1,0 +1,2 @@
+var err_multiply_nil = $"tests/tmp/cherry tests/errors/scripts/multiply_nil.51.cherry"
+assert_eq(err_multiply_nil.exit_code, 51, "error: multiply_nil.51 exits with 51")

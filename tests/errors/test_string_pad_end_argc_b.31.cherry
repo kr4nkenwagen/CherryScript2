@@ -1,0 +1,2 @@
+var err_string_pad_end_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_pad_end_argc_b.24.cherry"
+assert_eq(err_string_pad_end_argc_b.exit_code, 24, "error: string_pad_end_argc_b.24 exits with 24")

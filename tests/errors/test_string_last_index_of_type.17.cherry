@@ -1,0 +1,2 @@
+var err_string_last_index_of_type = $"tests/tmp/cherry tests/errors/scripts/string_last_index_of_type.10.cherry"
+assert_eq(err_string_last_index_of_type.exit_code, 10, "error: string_last_index_of_type.10 exits with 10")

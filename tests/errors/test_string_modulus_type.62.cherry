@@ -1,0 +1,2 @@
+var err_string_modulus_type = $"tests/tmp/cherry tests/errors/scripts/string_modulus_type.62.cherry"
+assert_eq(err_string_modulus_type.exit_code, 62, "error: string_modulus_type.62 exits with 62")

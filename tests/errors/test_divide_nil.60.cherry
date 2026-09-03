@@ -1,2 +1,0 @@
-var err_divide_nil = $"tests/tmp/cherry tests/errors/scripts/divide_nil.60.cherry"
-assert_eq(err_divide_nil.exit_code, 60, "error: divide_nil.60 exits with 60")

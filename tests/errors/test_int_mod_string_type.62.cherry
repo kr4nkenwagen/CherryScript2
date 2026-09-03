@@ -1,0 +1,2 @@
+var err_int_mod_string_type = $"tests/tmp/cherry tests/errors/scripts/int_mod_string_type.62.cherry"
+assert_eq(err_int_mod_string_type.exit_code, 62, "error: int_mod_string_type.62 exits with 62")

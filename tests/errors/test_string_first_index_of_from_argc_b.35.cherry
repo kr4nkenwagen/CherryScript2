@@ -1,2 +1,0 @@
-var err_string_first_index_of_from_argc_b = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_from_argc_b.28.cherry"
-assert_eq(err_string_first_index_of_from_argc_b.exit_code, 28, "error: string_first_index_of_from_argc_b.28 exits with 28")

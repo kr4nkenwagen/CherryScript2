@@ -1,0 +1,2 @@
+var err_string_contains_type_b = $"tests/tmp/cherry tests/errors/scripts/string_contains_type_b.6.cherry"
+assert_eq(err_string_contains_type_b.exit_code, 6, "error: string_contains_type_b.6 exits with 6")

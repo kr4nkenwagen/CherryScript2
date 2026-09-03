@@ -1,3 +1,0 @@
-var incorrect_numbers_of_paramters_in_println = $"tests/tmp/cherry tests/errors/scripts/incorrect_numbers_of_paramters_in_println.cherry"
-assert_eq(err_bad_json.exit_code, 351, "error: incorrect_numbers_of_paramters_in_println.351 exits with 351")
-remove incorrect_numbers_of_paramters_in_println

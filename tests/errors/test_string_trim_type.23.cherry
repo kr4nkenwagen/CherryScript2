@@ -1,2 +1,0 @@
-var err_string_trim_type = $"tests/tmp/cherry tests/errors/scripts/string_trim_type.16.cherry"
-assert_eq(err_string_trim_type.exit_code, 16, "error: string_trim_type.16 exits with 16")

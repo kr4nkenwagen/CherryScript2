@@ -1,0 +1,2 @@
+var err_undefined_identifier = $"tests/tmp/cherry tests/errors/scripts/undefined_identifier.190.cherry"
+assert_eq(err_undefined_identifier.exit_code, 190, "error: undefined_identifier.190 exits with 190")

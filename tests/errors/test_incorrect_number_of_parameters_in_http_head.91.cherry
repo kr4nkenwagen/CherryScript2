@@ -1,3 +1,0 @@
-var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_head.84.cherry"
-assert_eq(res.exit_code, 91, "error: http.head() exits with 91")
-remove res

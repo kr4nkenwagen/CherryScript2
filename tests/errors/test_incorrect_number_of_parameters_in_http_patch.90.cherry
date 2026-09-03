@@ -1,3 +1,0 @@
-var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_patch.83.cherry"
-assert_eq(res.exit_code, 90, "error: http.patch() exits with 90")
-remove res

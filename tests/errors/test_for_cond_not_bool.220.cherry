@@ -1,0 +1,2 @@
+var err_for_cond_not_bool = $"tests/tmp/cherry tests/errors/scripts/for_cond_not_bool.214.cherry"
+assert_eq(err_for_cond_not_bool.exit_code, 214, "error: for_cond_not_bool.214 exits with 214")

@@ -1,0 +1,2 @@
+var err_cmp_lte_type_mismatch = $"tests/tmp/cherry tests/errors/scripts/cmp_lte_type_mismatch.36.cherry"
+assert_eq(err_cmp_lte_type_mismatch.exit_code, 36, "error: cmp_lte_type_mismatch.36 exits with 36")

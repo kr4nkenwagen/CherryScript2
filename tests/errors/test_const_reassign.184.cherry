@@ -1,0 +1,2 @@
+var err_const_reassign = $"tests/tmp/cherry tests/errors/scripts/const_reassign.178.cherry"
+assert_eq(err_const_reassign.exit_code, 178, "error: const_reassign.178 exits with 178")

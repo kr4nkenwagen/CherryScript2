@@ -1,3 +1,0 @@
-var res = $"tests/tmp/cherry tests/errors/scripts/incorrect_number_of_parameters_in_http_delete.82.cherry"
-assert_eq(res.exit_code, 89, "error: http.delete() exits with 89")
-remove res

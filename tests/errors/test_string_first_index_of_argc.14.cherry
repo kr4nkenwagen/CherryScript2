@@ -1,0 +1,2 @@
+var err_string_first_index_of_argc = $"tests/tmp/cherry tests/errors/scripts/string_first_index_of_argc.7.cherry"
+assert_eq(err_string_first_index_of_argc.exit_code, 7, "error: string_first_index_of_argc.7 exits with 7")

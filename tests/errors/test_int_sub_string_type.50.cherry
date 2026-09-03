@@ -1,2 +1,0 @@
-var err_int_sub_string_type = $"tests/tmp/cherry tests/errors/scripts/int_sub_string_type.50.cherry"
-assert_eq(err_int_sub_string_type.exit_code, 50, "error: int_sub_string_type.50 exits with 50")

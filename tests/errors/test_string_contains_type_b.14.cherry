@@ -1,2 +1,0 @@
-var err_string_contains_type_b = $"tests/tmp/cherry tests/errors/scripts/string_contains_type_b.7.cherry"
-assert_eq(err_string_contains_type_b.exit_code, 7, "error: string_contains_type_b.7 exits with 7")
