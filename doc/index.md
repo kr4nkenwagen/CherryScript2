@@ -18,6 +18,7 @@ This index groups the small topic files in this directory to make it easier to f
 - [const](const.md)
 - [global](global.md)
 - [variables](variables.md)
+- [args](args.md) — Command-line arguments
 
 ## Control Flow
 - [if](if.md)
