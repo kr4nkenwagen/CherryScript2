@@ -1,2 +1,0 @@
-var pi = math.pi
-print(pi)
