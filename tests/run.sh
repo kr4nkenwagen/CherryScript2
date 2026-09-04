@@ -52,6 +52,35 @@ else
 fi
 echo "==============================="
 
+echo "== unit tests =="
+unit_fail=0
+unit_total=0
+unit_ran=0
+for tf in src/*/*_test.odin; do
+  [ -e "$tf" ] || continue
+  pkg=$(basename "$(dirname "$tf")")
+  tmp="tests/tmp/unit_${pkg}"
+  out=$(odin test "src/$pkg" -out:"$tmp" 2>&1)
+  rm -f "$tmp" 2>/dev/null
+  if echo "$out" | grep -q "All tests were successful"; then
+    echo "PASS  $pkg"
+  else
+    echo "FAIL  $pkg"
+    echo "$out" | strip_ansi | grep -aE 'Error:|failed|Assertion' | sed 's/^/      /' | head -20
+    unit_fail=$((unit_fail + 1))
+  fi
+  unit_ran=$((unit_ran + 1))
+  n=$(echo "$out" | grep -aoE 'Finished [0-9]+ tests' | grep -aoE '[0-9]+' | head -1)
+  if [ -n "$n" ]; then
+    unit_total=$((unit_total + n))
+  fi
+done
+echo "unit tests: packages=$unit_ran  tests=$unit_total  failures=$unit_fail"
+if [ "$unit_fail" -gt 0 ]; then
+  failures=$((failures + unit_fail))
+fi
+echo "==============================="
+
 echo "== performance benchmarks =="
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 HISTORY_FILE="tests/perf/history/history.csv"
