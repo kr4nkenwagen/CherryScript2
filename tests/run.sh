@@ -84,13 +84,12 @@ echo "==============================="
 echo "== performance benchmarks =="
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 HISTORY_FILE="tests/perf/history/history.csv"
-RAW_PERF=$("$BIN" tests/perf_runner.cherry 2>&1)
+RAW_PERF=$("$BIN" tests/perf_runner.cherry 2>&1 | strip_ansi)
 
-# Show formatted output (non-RESULT lines)
-echo "$RAW_PERF" | grep -v '^RESULT|' | strip_ansi
+echo "$RAW_PERF"
 
-result_lines=$(echo "$RAW_PERF" | grep '^RESULT|')
-if [ -z "$result_lines" ]; then
+bench_lines=$(echo "$RAW_PERF" | grep -E '^(PASS|FAIL):' || true)
+if [ -z "$bench_lines" ]; then
   echo "FAIL could not parse benchmark results (crash?)"
   failures=$((failures + 1))
 else
@@ -98,15 +97,17 @@ else
     echo "timestamp,benchmark,elapsed" > "$HISTORY_FILE"
   fi
   echo "timestamp,benchmark,elapsed" > tests/perf/history/latest.csv
-  while IFS='|' read -r _ name elapsed threshold; do
+  while IFS= read -r line; do
+    parsed=$(echo "$line" | sed -n 's/^\(PASS\|FAIL\): \([^ ]*\) (\([0-9.]*\)s \/ max \([0-9.]*\)s).*/\1|\2|\3|\4/p')
+    [ -z "$parsed" ] && continue
+    IFS='|' read -r status name elapsed threshold <<< "$parsed"
     echo "$TIMESTAMP,$name,$elapsed" >> "$HISTORY_FILE"
     echo "$TIMESTAMP,$name,$elapsed" >> tests/perf/history/latest.csv
-    exceeded=$(echo "$elapsed $threshold" | awk '{print ($1 > $2) ? 1 : 0}')
-    if [ "$exceeded" -eq 1 ]; then
+    if [ "$status" = "FAIL" ]; then
       echo "FAILED benchmark: $name (${elapsed}s > ${threshold}s)"
       failures=$((failures + 1))
     fi
-  done <<< "$result_lines"
+  done < <(echo "$bench_lines")
   echo "benchmarks written to: $HISTORY_FILE"
 fi
 echo "==============================="
