@@ -1,0 +1,21 @@
+const events = http.get("https://polisen.se/api/events")
+if events.head.code != 200 {
+  println("error fetching events: " .. events.head.code)
+  return
+}
+if (len(args) == 0) {
+  println("Please provide läns to check.")
+  println("example: cherry polis.cherry stockholm kronoberg")
+}
+for (var x = 0; x < len(args); x += 1) {
+  for (var i = 0; i < len(events.body); i += 1) {
+    if (string.to_lower(events.body[i].location.name) != string.to_lower(args[x]) .. "s län") {
+      continue
+    }
+    println("╭─")
+    println("│[#FFF]" .. string.pad_start(events.body[i].summary, 1) .. "[#]")
+    println("│[#888]" .. string.pad_start(events.body[i].datetime, 1) .. "[#]")
+    println("│[#881]" .. string.pad_start(events.body[i].location.name, 1) .. "[#]")
+    println("└─")
+  }
+}
