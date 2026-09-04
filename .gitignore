@@ -11,3 +11,5 @@ tree-sitter-cherry/build/
 # Test scratch files
 tests/tmp/
 odin
+/tests/perf/history/history.csv
+/tests/perf/history/latest.csv
