@@ -133,7 +133,7 @@ escape_string_literal :: proc(content: string, b: ^strings.Builder) {
 		case '"':
 			strings.write_string(b, "\\\"")
 		case:
-			strings.write_rune(b, rune(c))
+			strings.write_byte(b, c)
 		}
 	}
 }
