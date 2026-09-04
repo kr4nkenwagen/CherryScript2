@@ -4,13 +4,14 @@ import "core:fmt"
 import "core:os"
 import "core:path/filepath"
 import "core:testing"
+import "core:time"
 import "../types"
 
 temp_dir_counter := 0
 
 make_temp_dir :: proc() -> string {
 	temp_dir_counter += 1
-	suffix := fmt.tprintf("cherry_source_code_%d", temp_dir_counter)
+	suffix := fmt.tprintf("cherry_source_code_%d_%d", os.get_pid(), time.now()._nsec)
 	td, _ := os.temp_dir(context.allocator)
 	defer delete(td)
 	dir, _ := filepath.join([]string{td, suffix})
