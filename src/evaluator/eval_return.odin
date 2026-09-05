@@ -13,7 +13,9 @@ eval_return :: proc(
 	if program == nil do return .OBJECT_IS_NIL_IN_EVAL_RETURN
 	curr_prog := program
 	for curr_prog.type != .FUNCTION && curr_prog.type != .SOURCE {
+		if curr_prog.parent == nil do return .RETURN_STATEMENT_NOT_IN_A_FUNCTION_OR_SOURCE
 		curr_prog.exit = true
+
 		curr_prog = curr_prog.parent
 	}
 	curr_prog.exit = true

@@ -847,3 +847,14 @@ integration_run_joins_statements :: proc(t: ^testing.T) {
 	testing.expectf(t, tt(stmt(p, 1)) == .VAR, "second statement should be var")
 	testing.expectf(t, tt(stmt(p, 2)) == .PRINT_LINE, "third statement should be println")
 }
+
+@(test)
+integration_if_branch_parent_links_to_root :: proc(t: ^testing.T) {
+	p, code := run_of(t, {.IF, .LEFT_PAREN, .TRUE, .RIGHT_PAREN, .LEFT_BRACE, .RETURN, .RIGHT_BRACE, .TERMINATOR, .END_OF_FILE}, {"if", "(", "true", ")", "{", "return", "}", ";", "eof"})
+	testing.expectf(t, code == .OK, "parse failed: %v", code)
+	changes(t, p, 1)
+	if_s := stmt(p, 0)
+	testing.expectf(t, if_s != nil && if_s.branch != nil, "if statement should have a branch program")
+	testing.expectf(t, if_s.branch.parent == p, "top-level if branch must link to the root program, got %v", if_s.branch.parent)
+	testing.expectf(t, if_s.branch.type == .IF, "branch program type should be IF")
+}

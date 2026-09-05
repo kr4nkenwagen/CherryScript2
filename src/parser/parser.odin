@@ -95,7 +95,7 @@ run :: proc(
 		    curr_token.type != .RIGHT_BRACE &&
 		    curr_token.type != .LEFT_BRACE &&
 		    curr_token.type != .RIGHT_PAREN {
-			synt := statement(tokens, parent) or_return
+			synt := statement(tokens, prgm) or_return
 			if synt != nil {
 				program.add(prgm, synt) or_return
 			}

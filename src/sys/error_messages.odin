@@ -229,6 +229,7 @@ error_messages := #partial [types.exit_codes]string {
 	.OBJECT_IS_NIL_IN_FUNCTION_IDENTIFIER                                              = "Parser error: nil function identifier.",
 	.OBJECT_IS_NIL_IN_FUNCTION_DECLARATION                                             = "Parser error: nil function declaration.",
 	.BREAK_STATEMENT_NOT_IN_A_LOOP                                                     = "'break' statement used outside of a loop.",
+	.RETURN_STATEMENT_NOT_IN_A_FUNCTION_OR_SOURCE                                     = "'return' statement used outside of a function or source.",
 	.FAILED_TO_READ_BUFFER_IN_EVAL_IN                                                  = "Failed to read input buffer.",
 	.OBJECT_IS_NIL_IN_EVAL_RETURN                                                      = "Evaluator error: nil return value.",
 	.OBJECT_IS_NIL_IN_EVAL_PRINTLN                                                     = "Evaluator error: nil object in println.",
