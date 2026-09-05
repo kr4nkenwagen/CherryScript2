@@ -3,6 +3,7 @@ package evaluator
 import "../object"
 import "../types"
 import "core:strings"
+import "core:unicode/utf8"
 
 eval_string :: proc(
 	syntax: ^types.syntax_t,
@@ -145,7 +146,7 @@ str_pad_start :: proc(args: []^types.object_t) -> (obj: ^types.object_t, code: t
 	str := args[0]
 	count := args[1]
 	if str.type != .STRING || count.type != .INT do return nil, .INCORRECT_PARAMETER_TYPE_IN_STRING_PAD_START
-	total_count := len(str.data.(string)) + count.data.(int)
+	total_count := utf8.rune_count_in_string(str.data.(string)) + count.data.(int)
 	obj = object.create_string(
 		strings.right_justify(str.data.(string), total_count, " "),
 	) or_return
@@ -157,7 +158,7 @@ str_pad_end :: proc(args: []^types.object_t) -> (obj: ^types.object_t, code: typ
 	str := args[0]
 	count := args[1]
 	if str.type != .STRING || count.type != .INT do return nil, .INCORRECT_PARAMETER_TYPE_IN_STRING_PAD_END
-	total_count := len(str.data.(string)) + count.data.(int)
+	total_count := utf8.rune_count_in_string(str.data.(string)) + count.data.(int)
 	obj = object.create_string(strings.left_justify(str.data.(string), total_count, " ")) or_return
 	return
 }

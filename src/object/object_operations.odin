@@ -168,8 +168,15 @@ assign :: proc(target, source: ^types.object_t) -> (code: types.exit_codes) {
 	if target.is_const {
 		return .CANNOT_ASSIGN_TO_CONSTANT_IN_OBJECT_ASSIGN
 	}
-	target.data = source.data
 	target.type = source.type
+	#partial switch source.type {
+	case .ARRAY:
+		target.data = copy_array_data(source.data.(types.object_array_t), target) or_return
+	case .JSON:
+		target.data = copy_json_data(source.data.(types.object_json_t), target) or_return
+	case:
+		target.data = source.data
+	}
 	if target.parent != nil {
 		json_write_file(target)
 	}

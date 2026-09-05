@@ -22,6 +22,9 @@ variable_declarations :: proc(
 		obj := stack.get(curr_stack, curr.token.literal) or_return
 		if obj != nil do return .REDECLARATION_ERROR_IN_VARIABLE_DECLARATION
 		obj = eval_primary_expression(curr.value, stck, prog) or_return
+		if must_copy_value(curr.value) {
+			obj = object.copy_deep(obj) or_return
+		}
 		obj.name = curr.token.literal
 		obj.is_const = is_const
 		curr_stack = vm.current_frame(stck) or_return
@@ -33,6 +36,15 @@ variable_declarations :: proc(
 		curr = curr.left
 	}
 	return
+}
+
+must_copy_value :: proc(value: ^types.syntax_t) -> bool {
+	if value == nil do return true
+	#partial switch value.token.type {
+	case .NUMBER, .STRING_WRAPPER, .TRUE, .FALSE, .NULL:
+		return false
+	}
+	return true
 }
 
 eval_variable_remove :: proc(

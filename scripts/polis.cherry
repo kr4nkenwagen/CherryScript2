@@ -12,10 +12,20 @@ for (var x = 0; x < len(args); x += 1) {
     if (string.to_lower(events.body[i].location.name) != string.to_lower(args[x]) .. "s län") {
       continue
     }
-    println("╭─")
-    println("│[#FFF]" .. string.pad_start(events.body[i].summary, 1) .. "[#]")
-    println("│[#888]" .. string.pad_start(events.body[i].datetime, 1) .. "[#]")
-    println("│[#881]" .. string.pad_start(events.body[i].location.name, 1) .. "[#]")
-    println("└─")
+    const summary = string.trim(events.body[i].summary), sum_length = len(summary)
+    const date = string.trim(events.body[i].datetime), date_length = len(date)
+    const location = string.trim(events.body[i].location.name), loc_length = len(location)
+    var length = sum_length
+    if (length < date_length) {
+      length = date_length
+    }
+    if (length < loc_length) {
+      length = loc_length
+    }
+    println("╭─" .. "─" * length .. "─╮")
+    println("│[#FFF]" .. string.pad_end(string.pad_start(summary, 1),(length - sum_length) + 1) .. "[#]│")
+    println("│[#888]" .. string.pad_end(string.pad_start(date, 1),(length - date_length) + 1) .. "[#]│")
+    println("│[#881]" .. string.pad_end(string.pad_start(location, 1),(length - loc_length) + 1) .. "[#]│")
+    println("└─" .. "─" * length .. "─╯")
   }
 }

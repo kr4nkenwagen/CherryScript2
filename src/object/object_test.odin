@@ -529,6 +529,57 @@ assign_nil_errors :: proc(t: ^testing.T) {
 }
 
 @(test)
+assign_retains_target_name :: proc(t: ^testing.T) {
+	target, _ := create_int(1)
+	target.name = "original"
+	source, _ := create_int(2)
+	code := assign(target, source)
+	testing.expectf(t, code == .OK, "assign failed: %v", code)
+	testing.expectf(t, target.name == "original", "target name should be retained, got: %s", target.name)
+	remove(target)
+	remove(source)
+}
+
+@(test)
+assign_array_deep_copies :: proc(t: ^testing.T) {
+	src, _ := create_array()
+	one, _ := create_int(1)
+	array_set(src, 0, one)
+	target, _ := create_array()
+	code := assign(target, src)
+	testing.expectf(t, code == .OK, "assign failed: %v", code)
+	got, _ := array_get(target, 0)
+	testing.expectf(t, got != one, "deep copy should not share element references")
+	testing.expectf(t, got.data.(int) == 1, "element value should match, got %d", got.data.(int))
+	two, _ := create_int(2)
+	assign(got, two)
+	src_got, _ := array_get(src, 0)
+	testing.expectf(t, src_got.data.(int) == 1, "source element should be independent, got %d", src_got.data.(int))
+	remove(target)
+	remove(src)
+	remove(one)
+	remove(two)
+}
+
+@(test)
+assign_json_deep_copies :: proc(t: ^testing.T) {
+	src, _ := from_json_string("{\"a\": 1}")
+	target, _ := from_json_string("{}")
+	code := assign(target, src)
+	testing.expectf(t, code == .OK, "assign failed: %v", code)
+	src_child, _ := json_get(src, "a")
+	tgt_child, _ := json_get(target, "a")
+	testing.expectf(t, tgt_child != src_child, "deep copy should not share json children")
+	seven, _ := create_int(7)
+	assign(tgt_child, seven)
+	val, _ := get_numeric_value(src_child)
+	testing.expectf(t, val == 1.0, "source child should be independent, got %v", val)
+	remove(target)
+	remove(src)
+	remove(seven)
+}
+
+@(test)
 int_len_digits :: proc(t: ^testing.T) {
 	n, code := int_len(0)
 	testing.expectf(t, code == .OK && n == 1, "int_len(0) should be 1, got %d", n)

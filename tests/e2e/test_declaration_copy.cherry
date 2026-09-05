@@ -1,0 +1,63 @@
+# Declarations copy values instead of sharing references.
+
+# Scalar declared from another variable: independent values, source stays intact.
+var dc_src = 5
+var dc_copy = dc_src
+dc_copy = 9
+assert_eq(dc_src, 5, "declaration: source scalar unaffected by copy reassignment")
+assert_eq(dc_copy, 9, "declaration: copy holds its own scalar value")
+remove dc_src, dc_copy
+
+# Array declared from another variable: deep copy, mutations do not leak across.
+var dc_arr = [1, 2, 3]
+var dc_arr_copy = dc_arr
+dc_arr_copy[0] = 99
+assert_eq(dc_arr[0], 1, "declaration: source array unaffected by copy mutation")
+assert_eq(dc_arr_copy[0], 99, "declaration: copied array holds mutation")
+assert_eq(len(dc_arr), len(dc_arr_copy), "declaration: copy preserves length")
+remove dc_arr, dc_arr_copy
+
+# Nested arrays deep copy too.
+var dc_nested = [[1, 2], [3, 4]]
+var dc_nested_copy = dc_nested
+dc_nested_copy[0][1] = 99
+assert_eq(dc_nested[0][1], 2, "declaration: nested source array unaffected")
+assert_eq(dc_nested_copy[0][1], 99, "declaration: nested copied array mutated")
+remove dc_nested, dc_nested_copy
+
+# Inside a frame (exercises the frame pop / free path): reassigning an alias copy
+# must not clobber the value it was declared from, and must not crash at exit.
+fn dc_frame_alias(var dc_param) {
+  var dc_inner = dc_param
+  dc_inner = 99
+  return dc_param
+}
+var dc_call_arg = 5
+var dc_returned = dc_frame_alias(dc_call_arg)
+assert_eq(dc_returned, 5, "declaration: frame alias reassignment leaves param untouched")
+assert_eq(dc_call_arg, 5, "declaration: frame alias reassignment leaves call arg untouched")
+
+# Length-alias pattern from Polis: var length = sum_length must not alias.
+fn dc_length_alias(var level) {
+  const dc_summary = "hello world"
+  var dc_sum_length = len(dc_summary)
+  var dc_length = dc_sum_length
+  if (level < 1) {
+    dc_length = 3
+  }
+  return dc_sum_length
+}
+var dc_lvl = 0
+assert_eq(dc_length_alias(dc_lvl), 11, "declaration: length alias preserves sum_length when branch taken")
+dc_lvl = 1
+assert_eq(dc_length_alias(dc_lvl), 11, "declaration: length alias preserves sum_length when branch skipped")
+
+# Arrays declared inside a frame copy deeply too.
+fn dc_frame_array() {
+  var dc_items = [10, 20]
+  var dc_items_copy = dc_items
+  dc_items_copy[1] = 99
+  return dc_items
+}
+var dc_arr_result = dc_frame_array()
+assert_eq(dc_arr_result[1], 20, "declaration: in-frame array alias keeps source array intact")

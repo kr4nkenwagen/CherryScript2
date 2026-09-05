@@ -2,6 +2,7 @@ package object
 
 import "../types"
 import "core:encoding/json"
+import "core:unicode/utf8"
 
 create_int :: proc(value: int) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
 	ret_obj = new(types.object_t)
@@ -123,7 +124,7 @@ length :: proc(obj: ^types.object_t) -> (ret_int: int, code: types.exit_codes) {
 	case .FLOAT:
 		return float_len(obj.data.(f32))
 	case .STRING:
-		return len(obj.data.(string)), .OK
+		return utf8.rune_count_in_string(obj.data.(string)), .OK
 	case .ARRAY:
 		return obj.data.(types.object_array_t).count, .OK
 	case .JSON:
@@ -176,5 +177,60 @@ copy :: proc(src: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exi
 		return nil, .MEMORY_ALLOCATION_FAILED_IN_OBJECT_COPY
 	}
 	ret_obj^ = src^
+	return
+}
+
+copy_deep :: proc(src: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.exit_codes) {
+	if src == nil {
+		return nil, .OBJECT_IS_NIL_IN_OBJECT_COPY
+	}
+	ret_obj = new(types.object_t)
+	if ret_obj == nil {
+		return nil, .MEMORY_ALLOCATION_FAILED_IN_OBJECT_COPY
+	}
+	ret_obj.type = src.type
+	ret_obj.name = src.name
+	#partial switch src.type {
+	case .ARRAY:
+		arr := src.data.(types.object_array_t)
+		new_arr := types.object_array_t {count = arr.count}
+		for item in arr.value {
+			child := copy_deep(item) or_return
+			if item.parent != nil do child.parent = ret_obj
+			append(&new_arr.value, child)
+		}
+		ret_obj.data = new_arr
+	case .JSON:
+		json_obj := src.data.(types.object_json_t)
+		new_json := types.object_json_t {file = json_obj.file}
+		for item in json_obj.value {
+			child := copy_deep(item) or_return
+			if item.parent != nil do child.parent = ret_obj
+			append(&new_json.value, child)
+		}
+		ret_obj.data = new_json
+	case:
+		ret_obj.data = src.data
+	}
+	return
+}
+
+copy_array_data :: proc(src: types.object_array_t, container: ^types.object_t) -> (data: types.object_array_t, code: types.exit_codes) {
+	data = types.object_array_t {count = src.count}
+	for item in src.value {
+		child := copy_deep(item) or_return
+		if item.parent != nil do child.parent = container
+		append(&data.value, child)
+	}
+	return
+}
+
+copy_json_data :: proc(src: types.object_json_t, container: ^types.object_t) -> (data: types.object_json_t, code: types.exit_codes) {
+	data = types.object_json_t {file = src.file}
+	for item in src.value {
+		child := copy_deep(item) or_return
+		if item.parent != nil do child.parent = container
+		append(&data.value, child)
+	}
 	return
 }
