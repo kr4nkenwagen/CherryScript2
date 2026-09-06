@@ -38,7 +38,7 @@ var fi = 6.0
 farr[fi] = "*"
 assert_eq(len(farr), 7, "arrays: float variable index grows correctly")
 assert_eq(farr[6], "*", "arrays: float variable index casts to int")
-farr[math.round(5.1)] = "?"
+farr[5.9] = "?"
 assert_eq(farr[5], "?", "arrays: literal float index works")
 remove farr
 
