@@ -1,0 +1,127 @@
+if (len(args)) != 2 {
+  println("Please provide coordinates")
+  println("Examples: cherry weather.cherry LAT LON")
+  return
+}
+const lat = args[0], lon = args[1]
+const forecast = http.get("https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m")
+if (forecast.head.code != 200) {
+  println("Error fetching forecast: " .. forecast.head.code)
+  return
+}
+var temps = forecast.body.hourly.temperature_2m
+var times = forecast.body.hourly.time
+var n = len(temps)
+# Find min/max temperature
+var min_t = math.round(temps[0])
+var max_t = min_t
+for (var i = 1; i < n; i += 1) {
+  var t = math.round(temps[i])
+  if (t < min_t) {
+    min_t = t
+  }
+  if (t > max_t) {
+    max_t = t
+  }
+}
+# Fit the chart to the terminal (default when no tty is attached).
+# Y labels take 6 chars, so the chart area is width - 8; keep cols a
+# whole number of 24h day-blocks so the axis labels never overrun.
+var term_w = terminal.width
+if (term_w < 30) {
+  term_w = 100
+}
+var chart_cols = term_w - 8
+chart_cols = chart_cols -(chart_cols % 24)
+if (chart_cols < 24) {
+  chart_cols = 24
+}
+var cols = n
+if (cols > chart_cols) {
+  cols = chart_cols
+}
+var rows = max_t - min_t + 1
+# Build grid (row 0 = top = max_t, bottom = min_t)
+var grid =[]
+for (var r = 0; r < rows; r += 1) {
+  grid[r] =[]
+  for (var c = 0; c < cols; c += 1) {
+    grid[r][c] = " "
+  }
+}
+# Place data points and connect slope with vertical line
+for (var i = 0; i < cols; i += 1) {
+  var t = math.round(temps[i])
+  var r = max_t - t
+  grid[r][i] = "●"
+  if (i > 0) {
+    var prev = math.round(temps[i - 1])
+    if (prev != t) {
+      var lo = prev
+      var hi = t
+      if (t < prev) {
+        lo = t
+        hi = prev
+      }
+      for (var k = lo + 1; k < hi; k += 1) {
+        grid[max_t - k][i] = "│"
+      }
+    }
+  }
+}
+# Title
+print("      ")
+println("Temperature Forecast")
+# Grid rows with Y-axis labels (4-char field + " |")
+for (var r = 0; r < rows; r += 1) {
+  var label = "" ..(max_t - r .. "c")
+  var pad = 4 - len(label)
+  if (pad > 0) {
+    print(string.pad_start(label, pad))
+  } else {
+    print(label)
+  }
+  print(" |")
+  for (var c = 0; c < cols; c += 1) {
+    print(grid[r][c])
+  }
+  print(" |")
+  print("\n")
+}
+# X-axis line: day boundary +, 6-hour marker |, else -
+print("      ")
+for (var c = 0; c < cols; c += 1) {
+  if (c % 24 == 0) {
+    print("+")
+  } elif (c % 6 == 0) {
+    print("|")
+  } else {
+    print("-")
+  }
+}
+print("+")
+print("\n")
+# Hour markers (2 digits every 6h, in 6-char blocks)
+print("      ")
+for (var b = 0; b < cols; b += 6) {
+  var h = b % 24
+  if (h < 10) {
+    print("0")
+  }
+  print("" .. h)
+  print("    ")
+}
+print("\n")
+# Date labels starting each 24h block (16-char date + 8 pad)
+print("      ")
+for (var b = 0; b < cols; b += 24) {
+  print(times[b])
+  print("        ")
+}
+print("\n")
+# Legend
+println("")
+println("Legend:  ● = data point")
+println("        │ = slope between points")
+println("        + = day boundary (24h)")
+println("        | = 6-hour marker on axis")
