@@ -32,4 +32,14 @@ var c = a + b
 assert_eq(len(c), 3, "arrays: concat length")
 assert(c[0] == 1 && c[2] == 3, "arrays: concat preserves order")
 assert(len(a) == 2 && len(b) == 1, "arrays: concat leaves operands unchanged")
+# Float as index auto-casts to int
+var farr = []
+var fi = 6.0
+farr[fi] = "*"
+assert_eq(len(farr), 7, "arrays: float variable index grows correctly")
+assert_eq(farr[6], "*", "arrays: float variable index casts to int")
+farr[math.round(5.1)] = "?"
+assert_eq(farr[5], "?", "arrays: literal float index works")
+remove farr
+
 remove a, b, c, arr

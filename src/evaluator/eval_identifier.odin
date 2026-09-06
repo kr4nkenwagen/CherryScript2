@@ -52,8 +52,16 @@ eval_index_access :: proc(
 		curr_stack := vm.current_frame(stck) or_return
 		index_obj = stack.get(curr_stack, index_synt.token.literal) or_return
 	} else do index_obj = eval_primary_expression(index_synt, stck, prog) or_return
-	if index_obj == nil || index_obj.type != .INT do return nil, .EXPECTED_ARRAY_INDEX_IN_EVAL_INDEX_ACCESS
-	idx := int(index_obj.data.(int))
+	if index_obj == nil do return nil, .EXPECTED_ARRAY_INDEX_IN_EVAL_INDEX_ACCESS
+	idx: int
+	#partial switch index_obj.type {
+	case .INT:
+		idx = index_obj.data.(int)
+	case .FLOAT:
+		idx = int(index_obj.data.(f32))
+	case:
+		return nil, .EXPECTED_ARRAY_INDEX_IN_EVAL_INDEX_ACCESS
+	}
 	ret_obj = object.array_get(obj, idx) or_return
 	return
 }
