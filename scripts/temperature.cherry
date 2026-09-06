@@ -72,6 +72,7 @@ for (var i = 0; i < cols; i += 1) {
 # Title
 print("      ")
 println("Temperature Forecast")
+print("     ╭" .. "─" * cols .. "─╮\n")
 # Grid rows with Y-axis labels (4-char field + " |")
 for (var r = 0; r < rows; r += 1) {
   var label = "" ..(max_t - r .. "c")
@@ -81,25 +82,25 @@ for (var r = 0; r < rows; r += 1) {
   } else {
     print(label)
   }
-  print(" |")
+  print(" │")
   for (var c = 0; c < cols; c += 1) {
     print(grid[r][c])
   }
-  print(" |")
+  print(" │")
   print("\n")
 }
 # X-axis line: day boundary +, 6-hour marker |, else -
-print("      ")
+print("     ")
 for (var c = 0; c < cols; c += 1) {
   if (c % 24 == 0) {
     print("+")
   } elif (c % 6 == 0) {
-    print("|")
+    print("+")
   } else {
-    print("-")
+    print("─")
   }
 }
-print("+")
+print("──╯")
 print("\n")
 # Hour markers (2 digits every 6h, in 6-char blocks)
 print("      ")
@@ -124,4 +125,4 @@ println("")
 println("Legend:  ● = data point")
 println("        │ = slope between points")
 println("        + = day boundary (24h)")
-println("        | = 6-hour marker on axis")
+println("        │ = 6-hour marker on axis")
