@@ -113,7 +113,6 @@ divide :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.
 		return nil, .OBJECT_IS_NIL_IN_OBJECT_DIVIDE
 	}
 	if a.type == .INT {
-		if a.data.(int) == 0 do return nil, .DIVISION_BY_ZERO_A_INT_IN_OBJECT_DIVIDE
 		if b.type == .FLOAT {
 			if b.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO_A_INT_B_FLOAT_IN_OBJECT_DIVIDE
 			return object.create_int(int(f64(a.data.(int)) / f64(b.data.(f32))))
@@ -123,7 +122,6 @@ divide :: proc(a, b: ^types.object_t) -> (ret_obj: ^types.object_t, code: types.
 		}
 	}
 	if a.type == .FLOAT {
-		if a.data.(f32) == 0 do return nil, .DIVISION_BY_ZERO_A_FLOAT_IN_OBJECT_DIVIDE
 		if b.type == .INT {
 			if b.data.(int) == 0 do return nil, .DIVISION_BY_ZERO_A_FLOAT_B_INT_IN_OBJECT_DIVIDE
 			return object.create_float(f32(f64(a.data.(f32)) / f64(b.data.(int))))

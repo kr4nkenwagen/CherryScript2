@@ -282,9 +282,7 @@ eval_comparison_expression :: proc(
 }
 
 divide_by_zero :: proc(a, b: ^types.object_t) -> (ret_bl: bool) {
-	if (a.type == .INT && a.data.(int) == 0) ||
-	   (a.type == .FLOAT && a.data.(f32) == 0) ||
-	   (b.type == .INT && b.data.(int) == 0) ||
+	if (b.type == .INT && b.data.(int) == 0) ||
 	   (b.type == .FLOAT && b.data.(f32) == 0) {
 		return true
 	}

@@ -371,10 +371,11 @@ math_type_errors :: proc(t: ^testing.T) {
 divide_by_zero_detects :: proc(t: ^testing.T) {
 	z := mki(0)
 	n := mki(5)
-	testing.expectf(t, divide_by_zero(z, n), "a==0 should be div-by-zero")
+	testing.expectf(t, !divide_by_zero(z, n), "a==0 with b!=0 should not be div-by-zero")
 	testing.expectf(t, divide_by_zero(n, z), "b==0 should be div-by-zero")
 	testing.expectf(t, !divide_by_zero(n, mki(2)), "non-zero should not be div-by-zero")
-	testing.expectf(t, divide_by_zero(mkf(0.0), n), "float a==0 should be div-by-zero")
+	testing.expectf(t, !divide_by_zero(mkf(0.0), n), "float a==0 should not be div-by-zero")
+	testing.expectf(t, divide_by_zero(n, mkf(0.0)), "float b==0 should be div-by-zero")
 }
 
 @(test)
