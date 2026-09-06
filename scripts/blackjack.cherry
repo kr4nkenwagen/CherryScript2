@@ -1,0 +1,206 @@
+# ┌──────────────────────────────────────────────┐
+# │  ♠ Blackjack — playable in the terminal     │
+# │  key = read one keypress (no Enter needed)  │
+# │  in   = read a line until Enter             │
+# └──────────────────────────────────────────────┘
+
+global const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+global const suits = ["♠", "♥", "♦", "♣"]
+
+global var deck = []
+global var pos = 0
+
+fn hand_value(var hand) {
+  var total = 0
+  var aces = 0
+  for (var i = 0; i < len(hand); i += 1) {
+    var c = hand[i]
+    var r = c % 13
+    var v = r + 1
+    if (r == 0) { v = 11 }
+    if (r >= 10) { v = 10 }
+    if (v == 11) { aces += 1 }
+    total += v
+  }
+  for (total > 21 && aces > 0) {
+    total -= 10
+    aces -= 1
+  }
+  return total
+}
+
+global fn new_deck() {
+  for (var i = 0; i < 52; i += 1) {
+    deck[i] = i
+  }
+  for (var i = 51; i > 0; i -= 1) {
+    var j = math.floor(math.random() * (i + 1))
+    var tmp = deck[i]
+    deck[i] = deck[j]
+    deck[j] = tmp
+  }
+  pos = 0
+}
+
+new_deck()
+
+println("")
+println("[#0AF] ♠ ♥ ♦ ♣   BLACKJACK   ♣ ♦ ♥ ♠[#]")
+println("")
+println("Get as close to 21 as you can without going over.")
+println("Aces count as 1 or 11. Face cards count as 10.")
+println("")
+
+var playing = "y"
+
+for (playing == "y" || playing == "yes") {
+  if (pos > 46) {
+    new_deck()
+  }
+
+  var player = []
+  var dealer = []
+  var pc = 0
+  var dc = 0
+
+  player[pc] = deck[pos]
+  pos += 1
+  pc += 1
+  dealer[dc] = deck[pos]
+  pos += 1
+  dc += 1
+  player[pc] = deck[pos]
+  pos += 1
+  pc += 1
+  dealer[dc] = deck[pos]
+  pos += 1
+  dc += 1
+
+  var pv = hand_value(player)
+  var dv = hand_value(dealer)
+  var p_blackjack = pc == 2 && pv == 21
+  var d_blackjack = dc == 2 && dv == 21
+
+  var dline = "Dealer: "
+  for (var i = 0; i < dc; i += 1) {
+    if (i == 0) {
+      dline = dline .. "?? "
+    } else {
+      var d = dealer[i]
+      dline = dline .. "" .. ranks[d % 13] .. suits[d / 13] .. " "
+    }
+  }
+  println("")
+  println("────────── the deal ──────────")
+  println(dline)
+
+  var pline = "Player: "
+  for (var i = 0; i < pc; i += 1) {
+    var c = player[i]
+    var s = c / 13
+    if (s == 1 || s == 2) {
+      pline = pline .. "[#C33]" .. "" .. ranks[c % 13] .. suits[s] .. "[#] "
+    } else {
+      pline = pline .. "" .. ranks[c % 13] .. suits[s] .. " "
+    }
+  }
+  pline = pline .. "= " .. pv
+  println(pline)
+
+  var player_turn = true
+
+  for (player_turn && pv < 21) {
+    print("Hit or stand? [h/s] ")
+    var choice = key
+    if (choice == "h" || choice == "H") {
+      player[pc] = deck[pos]
+      pos += 1
+      pc += 1
+      pv = hand_value(player)
+      var b = "Player: "
+      for (var i = 0; i < pc; i += 1) {
+        var c = player[i]
+        var s = c / 13
+        if (s == 1 || s == 2) {
+          b = b .. "[#C33]" .. "" .. ranks[c % 13] .. suits[s] .. "[#] "
+        } else {
+          b = b .. "" .. ranks[c % 13] .. suits[s] .. " "
+        }
+      }
+      b = b .. "= " .. pv
+      println(b)
+      if (pv > 21) {
+        player_turn = false
+      }
+    } elif (choice == "s" || choice == "S") {
+      player_turn = false
+    } else {
+      println("(press h to hit, s to stand)")
+    }
+  }
+
+  println("")
+  println("────────── dealer ──────────")
+  var d2 = "Dealer: "
+  for (var i = 0; i < dc; i += 1) {
+    var d = dealer[i]
+    d2 = d2 .. "" .. ranks[d % 13] .. suits[d / 13] .. " "
+  }
+  d2 = d2 .. "= " .. dv
+  println(d2)
+
+  var result = ""
+
+  if (d_blackjack && p_blackjack) {
+    result = "push"
+  } elif (d_blackjack) {
+    result = "lose"
+  } elif (p_blackjack) {
+    result = "win"
+  } elif (pv > 21) {
+    result = "busted"
+  } else {
+    for (dv < 17) {
+      sleep(1)
+      dealer[dc] = deck[pos]
+      pos += 1
+      dc += 1
+      dv = hand_value(dealer)
+      var d3 = "Dealer: "
+      for (var i = 0; i < dc; i += 1) {
+        var d = dealer[i]
+        d3 = d3 .. "" .. ranks[d % 13] .. suits[d / 13] .. " "
+      }
+      d3 = d3 .. "= " .. dv
+      println(d3)
+    }
+    if (dv > 21) {
+      result = "win"
+    } elif (dv > pv) {
+      result = "lose"
+    } elif (dv < pv) {
+      result = "win"
+    } else {
+      result = "push"
+    }
+  }
+
+  println("")
+  println("────────── result ──────────")
+
+  if (result == "win") {
+    println("[#0F0]You win![#]")
+  } elif (result == "lose") {
+    println("[#F00]Dealer wins.[#]")
+  } elif (result == "push") {
+    println("Push — nobody wins.")
+  } elif (result == "busted") {
+    println("[#F00]You busted.[#]")
+  }
+
+  print("Play again? (y/n) ")
+  playing = in
+}
+
+println("")
+println("Thanks for playing!")
